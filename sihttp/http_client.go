@@ -109,11 +109,15 @@ func (hc *Client) DoDecode(request *http.Request, res any) error {
 	return nil
 }
 
-func (hc *Client) Request(method string, url string, header http.Header, queries map[string]string, body []byte, opts ...RequestOption) ([]byte, error) {
+func (hc *Client) Request(method string, url string, header http.Header, queries map[string]string,
+	body []byte, opts ...RequestOption) ([]byte, error) {
+
 	return hc.RequestContext(context.Background(), method, url, header, queries, body, opts...)
 }
 
-func (hc *Client) RequestContext(ctx context.Context, method string, url string, header http.Header, queries map[string]string, body []byte, opts ...RequestOption) ([]byte, error) {
+func (hc *Client) RequestContext(ctx context.Context, method string, url string, header http.Header,
+	queries map[string]string, body []byte, opts ...RequestOption) ([]byte, error) {
+
 	var res []byte
 	var err error
 	for i := 0; i <= hc.retryAttempts; i++ {
@@ -126,10 +130,14 @@ func (hc *Client) RequestContext(ctx context.Context, method string, url string,
 	}
 	return res, err
 }
-func (hc *Client) RequestDecode(method string, url string, header http.Header, queries map[string]string, body any, res any, opts ...RequestOption) error {
+func (hc *Client) RequestDecode(method string, url string, header http.Header, queries map[string]string,
+	body any, res any, opts ...RequestOption) error {
+
 	return hc.RequestDecodeContext(context.Background(), http.MethodPost, url, header, queries, body, res, opts...)
 }
-func (hc *Client) RequestDecodeContext(ctx context.Context, method string, url string, header http.Header, queries map[string]string, body any, res any, opts ...RequestOption) error {
+func (hc *Client) RequestDecodeContext(ctx context.Context, method string, url string, header http.Header,
+	queries map[string]string, body any, res any, opts ...RequestOption) error {
+
 	var err error
 	for i := 0; i <= hc.retryAttempts; i++ {
 		err = hc.requestDecode(ctx, method, hc.baseUrl+url, header, queries, body, res, opts...)

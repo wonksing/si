@@ -2,16 +2,21 @@ package sihttp_test
 
 import (
 	"bytes"
+	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
+	"net"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/wonksing/si/v2/sicore"
@@ -20,7 +25,7 @@ import (
 	"github.com/wonksing/si/v2/tests/testmodels"
 )
 
-func Test_Client_Do(t *testing.T) {
+func Test_Online_Client_Do(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
@@ -545,4 +550,220 @@ func TestWithBaseUrl(t *testing.T) {
 	expected := `{"id":1,"email_address":"wonk@wonk.org","name":"wonk","borrowed":false}`
 	assert.EqualValues(t, expected, string(res))
 
+}
+
+func Test_Client_NewClient(t *testing.T) {
+	c := sihttp.NewClient(newStandardClient())
+	siutils.AssertNotNilFail(t, c)
+}
+
+func Test_Client_Do(t *testing.T) {
+
+	expected := []byte("hello there")
+
+	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write(expected)
+	}))
+	defer svr.Close()
+
+	c := sihttp.NewClient(newStandardClient())
+	siutils.AssertNotNilFail(t, c)
+
+	req, err := http.NewRequest(http.MethodGet, svr.URL, nil)
+	siutils.AssertNilFail(t, err)
+	resp, err := c.Do(req)
+	siutils.AssertNilFail(t, err)
+	assert.EqualValues(t, http.StatusOK, resp.StatusCode)
+
+	defer resp.Body.Close()
+	resBody, err := io.ReadAll(resp.Body)
+	siutils.AssertNilFail(t, err)
+
+	assert.EqualValues(t, expected, resBody)
+}
+
+func Test_Client_DoRead(t *testing.T) {
+
+	expected := []byte("hello there")
+
+	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write(expected)
+	}))
+	defer svr.Close()
+
+	c := sihttp.NewClient(newStandardClient())
+	siutils.AssertNotNilFail(t, c)
+
+	req, err := http.NewRequest(http.MethodGet, svr.URL, nil)
+	siutils.AssertNilFail(t, err)
+	resBody, err := c.DoRead(req)
+	siutils.AssertNilFail(t, err)
+
+	assert.EqualValues(t, expected, resBody)
+}
+
+func Test_Client_DoDecode(t *testing.T) {
+
+	expected := []byte("hello there")
+
+	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write(expected)
+	}))
+	defer svr.Close()
+
+	c := sihttp.NewClient(newStandardClient())
+	siutils.AssertNotNilFail(t, c)
+
+	req, err := http.NewRequest(http.MethodGet, svr.URL, nil)
+	siutils.AssertNilFail(t, err)
+
+	var resBody []byte
+	err = c.DoDecode(req, &resBody)
+	siutils.AssertNilFail(t, err)
+
+	assert.EqualValues(t, expected, resBody)
+}
+
+func Test_Client_DoDecode_Struct(t *testing.T) {
+
+	expected := []byte(`{"msg":"hello there"}`)
+
+	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write(expected)
+	}))
+	defer svr.Close()
+
+	c := sihttp.NewClient(newStandardClient(),
+		sihttp.WithWriterOpt(sicore.SetJsonEncoder()),
+		sihttp.WithReaderOpt(sicore.SetJsonDecoder()),
+	)
+	siutils.AssertNotNilFail(t, c)
+
+	req, err := http.NewRequest(http.MethodGet, svr.URL, nil)
+	siutils.AssertNilFail(t, err)
+
+	resBody := testStruct{}
+	err = c.DoDecode(req, &resBody)
+	siutils.AssertNilFail(t, err)
+
+	b, err := jsonMarshal(&resBody)
+	siutils.AssertNilFail(t, err)
+	assert.EqualValues(t, expected, b)
+}
+
+func Test_Client_Request(t *testing.T) {
+
+	expected := []byte(`{"msg":"hello there"}`)
+
+	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write(expected)
+	}))
+	defer svr.Close()
+
+	c := sihttp.NewClient(newStandardClient(),
+		sihttp.WithWriterOpt(sicore.SetJsonEncoder()),
+		sihttp.WithReaderOpt(sicore.SetJsonDecoder()),
+	)
+	siutils.AssertNotNilFail(t, c)
+
+	resBody, err := c.Request(http.MethodGet, svr.URL, nil, nil, nil)
+	siutils.AssertNilFail(t, err)
+
+	assert.EqualValues(t, expected, resBody)
+}
+
+func Test_Client_RequestContext(t *testing.T) {
+
+	expected := []byte(`{"msg":"hello there"}`)
+
+	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write(expected)
+	}))
+	defer svr.Close()
+
+	c := sihttp.NewClient(newStandardClient(),
+		sihttp.WithWriterOpt(sicore.SetJsonEncoder()),
+		sihttp.WithReaderOpt(sicore.SetJsonDecoder()),
+	)
+	siutils.AssertNotNilFail(t, c)
+
+	resBody, err := c.RequestContext(context.Background(), http.MethodGet, svr.URL, nil, nil, nil)
+	siutils.AssertNilFail(t, err)
+
+	assert.EqualValues(t, expected, resBody)
+}
+
+func Test_Client_RequestDecode(t *testing.T) {
+
+	expected := []byte(`{"msg":"hello there"}`)
+
+	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write(expected)
+	}))
+	defer svr.Close()
+
+	c := sihttp.NewClient(newStandardClient(),
+		sihttp.WithWriterOpt(sicore.SetJsonEncoder()),
+		sihttp.WithReaderOpt(sicore.SetJsonDecoder()),
+	)
+	siutils.AssertNotNilFail(t, c)
+
+	resBody := testStruct{}
+	err := c.RequestDecode(http.MethodGet, svr.URL, nil, nil, nil, &resBody)
+	siutils.AssertNilFail(t, err)
+
+	b, err := jsonMarshal(&resBody)
+	siutils.AssertNilFail(t, err)
+	assert.EqualValues(t, expected, b)
+}
+
+func Test_Client_RequestDecodeContext(t *testing.T) {
+
+	expected := []byte(`{"msg":"hello there"}`)
+
+	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write(expected)
+	}))
+	defer svr.Close()
+
+	c := sihttp.NewClient(newStandardClient(),
+		sihttp.WithWriterOpt(sicore.SetJsonEncoder()),
+		sihttp.WithReaderOpt(sicore.SetJsonDecoder()),
+	)
+	siutils.AssertNotNilFail(t, c)
+
+	resBody := testStruct{}
+	err := c.RequestDecodeContext(context.Background(), http.MethodGet, svr.URL, nil, nil, nil, &resBody)
+	siutils.AssertNilFail(t, err)
+
+	b, err := jsonMarshal(&resBody)
+	siutils.AssertNilFail(t, err)
+	assert.EqualValues(t, expected, b)
+}
+
+func newStandardClient() *http.Client {
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: true,
+	}
+
+	dialer := &net.Dialer{Timeout: 5 * time.Second}
+
+	tr := &http.Transport{
+		MaxIdleConns:       300,
+		IdleConnTimeout:    time.Duration(15) * time.Second,
+		DisableCompression: false,
+		TLSClientConfig:    tlsConfig,
+		DisableKeepAlives:  false,
+		Dial:               dialer.Dial,
+	}
+
+	return sihttp.NewStandardClient(time.Duration(30), tr)
+}
+
+type testStruct struct {
+	Msg string `json:"msg"`
+}
+
+func jsonMarshal(v any) ([]byte, error) {
+	return json.Marshal(v)
 }
