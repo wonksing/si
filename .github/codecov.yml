@@ -1,0 +1,20 @@
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
+ignore:
+  # Tests and test related files.
+  - "tests"
+  - "**/tests"
+  - "**/tests/data"
+  # Other submodules.
+  - "cmd"
+  - "example"
+  # Documentation
+  - "docs"
+comment:
+  layout: "header, diff, files"
