@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/go-wonk/si/v2/sicore"
-	"github.com/go-wonk/si/v2/siutils"
 	"github.com/stretchr/testify/assert"
+	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/siutils"
 )
 
 func TestHmacSha256HexEncoded(t *testing.T) {

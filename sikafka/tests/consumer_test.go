@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/IBM/sarama"
-	"github.com/go-wonk/si/v2/sikafka"
-	"github.com/go-wonk/si/v2/siutils"
 	"github.com/stretchr/testify/assert"
+	"github.com/wonksing/si/sikafka"
+	"github.com/wonksing/si/siutils"
 )
 
 var (

@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/go-wonk/si/v2/siutils"
-	"github.com/go-wonk/si/v2/tests/testmodels"
 	"github.com/mitchellh/mapstructure"
+	"github.com/wonksing/si/siutils"
+	"github.com/wonksing/si/tests/testmodels"
 )
 
 var (

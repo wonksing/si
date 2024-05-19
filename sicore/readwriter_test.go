@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/go-wonk/si/v2/siutils"
 	"github.com/stretchr/testify/assert"
+	"github.com/wonksing/si/siutils"
 )
 
 func TestWriter_Reset(t *testing.T) {

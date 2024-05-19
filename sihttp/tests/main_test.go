@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-wonk/si/v2/sihttp"
 	_ "github.com/lib/pq"
+	"github.com/wonksing/si/sihttp"
 )
 
 var (

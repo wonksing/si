@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-wonk/si/v2/sicore"
-	"github.com/go-wonk/si/v2/siutils"
-	"github.com/go-wonk/si/v2/siwebsocket"
 	"github.com/stretchr/testify/assert"
+	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/siutils"
+	"github.com/wonksing/si/siwebsocket"
 )
 
 func TestHub(t *testing.T) {

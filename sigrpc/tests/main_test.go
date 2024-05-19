@@ -8,12 +8,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-wonk/si/v2/sigrpc"
 	_ "github.com/lib/pq"
+	"github.com/wonksing/si/sigrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	pb "github.com/go-wonk/si/v2/sigrpc/tests/protos"
+	pb "github.com/wonksing/si/sigrpc/tests/protos"
 )
 
 var (

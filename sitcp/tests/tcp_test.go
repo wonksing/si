@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-wonk/si/v2/sicore"
-	"github.com/go-wonk/si/v2/sitcp"
-	"github.com/go-wonk/si/v2/siutils"
 	"github.com/stretchr/testify/assert"
+	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/sitcp"
+	"github.com/wonksing/si/siutils"
 )
 
 type TcpEOFChecker struct{}

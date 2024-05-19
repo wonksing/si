@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-wonk/si/v2/sicore"
+	"github.com/wonksing/si/sicore"
 )
 
 // Hub maintains the set of active clients and broadcasts messages to the

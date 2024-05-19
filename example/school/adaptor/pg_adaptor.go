@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-wonk/si/v2/example/school/core"
-	"github.com/go-wonk/si/v2/sisql"
+	"github.com/wonksing/si/example/school/core"
+	"github.com/wonksing/si/sisql"
 )
 
 type pgStudentRepo struct {
@@ -60,7 +60,6 @@ func (o *pgStudentRepo) FindAll() ([]core.Student, error) {
 	return output[:n], nil
 }
 
-//
 type pgBookRepo struct {
 	db *sql.DB
 }
@@ -87,7 +86,6 @@ func (o *pgBookRepo) Add(book *core.Book, tx core.TxController) error {
 	return nil
 }
 
-//
 type pgBorrowingRepo struct {
 	db *sql.DB
 }

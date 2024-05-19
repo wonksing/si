@@ -8,8 +8,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/go-wonk/si/v2/sihttp"
 	"github.com/stretchr/testify/assert"
+	"github.com/wonksing/si/sihttp"
 )
 
 // func requestt(wg *sync.WaitGroup, client *sihttp.HttpClient, method, url string, numRequests int, id int) error {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/go-wonk/si/v2/sisql"
 	_ "github.com/lib/pq"
+	"github.com/wonksing/si/sisql"
 )
 
 func main() {

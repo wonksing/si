@@ -9,10 +9,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-wonk/si/v2"
-	"github.com/go-wonk/si/v2/sicore"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
+	"github.com/wonksing/si"
+	"github.com/wonksing/si/sicore"
 )
 
 var (

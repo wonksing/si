@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	pb "github.com/go-wonk/si/v2/sigrpc/tests/protos"
 	"github.com/stretchr/testify/assert"
+	pb "github.com/wonksing/si/sigrpc/tests/protos"
 )
 
 func TestXxx(t *testing.T) {

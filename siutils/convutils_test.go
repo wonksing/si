@@ -3,8 +3,8 @@ package siutils_test
 import (
 	"testing"
 
-	"github.com/go-wonk/si/v2/siutils"
 	"github.com/stretchr/testify/assert"
+	"github.com/wonksing/si/siutils"
 )
 
 func TestDecodeAny(t *testing.T) {

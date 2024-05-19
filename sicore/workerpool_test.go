@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-wonk/si/v2/sicore"
 	"github.com/stretchr/testify/assert"
+	"github.com/wonksing/si/sicore"
 )
 
 var (

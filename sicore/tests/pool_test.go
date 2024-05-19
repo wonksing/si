@@ -4,8 +4,8 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/go-wonk/si/v2/sicore"
 	"github.com/stretchr/testify/assert"
+	"github.com/wonksing/si/sicore"
 )
 
 func TestGetHmacSha256Pool(t *testing.T) {

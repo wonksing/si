@@ -4,10 +4,10 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/go-wonk/si/v2/sicore"
-	"github.com/go-wonk/si/v2/sisql"
-	"github.com/go-wonk/si/v2/siutils"
 	"github.com/stretchr/testify/assert"
+	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/sisql"
+	"github.com/wonksing/si/siutils"
 )
 
 func TestSqlDB_Concurrency_QueryMaps(t *testing.T) {

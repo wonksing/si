@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/go-wonk/si/v2/sirabbitmq"
+	"github.com/wonksing/si/sirabbitmq"
 )
 
 func Test_Logger(t *testing.T) {

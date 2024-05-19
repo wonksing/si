@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-wonk/si/v2/siwebsocket"
 	"github.com/gorilla/websocket"
+	"github.com/wonksing/si/siwebsocket"
 )
 
 var addr = flag.String("addr", ":28080", "http service address")

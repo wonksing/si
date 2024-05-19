@@ -8,10 +8,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-wonk/si/v2/sicore"
-	"github.com/go-wonk/si/v2/sihttp"
-	"github.com/go-wonk/si/v2/siutils"
 	"github.com/stretchr/testify/assert"
+	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/sihttp"
+	"github.com/wonksing/si/siutils"
 )
 
 // BenchmarkBasicClientGet-8   	     794	   1445329 ns/op	    4925 B/op	      57 allocs/op

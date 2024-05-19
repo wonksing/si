@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/go-wonk/si/v2/sicore"
+	"github.com/wonksing/si/sicore"
 )
 
 // Client is a wrapper of http.Client

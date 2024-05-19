@@ -9,10 +9,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/go-wonk/si/v2"
-	"github.com/go-wonk/si/v2/sicore"
-	"github.com/go-wonk/si/v2/siutils"
-	"github.com/go-wonk/si/v2/tests/testmodels"
+	"github.com/wonksing/si"
+	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/siutils"
+	"github.com/wonksing/si/tests/testmodels"
 )
 
 func makeStuReq(num int) testmodels.StudentList {

@@ -10,7 +10,7 @@ import (
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
-	"github.com/go-wonk/si/v2/sicore"
+	"github.com/wonksing/si/sicore"
 )
 
 func DefaultElasticsearchClient(elasticAddresses, userName, password string) (*elasticsearch.Client, error) {

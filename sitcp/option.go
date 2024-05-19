@@ -3,7 +3,7 @@ package sitcp
 import (
 	"time"
 
-	"github.com/go-wonk/si/v2/sicore"
+	"github.com/wonksing/si/sicore"
 )
 
 type TcpOption interface {
