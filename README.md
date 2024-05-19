@@ -1,5 +1,6 @@
 # si(storage interface)
-`si` is a collection of wrappers that aims to ease reading/writing data from/to repositories. It is mostly a client side library and the following repositories or communication protocols will be supported from standard or non-standard packages.
+
+`si` is a package designed to help developers (mostly myself) read and write data to various destinations by wrapping standard and non-standard packages. Its main function is to convert between structs and primary types (bytes, strings, etc.), allowing you to skip the encoding and decoding routines.
 
 - file 
 - tcp
@@ -11,11 +12,13 @@
 - ftp ([jlaffaye](https://github.com/jlaffaye/ftp))
 
 ## Installation
+
 ```bash
-go get -u github.com/go-wonk/si
+go get -u github.com/wonksing/si/v2
 ```
 
 ## Quick Start
+
 1. sql
 ```go
 connStr := "host=testpghost port=5432 user=test password=test123 dbname=testdb sslmode=disable connect_timeout=60"
@@ -46,9 +49,15 @@ _, err := sqldb.QueryStructs(query, &m)
 
 ```
 ## Test
+
 Test flags include the following.
+
 - `ONLINE_TEST`
+  - Runs tests that actually connect to the storages such as PostgreSQL database.
 - `LONG_TEST`
+  - Runs tests that takes long time to complete.
+
+Examples of running the tests.
 
 ```bash
 ONLINE_TEST=1 LONG_TEST=1 go test ./...
@@ -57,8 +66,7 @@ ONLINE_TEST=1 go test -run SKIP -bench . -benchtime 100x -benchmem
 
 ## Versions
 
-### v0.2.1
-- `sihttp`'s struct and interface name changed. 
-### v0.1.1
-- `siwrap` package has been renamed to `sisql`.
+### v2.2.1
+
+- Moved from [github.com/go-wonk/si](github.com/go-wonk/si) 
 
