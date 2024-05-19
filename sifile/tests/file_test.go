@@ -11,6 +11,9 @@ import (
 )
 
 func TestFile_ReadFrom(t *testing.T) {
+	if !onlinetest {
+		t.Skip("skipping online tests")
+	}
 	data := "test data to write.\n"
 	dataReader := strings.NewReader(data)
 	fileName := "./data/TestFile_ReadFrom.txt"
