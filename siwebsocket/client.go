@@ -11,8 +11,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
-	"github.com/wonksing/si"
-	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/v2"
+	"github.com/wonksing/si/v2/sicore"
 )
 
 var (

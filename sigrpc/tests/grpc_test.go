@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	pb "github.com/wonksing/si/sigrpc/tests/protos"
+	pb "github.com/wonksing/si/v2/sigrpc/tests/protos"
 )
 
 func TestXxx(t *testing.T) {

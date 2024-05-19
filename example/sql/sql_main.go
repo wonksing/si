@@ -5,7 +5,7 @@ import (
 	"log"
 
 	_ "github.com/lib/pq"
-	"github.com/wonksing/si/sisql"
+	"github.com/wonksing/si/v2/sisql"
 )
 
 func main() {

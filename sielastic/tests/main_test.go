@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/wonksing/si/sielastic"
+	"github.com/wonksing/si/v2/sielastic"
 )
 
 var (

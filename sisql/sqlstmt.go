@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/v2/sicore"
 )
 
 type SqlStmt struct {

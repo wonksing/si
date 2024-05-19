@@ -15,10 +15,10 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
-	"github.com/wonksing/si/example/school/adaptor"
-	"github.com/wonksing/si/example/school/core"
-	"github.com/wonksing/si/sicore"
-	"github.com/wonksing/si/sihttp"
+	"github.com/wonksing/si/v2/example/school/adaptor"
+	"github.com/wonksing/si/v2/example/school/core"
+	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/sihttp"
 )
 
 var (

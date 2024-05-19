@@ -9,11 +9,11 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
-	"github.com/wonksing/si/sigrpc"
+	"github.com/wonksing/si/v2/sigrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	pb "github.com/wonksing/si/sigrpc/tests/protos"
+	pb "github.com/wonksing/si/v2/sigrpc/tests/protos"
 )
 
 var (

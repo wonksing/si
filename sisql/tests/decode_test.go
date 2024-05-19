@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/wonksing/si/siutils"
-	"github.com/wonksing/si/tests/testmodels"
+	"github.com/wonksing/si/v2/siutils"
+	"github.com/wonksing/si/v2/tests/testmodels"
 )
 
 var (

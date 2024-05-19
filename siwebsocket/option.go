@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/v2/sicore"
 )
 
 // ClientOption is an interface with apply method.

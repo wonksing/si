@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/v2/sicore"
 	"golang.org/x/oauth2"
 )
 

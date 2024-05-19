@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/sicore"
-	"github.com/wonksing/si/siutils"
+	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/siutils"
 )
 
 func TestReader_Buffer_Read(t *testing.T) {

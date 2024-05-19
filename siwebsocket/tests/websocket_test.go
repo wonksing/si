@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wonksing/si/sicore"
-	"github.com/wonksing/si/siutils"
-	"github.com/wonksing/si/siwebsocket"
-	"github.com/wonksing/si/tests/testmodels"
+	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/siutils"
+	"github.com/wonksing/si/v2/siwebsocket"
+	"github.com/wonksing/si/v2/tests/testmodels"
 )
 
 func TestWebsocket(t *testing.T) {

@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/sihttp"
+	"github.com/wonksing/si/v2/sihttp"
 )
 
 // func requestt(wg *sync.WaitGroup, client *sihttp.HttpClient, method, url string, numRequests int, id int) error {

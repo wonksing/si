@@ -8,8 +8,8 @@ import (
 
 	"github.com/IBM/sarama"
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/sikafka"
-	"github.com/wonksing/si/siutils"
+	"github.com/wonksing/si/v2/sikafka"
+	"github.com/wonksing/si/v2/siutils"
 )
 
 var (

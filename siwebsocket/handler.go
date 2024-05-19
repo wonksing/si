@@ -4,7 +4,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/v2/sicore"
 )
 
 // MessageHandler handles data read from r with ReaderOption opts.

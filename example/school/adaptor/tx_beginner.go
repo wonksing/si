@@ -3,7 +3,7 @@ package adaptor
 import (
 	"database/sql"
 
-	"github.com/wonksing/si/example/school/core"
+	"github.com/wonksing/si/v2/example/school/core"
 )
 
 type TxBeginner struct {

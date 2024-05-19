@@ -14,10 +14,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/sicore"
-	"github.com/wonksing/si/sihttp"
-	"github.com/wonksing/si/siutils"
-	"github.com/wonksing/si/tests/testmodels"
+	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/sihttp"
+	"github.com/wonksing/si/v2/siutils"
+	"github.com/wonksing/si/v2/tests/testmodels"
 )
 
 func Test_Client_Do(t *testing.T) {

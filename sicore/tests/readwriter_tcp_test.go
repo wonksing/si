@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/sicore"
-	"github.com/wonksing/si/siutils"
+	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/siutils"
 )
 
 func Test_Basic_Tcp(t *testing.T) {

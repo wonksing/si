@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/sicore"
-	"github.com/wonksing/si/sisql"
-	"github.com/wonksing/si/siutils"
-	"github.com/wonksing/si/tests/testmodels"
+	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/sisql"
+	"github.com/wonksing/si/v2/siutils"
+	"github.com/wonksing/si/v2/tests/testmodels"
 )
 
 func TestSqlDB_QueryRow(t *testing.T) {

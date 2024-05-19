@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wonksing/si/sifile"
-	"github.com/wonksing/si/siutils"
+	"github.com/wonksing/si/v2/sifile"
+	"github.com/wonksing/si/v2/siutils"
 )
 
 func TestFile_ReadFrom(t *testing.T) {

@@ -1,6 +1,6 @@
 package sifile
 
-import "github.com/wonksing/si/sicore"
+import "github.com/wonksing/si/v2/sicore"
 
 // FileOption is an interface with apply method.
 type FileOption interface {

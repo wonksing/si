@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/wonksing/si/siftp"
-	"github.com/wonksing/si/siutils"
+	"github.com/wonksing/si/v2/siftp"
+	"github.com/wonksing/si/v2/siutils"
 )
 
 func TestRead(t *testing.T) {

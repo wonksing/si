@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/IBM/sarama"
-	"github.com/wonksing/si/sikafka"
+	"github.com/wonksing/si/v2/sikafka"
 )
 
 type testMessageHandler struct{}

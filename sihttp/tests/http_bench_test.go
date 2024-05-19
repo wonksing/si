@@ -9,9 +9,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/sicore"
-	"github.com/wonksing/si/sihttp"
-	"github.com/wonksing/si/siutils"
+	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/sihttp"
+	"github.com/wonksing/si/v2/siutils"
 )
 
 // BenchmarkBasicClientGet-8   	     794	   1445329 ns/op	    4925 B/op	      57 allocs/op

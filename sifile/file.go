@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/v2/sicore"
 )
 
 // File is a wrapper of os.File

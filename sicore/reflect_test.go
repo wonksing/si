@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/wonksing/si/siutils"
-	"github.com/wonksing/si/tests/testmodels"
+	"github.com/wonksing/si/v2/siutils"
+	"github.com/wonksing/si/v2/tests/testmodels"
 )
 
 type TestEmbeddedLevel2 struct {

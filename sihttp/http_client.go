@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/v2/sicore"
 )
 
 // Client is a wrapper of http.Client

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/siutils"
+	"github.com/wonksing/si/v2/siutils"
 )
 
 func TestWriter_Reset(t *testing.T) {

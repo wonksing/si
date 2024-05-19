@@ -13,7 +13,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
-	"github.com/wonksing/si/sihttp"
+	"github.com/wonksing/si/v2/sihttp"
 )
 
 var (

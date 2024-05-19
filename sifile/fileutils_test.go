@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/wonksing/si/sifile"
-	"github.com/wonksing/si/siutils"
+	"github.com/wonksing/si/v2/sifile"
+	"github.com/wonksing/si/v2/siutils"
 )
 
 func TestListAll(t *testing.T) {

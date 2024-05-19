@@ -1,6 +1,6 @@
 package sisql
 
-import "github.com/wonksing/si/sicore"
+import "github.com/wonksing/si/v2/sicore"
 
 // SqlOption is an interface with apply method.
 type SqlOption interface {

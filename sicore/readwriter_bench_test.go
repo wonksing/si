@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/wonksing/si/siutils"
-	"github.com/wonksing/si/tests/testmodels"
+	"github.com/wonksing/si/v2/siutils"
+	"github.com/wonksing/si/v2/tests/testmodels"
 )
 
 func testCreateFileToRead(fileName, data string) error {

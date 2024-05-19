@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/wonksing/si/siutils"
+	"github.com/wonksing/si/v2/siutils"
 )
 
 func TestNewFile(t *testing.T) {

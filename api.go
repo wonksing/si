@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"io"
 
-	"github.com/wonksing/si/sicore"
+	"github.com/wonksing/si/v2/sicore"
 )
 
 // ReadAll reads from r until EOF.

@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	_ "github.com/lib/pq"
-	"github.com/wonksing/si/example/school/adaptor"
-	"github.com/wonksing/si/example/school/core"
+	"github.com/wonksing/si/v2/example/school/adaptor"
+	"github.com/wonksing/si/v2/example/school/core"
 )
 
 var ()
