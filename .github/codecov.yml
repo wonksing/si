@@ -11,6 +11,7 @@ ignore:
   - "tests"
   - "**/tests"
   - "**/tests/data"
+  - "**/*_test.go"
   # Other submodules.
   - "cmd"
   - "example"
