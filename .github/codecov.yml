@@ -10,7 +10,7 @@ ignore:
   # Tests and test related files.
   - "tests"
   - "**/tests"
-  - "**/tests/data"
+  # - "**/tests/data"
   # Other submodules.
   - "cmd"
   - "example"
