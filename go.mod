@@ -1,4 +1,4 @@
-module github.com/wonksing/si
+module github.com/wonksing/si/v2
 
 go 1.20
 
