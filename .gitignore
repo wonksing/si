@@ -26,6 +26,13 @@ logs/
 # debug files
 debug
 
+# mac
+.DS_Store
+._*
+
+# vscode
+.vscode
+
 /example/auser/data/*.txt
 /example/auser/data/user/*.json
 /sicore/tests/data/*.txt
