@@ -1,6 +1,8 @@
 # si(storage interface)
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/wonksing/si/v2.svg)](https://pkg.go.dev/github.com/wonksing/si/v2)
 [![codecov](https://codecov.io/gh/wonksing/si/graph/badge.svg?token=X9U647A20R)](https://codecov.io/gh/wonksing/si)
+[![Go Report Card](https://goreportcard.com/badge/github.com/wonksing/si/v2)](https://goreportcard.com/report/github.com/wonksing/si/v2)
 
 `si` is a package designed to help developers (mostly myself) read and write data to various destinations by wrapping standard and non-standard packages. Its main function is to convert between structs and primary types (bytes, strings, etc.), allowing you to skip the encoding and decoding routines.
 
