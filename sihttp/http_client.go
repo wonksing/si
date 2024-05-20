@@ -279,14 +279,18 @@ func (hc *Client) PatchDecodeContext(ctx context.Context, url string, header htt
 	return err
 }
 
-func (hc *Client) Delete(url string, header http.Header, body any, opts ...RequestOption) ([]byte, error) {
-	return hc.DeleteContext(context.Background(), url, header, body, opts...)
+func (hc *Client) Delete(url string, header http.Header, queries map[string]string,
+	opts ...RequestOption) ([]byte, error) {
+
+	return hc.DeleteContext(context.Background(), url, header, queries, opts...)
 }
-func (hc *Client) DeleteContext(ctx context.Context, url string, header http.Header, body any, opts ...RequestOption) ([]byte, error) {
+func (hc *Client) DeleteContext(ctx context.Context, url string, header http.Header, queries map[string]string,
+	opts ...RequestOption) ([]byte, error) {
+
 	var res []byte
 	var err error
 	for i := 0; i <= hc.retryAttempts; i++ {
-		res, err = hc.request(ctx, http.MethodDelete, hc.baseUrl+url, header, nil, body, opts...)
+		res, err = hc.request(ctx, http.MethodDelete, hc.baseUrl+url, header, queries, nil, opts...)
 		if err != nil && hc.isRetryError(err) {
 			continue
 		} else {
@@ -295,13 +299,17 @@ func (hc *Client) DeleteContext(ctx context.Context, url string, header http.Hea
 	}
 	return res, err
 }
-func (hc *Client) DeleteDecode(url string, header http.Header, body any, res any, opts ...RequestOption) error {
-	return hc.DeleteDecodeContext(context.Background(), url, header, body, res, opts...)
+func (hc *Client) DeleteDecode(url string, header http.Header, queries map[string]string,
+	res any, opts ...RequestOption) error {
+
+	return hc.DeleteDecodeContext(context.Background(), url, header, queries, res, opts...)
 }
-func (hc *Client) DeleteDecodeContext(ctx context.Context, url string, header http.Header, body any, res any, opts ...RequestOption) error {
+func (hc *Client) DeleteDecodeContext(ctx context.Context, url string, header http.Header, queries map[string]string,
+	res any, opts ...RequestOption) error {
+
 	var err error
 	for i := 0; i <= hc.retryAttempts; i++ {
-		err = hc.requestDecode(ctx, http.MethodDelete, hc.baseUrl+url, header, nil, body, res, opts...)
+		err = hc.requestDecode(ctx, http.MethodDelete, hc.baseUrl+url, header, queries, nil, res, opts...)
 		if err != nil && hc.isRetryError(err) {
 			continue
 		} else {
@@ -311,9 +319,12 @@ func (hc *Client) DeleteDecodeContext(ctx context.Context, url string, header ht
 	return err
 }
 
+// Deprecated
 func (hc *Client) Head(url string, header http.Header, opts ...RequestOption) ([]byte, error) {
 	return hc.HeadContext(context.Background(), url, header, opts...)
 }
+
+// Deprecated
 func (hc *Client) HeadContext(ctx context.Context, url string, header http.Header, opts ...RequestOption) ([]byte, error) {
 	var res []byte
 	var err error
@@ -327,9 +338,13 @@ func (hc *Client) HeadContext(ctx context.Context, url string, header http.Heade
 	}
 	return res, err
 }
+
+// Deprecated
 func (hc *Client) HeadDecode(url string, header http.Header, body any, res any, opts ...RequestOption) error {
 	return hc.HeadDecodeContext(context.Background(), url, header, body, res, opts...)
 }
+
+// Deprecated
 func (hc *Client) HeadDecodeContext(ctx context.Context, url string, header http.Header, body any, res any, opts ...RequestOption) error {
 	var err error
 	for i := 0; i <= hc.retryAttempts; i++ {
@@ -344,13 +359,13 @@ func (hc *Client) HeadDecodeContext(ctx context.Context, url string, header http
 }
 
 func (hc *Client) PostFile(url string, header http.Header,
-	params map[string]string, fileFieldName, fileName string) ([]byte, error) {
+	params map[string]string, formKeyName, fileName string) ([]byte, error) {
 
-	return hc.PostFileContext(context.Background(), url, header, params, fileFieldName, fileName)
+	return hc.PostFileContext(context.Background(), url, header, params, formKeyName, fileName)
 }
 
 func (hc *Client) PostFileContext(ctx context.Context, url string, header http.Header,
-	params map[string]string, fileFieldName, fileName string) ([]byte, error) {
+	params map[string]string, formKeyName, fileName string) ([]byte, error) {
 
 	// open file
 	f, err := os.OpenFile(fileName, os.O_RDONLY, 0777)
@@ -362,7 +377,7 @@ func (hc *Client) PostFileContext(ctx context.Context, url string, header http.H
 	// create multipart.Writer
 	buf := bytes.NewBuffer(make([]byte, 0, 512))
 	mw := multipart.NewWriter(buf)
-	w, err := mw.CreateFormFile(fileFieldName, f.Name())
+	w, err := mw.CreateFormFile(formKeyName, f.Name())
 	if err != nil {
 		return nil, err
 	}
@@ -424,8 +439,20 @@ func (hc *Client) request(ctx context.Context, method string, url string,
 		if body != nil {
 			w, buf := sicore.GetWriterAndBuffer(hc.writerOpts...)
 			defer sicore.PutWriterAndBuffer(w, buf)
-			if err := w.EncodeFlush(body); err != nil {
-				return nil, err
+
+			switch switchedBody := body.(type) {
+			case []byte:
+				if _, err = w.WriteFlush(switchedBody); err != nil {
+					return nil, err
+				}
+			case string:
+				if _, err = w.WriteFlush([]byte(switchedBody)); err != nil {
+					return nil, err
+				}
+			default:
+				if err := w.EncodeFlush(body); err != nil {
+					return nil, err
+				}
 			}
 			req, err = http.NewRequestWithContext(ctx, method, url, buf)
 		} else {
@@ -465,8 +492,20 @@ func (hc *Client) requestDecode(ctx context.Context, method string, url string, 
 		if body != nil {
 			w, buf := sicore.GetWriterAndBuffer(hc.writerOpts...)
 			defer sicore.PutWriterAndBuffer(w, buf)
-			if err := w.EncodeFlush(body); err != nil {
-				return err
+
+			switch switchedBody := body.(type) {
+			case []byte:
+				if _, err = w.WriteFlush(switchedBody); err != nil {
+					return err
+				}
+			case string:
+				if _, err = w.WriteFlush([]byte(switchedBody)); err != nil {
+					return err
+				}
+			default:
+				if err := w.EncodeFlush(body); err != nil {
+					return err
+				}
 			}
 			req, err = http.NewRequestWithContext(ctx, method, url, buf)
 		} else {
