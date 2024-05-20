@@ -319,45 +319,6 @@ func (hc *Client) DeleteDecodeContext(ctx context.Context, url string, header ht
 	return err
 }
 
-// Deprecated
-func (hc *Client) Head(url string, header http.Header, opts ...RequestOption) ([]byte, error) {
-	return hc.HeadContext(context.Background(), url, header, opts...)
-}
-
-// Deprecated
-func (hc *Client) HeadContext(ctx context.Context, url string, header http.Header, opts ...RequestOption) ([]byte, error) {
-	var res []byte
-	var err error
-	for i := 0; i <= hc.retryAttempts; i++ {
-		res, err = hc.request(ctx, http.MethodHead, hc.baseUrl+url, header, nil, nil, opts...)
-		if err != nil && hc.isRetryError(err) {
-			continue
-		} else {
-			break
-		}
-	}
-	return res, err
-}
-
-// Deprecated
-func (hc *Client) HeadDecode(url string, header http.Header, body any, res any, opts ...RequestOption) error {
-	return hc.HeadDecodeContext(context.Background(), url, header, body, res, opts...)
-}
-
-// Deprecated
-func (hc *Client) HeadDecodeContext(ctx context.Context, url string, header http.Header, body any, res any, opts ...RequestOption) error {
-	var err error
-	for i := 0; i <= hc.retryAttempts; i++ {
-		err = hc.requestDecode(ctx, http.MethodHead, hc.baseUrl+url, header, nil, body, res, opts...)
-		if err != nil && hc.isRetryError(err) {
-			continue
-		} else {
-			break
-		}
-	}
-	return err
-}
-
 func (hc *Client) PostFile(url string, header http.Header,
 	params map[string]string, formKeyName, fileName string) ([]byte, error) {
 

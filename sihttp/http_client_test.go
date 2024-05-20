@@ -22,7 +22,11 @@ import (
 )
 
 func Test_Client_NewClient(t *testing.T) {
-	c := NewClient(newStandardClient())
+	sc := _newStandardClient()
+	c := NewClient(sc)
+	siutils.AssertNotNilFail(t, c)
+
+	c = NewClient(sc, nil)
 	siutils.AssertNotNilFail(t, c)
 }
 
@@ -35,7 +39,7 @@ func Test_Client_Do(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient())
+	c := NewClient(_newStandardClient())
 	siutils.AssertNotNilFail(t, c)
 
 	req, err := http.NewRequest(http.MethodGet, svr.URL, nil)
@@ -60,7 +64,7 @@ func Test_Client_DoRead(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient())
+	c := NewClient(_newStandardClient())
 	siutils.AssertNotNilFail(t, c)
 
 	req, err := http.NewRequest(http.MethodGet, svr.URL, nil)
@@ -80,7 +84,7 @@ func Test_Client_DoDecode(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient())
+	c := NewClient(_newStandardClient())
 	siutils.AssertNotNilFail(t, c)
 
 	req, err := http.NewRequest(http.MethodGet, svr.URL, nil)
@@ -102,7 +106,7 @@ func Test_Client_DoDecode_Struct(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient(),
+	c := NewClient(_newStandardClient(),
 		WithWriterOpt(sicore.SetJsonEncoder()),
 		WithReaderOpt(sicore.SetJsonDecoder()),
 	)
@@ -111,11 +115,11 @@ func Test_Client_DoDecode_Struct(t *testing.T) {
 	req, err := http.NewRequest(http.MethodGet, svr.URL, nil)
 	siutils.AssertNilFail(t, err)
 
-	resBody := testStruct{}
+	resBody := _testStruct{}
 	err = c.DoDecode(req, &resBody)
 	siutils.AssertNilFail(t, err)
 
-	b, err := jsonMarshal(&resBody)
+	b, err := _jsonMarshal(&resBody)
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, b)
 }
@@ -129,7 +133,7 @@ func Test_Client_Request(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient(),
+	c := NewClient(_newStandardClient(),
 		WithWriterOpt(sicore.SetJsonEncoder()),
 		WithReaderOpt(sicore.SetJsonDecoder()),
 	)
@@ -157,17 +161,17 @@ func Test_Client_RequestDecode(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient(),
+	c := NewClient(_newStandardClient(),
 		WithWriterOpt(sicore.SetJsonEncoder()),
 		WithReaderOpt(sicore.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
-	resBody := testStruct{}
+	resBody := _testStruct{}
 	err := c.RequestDecode(http.MethodGet, svr.URL, nil, nil, nil, &resBody)
 	siutils.AssertNilFail(t, err)
 
-	b, err := jsonMarshal(&resBody)
+	b, err := _jsonMarshal(&resBody)
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, b)
 }
@@ -181,17 +185,17 @@ func Test_Client_RequestDecodeContext(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient(),
+	c := NewClient(_newStandardClient(),
 		WithWriterOpt(sicore.SetJsonEncoder()),
 		WithReaderOpt(sicore.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
-	resBody := testStruct{}
+	resBody := _testStruct{}
 	err := c.RequestDecodeContext(context.Background(), http.MethodGet, svr.URL, nil, nil, nil, &resBody)
 	siutils.AssertNilFail(t, err)
 
-	b, err := jsonMarshal(&resBody)
+	b, err := _jsonMarshal(&resBody)
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, b)
 }
@@ -205,7 +209,7 @@ func Test_Client_Get(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient(),
+	c := NewClient(_newStandardClient(),
 		WithWriterOpt(sicore.SetJsonEncoder()),
 		WithReaderOpt(sicore.SetJsonDecoder()),
 	)
@@ -226,7 +230,7 @@ func Test_Client_GetContext(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient(),
+	c := NewClient(_newStandardClient(),
 		WithWriterOpt(sicore.SetJsonEncoder()),
 		WithReaderOpt(sicore.SetJsonDecoder()),
 	)
@@ -247,25 +251,25 @@ func Test_Client_GetDecode(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient(),
+	c := NewClient(_newStandardClient(),
 		WithWriterOpt(sicore.SetJsonEncoder()),
 		WithReaderOpt(sicore.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
-	resBody := testStruct{}
+	resBody := _testStruct{}
 	err := c.GetDecode(svr.URL, nil, nil, &resBody)
 	siutils.AssertNilFail(t, err)
 
-	b, err := jsonMarshal(&resBody)
+	b, err := _jsonMarshal(&resBody)
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, b)
 
-	resBody2 := testStruct{}
+	resBody2 := _testStruct{}
 	err = c.GetDecodeContext(context.Background(), svr.URL, nil, nil, &resBody2)
 	siutils.AssertNilFail(t, err)
 
-	b2, err := jsonMarshal(&resBody2)
+	b2, err := _jsonMarshal(&resBody2)
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, b2)
 }
@@ -280,7 +284,7 @@ func Test_Client_Post(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient(),
+	c := NewClient(_newStandardClient(),
 		WithWriterOpt(sicore.SetJsonEncoder()),
 		WithReaderOpt(sicore.SetJsonDecoder()),
 	)
@@ -288,7 +292,7 @@ func Test_Client_Post(t *testing.T) {
 
 	var err error
 	var resBody []byte
-	var resStruct testStruct
+	var resStruct _testStruct
 
 	resBody, err = c.Post(svr.URL, nil, expected)
 	siutils.AssertNilFail(t, err)
@@ -298,17 +302,17 @@ func Test_Client_Post(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, resBody)
 
-	resStruct = testStruct{}
+	resStruct = _testStruct{}
 	err = c.PostDecode(svr.URL, nil, expected, &resStruct)
 	siutils.AssertNilFail(t, err)
-	b, err := jsonMarshal(&resStruct)
+	b, err := _jsonMarshal(&resStruct)
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, b)
 
-	resStruct = testStruct{}
+	resStruct = _testStruct{}
 	err = c.PostDecodeContext(context.Background(), svr.URL, nil, expected, &resStruct)
 	siutils.AssertNilFail(t, err)
-	b, err = jsonMarshal(&resStruct)
+	b, err = _jsonMarshal(&resStruct)
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, b)
 }
@@ -322,7 +326,7 @@ func Test_Client_Put(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient(),
+	c := NewClient(_newStandardClient(),
 		WithWriterOpt(sicore.SetJsonEncoder()),
 		WithReaderOpt(sicore.SetJsonDecoder()),
 	)
@@ -330,7 +334,7 @@ func Test_Client_Put(t *testing.T) {
 
 	var err error
 	var resBody []byte
-	var resStruct testStruct
+	var resStruct _testStruct
 
 	resBody, err = c.Put(svr.URL, nil, nil)
 	siutils.AssertNilFail(t, err)
@@ -340,17 +344,17 @@ func Test_Client_Put(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, resBody)
 
-	resStruct = testStruct{}
+	resStruct = _testStruct{}
 	err = c.PutDecode(svr.URL, nil, nil, &resStruct)
 	siutils.AssertNilFail(t, err)
-	b, err := jsonMarshal(&resStruct)
+	b, err := _jsonMarshal(&resStruct)
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, b)
 
-	resStruct = testStruct{}
+	resStruct = _testStruct{}
 	err = c.PutDecodeContext(context.Background(), svr.URL, nil, nil, &resStruct)
 	siutils.AssertNilFail(t, err)
-	b, err = jsonMarshal(&resStruct)
+	b, err = _jsonMarshal(&resStruct)
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, b)
 }
@@ -365,7 +369,7 @@ func Test_Client_Patch(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient(),
+	c := NewClient(_newStandardClient(),
 		WithWriterOpt(sicore.SetJsonEncoder()),
 		WithReaderOpt(sicore.SetJsonDecoder()),
 	)
@@ -373,7 +377,7 @@ func Test_Client_Patch(t *testing.T) {
 
 	var err error
 	var resBody []byte
-	var resStruct testStruct
+	var resStruct _testStruct
 
 	resBody, err = c.Patch(svr.URL, nil, expected)
 	siutils.AssertNilFail(t, err)
@@ -383,17 +387,17 @@ func Test_Client_Patch(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, resBody)
 
-	resStruct = testStruct{}
+	resStruct = _testStruct{}
 	err = c.PatchDecode(svr.URL, nil, expected, &resStruct)
 	siutils.AssertNilFail(t, err)
-	b, err := jsonMarshal(&resStruct)
+	b, err := _jsonMarshal(&resStruct)
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, b)
 
-	resStruct = testStruct{}
+	resStruct = _testStruct{}
 	err = c.PatchDecodeContext(context.Background(), svr.URL, nil, expected, &resStruct)
 	siutils.AssertNilFail(t, err)
-	b, err = jsonMarshal(&resStruct)
+	b, err = _jsonMarshal(&resStruct)
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, b)
 }
@@ -404,15 +408,15 @@ func Test_Client_Delete(t *testing.T) {
 
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		v := r.URL.Query().Get("msg")
-		s := testStruct{
+		s := _testStruct{
 			Msg: v,
 		}
-		res, _ := jsonMarshal(&s)
+		res, _ := _jsonMarshal(&s)
 		w.Write(res)
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient(),
+	c := NewClient(_newStandardClient(),
 		WithWriterOpt(sicore.SetJsonEncoder()),
 		WithReaderOpt(sicore.SetJsonDecoder()),
 	)
@@ -420,7 +424,7 @@ func Test_Client_Delete(t *testing.T) {
 
 	var err error
 	var resBody []byte
-	var resStruct testStruct
+	var resStruct _testStruct
 	queries := make(map[string]string)
 	queries["msg"] = "hello there"
 
@@ -432,17 +436,17 @@ func Test_Client_Delete(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, resBody)
 
-	resStruct = testStruct{}
+	resStruct = _testStruct{}
 	err = c.DeleteDecode(svr.URL, nil, queries, &resStruct)
 	siutils.AssertNilFail(t, err)
-	b, err := jsonMarshal(&resStruct)
+	b, err := _jsonMarshal(&resStruct)
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, b)
 
-	resStruct = testStruct{}
+	resStruct = _testStruct{}
 	err = c.DeleteDecodeContext(context.Background(), svr.URL, nil, queries, &resStruct)
 	siutils.AssertNilFail(t, err)
-	b, err = jsonMarshal(&resStruct)
+	b, err = _jsonMarshal(&resStruct)
 	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, b)
 }
@@ -525,7 +529,7 @@ func Test_Client_PostFile(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	c := NewClient(newStandardClient(),
+	c := NewClient(_newStandardClient(),
 		WithWriterOpt(sicore.SetJsonEncoder()),
 		WithReaderOpt(sicore.SetJsonDecoder()),
 	)
@@ -542,7 +546,7 @@ func Test_Client_PostFile(t *testing.T) {
 	assert.EqualValues(t, expected, res)
 }
 
-func newStandardClient() *http.Client {
+func _newStandardClient() *http.Client {
 	tlsConfig := &tls.Config{
 		InsecureSkipVerify: true,
 	}
@@ -561,11 +565,11 @@ func newStandardClient() *http.Client {
 	return NewStandardClient(time.Duration(30), tr)
 }
 
-type testStruct struct {
+type _testStruct struct {
 	Msg string `json:"msg"`
 }
 
-func jsonMarshal(v any) ([]byte, error) {
+func _jsonMarshal(v any) ([]byte, error) {
 	return json.Marshal(v)
 }
 
