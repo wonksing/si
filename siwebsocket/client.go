@@ -11,7 +11,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
-	"github.com/wonksing/si/v2"
 	"github.com/wonksing/si/v2/sicore"
 )
 
@@ -289,7 +288,7 @@ func (c *Client) ReadMessage() (messageType int, p []byte, err error) {
 	if err != nil {
 		return messageType, nil, err
 	}
-	p, err = si.ReadAll(r)
+	p, err = io.ReadAll(r)
 	return messageType, p, err
 }
 

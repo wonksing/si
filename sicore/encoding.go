@@ -1,22 +1,53 @@
 package sicore
 
 import (
+	"bytes"
 	"encoding/hex"
-	"encoding/json"
 	"errors"
 	"io"
 )
 
+// EncodeJson encode src into json bytes then write to dst.
+func EncodeJson(dst io.Writer, src any) error {
+	sw := GetWriter(dst, SetJsonEncoder())
+	defer PutWriter(sw)
+	return sw.EncodeFlush(src)
+}
+
+// EncodeJsonCopied encode src into json bytes then write to dst.
+// It also write encoded bytes of src to a bytes.Buffer then returns it.
+func EncodeJsonCopied(dst io.Writer, src any) (*bytes.Buffer, error) {
+	bb := GetBytesBuffer(nil)
+	mw := io.MultiWriter(dst, bb)
+	sw := GetWriter(mw, SetJsonEncoder())
+	defer PutWriter(sw)
+	return bb, sw.EncodeFlush(src)
+}
+
+// HmacSha256HexEncoded creates an hmac sha256 hash from secret and mesage.
+func HmacSha256HexEncoded(secret string, message []byte) (string, error) {
+	hm := GetHmacSha256Hash(secret)
+	defer PutHmacSha256Hash(secret, hm)
+	_, err := hm.Write(message)
+	if err != nil {
+		return "", err
+	}
+
+	return hex.EncodeToString(hm.Sum(nil)), nil
+}
+
+// HmacSha256HexEncodedWithReader creates an hmac sha256 hash from secret and r.
+func HmacSha256HexEncodedWithReader(secret string, r io.Reader) (string, error) {
+	body, err := io.ReadAll(r)
+	if err != nil {
+		return "", err
+	}
+	return HmacSha256HexEncoded(secret, body)
+}
+
 // Encoder encode input parameter and write to a writer.
 type Encoder interface {
 	Encode(v any) error
-}
-
-// SetJsonEncoder is a WriterOption to encode w's data in json format
-func SetJsonEncoder() WriterOption {
-	return WriterOptionFunc(func(w *Writer) {
-		w.SetEncoder(json.NewEncoder(w))
-	})
 }
 
 // DefaultEncoder is to write string or []byte type to the underlying Writer
@@ -52,82 +83,4 @@ func (de *DefaultEncoder) Encode(v any) error {
 		return errors.New("unable to encode v")
 	}
 
-}
-
-// SetDefaultEncoder sets DefaultEncoder to w
-func SetDefaultEncoder() WriterOption {
-	return WriterOptionFunc(func(w *Writer) {
-		w.SetEncoder(&DefaultEncoder{w})
-	})
-}
-
-// Decoder is an interface that has Decode method.
-type Decoder interface {
-	Decode(v any) error
-}
-
-// DefaultDecoder just read underlying r.
-type DefaultDecoder struct {
-	r io.Reader
-}
-
-// NewDefaultDecoder returns a new DefaultDecoder
-func NewDefaultDecoder(r io.Reader) *DefaultDecoder {
-	return &DefaultDecoder{r}
-}
-
-// Reset resets underyling Reader
-func (d *DefaultDecoder) Reset(r io.Reader) {
-	d.r = r
-}
-
-// Decode read underlying r, and pass the data to v.
-// v must be either type of *[]byte or *string.
-func (d *DefaultDecoder) Decode(v any) error {
-	switch t := v.(type) {
-	case *[]byte:
-		b, err := ReadAll(d.r)
-		if err != nil {
-			return err
-		}
-		*t = b
-		return nil
-	case *string:
-		b, err := ReadAll(d.r)
-		if err != nil {
-			return err
-		}
-		*t = string(b)
-		return nil
-	}
-
-	return errors.New("not supported")
-}
-
-// SetJsonDecoder sets json.Decoder to r.
-func SetJsonDecoder() ReaderOption {
-	return ReaderOptionFunc(func(r *Reader) {
-		r.SetDecoder(json.NewDecoder(r))
-	})
-}
-
-// HmacSha256HexEncoded creates an hmac sha256 hash from secret and mesage.
-func HmacSha256HexEncoded(secret string, message []byte) (string, error) {
-	hm := GetHmacSha256Hash(secret)
-	defer PutHmacSha256Hash(secret, hm)
-	_, err := hm.Write(message)
-	if err != nil {
-		return "", err
-	}
-
-	return hex.EncodeToString(hm.Sum(nil)), nil
-}
-
-// HmacSha256HexEncodedWithReader creates an hmac sha256 hash from secret and r.
-func HmacSha256HexEncodedWithReader(secret string, r io.Reader) (string, error) {
-	body, err := ReadAll(r)
-	if err != nil {
-		return "", err
-	}
-	return HmacSha256HexEncoded(secret, body)
 }

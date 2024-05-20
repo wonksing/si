@@ -1,5 +1,7 @@
 package sicore
 
+import "encoding/json"
+
 // WriterOption is an interface that has apply method.
 type WriterOption interface {
 	apply(w *Writer)
@@ -11,6 +13,20 @@ type WriterOptionFunc func(*Writer)
 // apply implements WriterOption's apply method.
 func (s WriterOptionFunc) apply(w *Writer) {
 	s(w)
+}
+
+// SetJsonEncoder is a WriterOption to encode w's data in json format
+func SetJsonEncoder() WriterOption {
+	return WriterOptionFunc(func(w *Writer) {
+		w.SetEncoder(json.NewEncoder(w))
+	})
+}
+
+// SetDefaultEncoder sets DefaultEncoder to w
+func SetDefaultEncoder() WriterOption {
+	return WriterOptionFunc(func(w *Writer) {
+		w.SetEncoder(&DefaultEncoder{w})
+	})
 }
 
 // ReaderOption is an interface that wraps an apply method.
@@ -36,6 +52,13 @@ func SetEofChecker(chk EofChecker) ReaderOption {
 func SetDefaultEOFChecker() ReaderOption {
 	return ReaderOptionFunc(func(r *Reader) {
 		r.SetEofChecker(&defaultEofChecker{})
+	})
+}
+
+// SetJsonDecoder sets json.Decoder to r.
+func SetJsonDecoder() ReaderOption {
+	return ReaderOptionFunc(func(r *Reader) {
+		r.SetDecoder(json.NewDecoder(r))
 	})
 }
 
