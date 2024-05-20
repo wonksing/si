@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -124,10 +125,14 @@ func Test_setQueries(t *testing.T) {
 func Test_Client_isRetryError(t *testing.T) {
 	c := NewClient(nil)
 
+	assert.EqualValues(t, false, c.isRetryError(nil))
+
 	e := &Error{
 		Response: &http.Response{
 			StatusCode: http.StatusUnauthorized,
 		},
 	}
 	assert.EqualValues(t, true, c.isRetryError(e))
+
+	assert.EqualValues(t, false, c.isRetryError(errors.New("just error")))
 }

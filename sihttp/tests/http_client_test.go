@@ -669,30 +669,16 @@ func Test_Client_Request(t *testing.T) {
 	)
 	siutils.AssertNotNilFail(t, c)
 
-	resBody, err := c.Request(http.MethodGet, svr.URL, nil, nil, nil)
-	siutils.AssertNilFail(t, err)
+	headers := http.Header{}
+	queries := make(map[string]string)
+	var reqBody []byte
 
+	resBody, err := c.Request(http.MethodGet, svr.URL, headers, queries, reqBody)
+	siutils.AssertNilFail(t, err)
 	assert.EqualValues(t, expected, resBody)
-}
 
-func Test_Client_RequestContext(t *testing.T) {
-
-	expected := []byte(`{"msg":"hello there"}`)
-
-	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write(expected)
-	}))
-	defer svr.Close()
-
-	c := sihttp.NewClient(newStandardClient(),
-		sihttp.WithWriterOpt(sicore.SetJsonEncoder()),
-		sihttp.WithReaderOpt(sicore.SetJsonDecoder()),
-	)
-	siutils.AssertNotNilFail(t, c)
-
-	resBody, err := c.RequestContext(context.Background(), http.MethodGet, svr.URL, nil, nil, nil)
+	resBody, err = c.RequestContext(context.Background(), http.MethodGet, svr.URL, headers, queries, reqBody)
 	siutils.AssertNilFail(t, err)
-
 	assert.EqualValues(t, expected, resBody)
 }
 
