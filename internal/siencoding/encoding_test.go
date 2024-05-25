@@ -1,50 +1,11 @@
-package internal
+package siencoding
 
 import (
 	"bytes"
-	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
-
-func Test_EncodeJson(t *testing.T) {
-	dst := bytes.Buffer{}
-	src := _testStruct{
-		Msg: "hello world",
-	}
-	err := EncodeJson(&dst, &src)
-	require.Nil(t, err)
-	b, _ := json.Marshal(&src)
-	b = append(b, '\n')
-	require.EqualValues(t, b, dst.Bytes())
-}
-
-func Test_EncodeJsonCopied(t *testing.T) {
-	dst := bytes.Buffer{}
-	src := _testStruct{
-		Msg: "hello world",
-	}
-	copied, err := EncodeJsonCopied(&dst, &src)
-	require.Nil(t, err)
-	b, _ := json.Marshal(&src)
-	b = append(b, '\n')
-	require.EqualValues(t, b, dst.Bytes())
-	require.EqualValues(t, b, copied.Bytes())
-}
-
-func Test_HmacSha256HexEncoded(t *testing.T) {
-	res, err := HmacSha256HexEncoded("asdf", []byte("hello world"))
-	require.Nil(t, err)
-	require.EqualValues(t, "2c78fedf60d1f955bf0c9e14ed6b332a6efb6e5668fc6aa067257558cdbb7d6d", res)
-}
-
-func Test_HmacSha256HexEncodedWithReader(t *testing.T) {
-	r := bytes.NewBufferString("hello world")
-	res, err := HmacSha256HexEncodedWithReader("asdf", r)
-	require.Nil(t, err)
-	require.EqualValues(t, "2c78fedf60d1f955bf0c9e14ed6b332a6efb6e5668fc6aa067257558cdbb7d6d", res)
-}
 
 func TestDefaultEncoder_Reset(t *testing.T) {
 	b := &bytes.Buffer{}
@@ -115,8 +76,4 @@ func TestDefaultEncoder_Encode(t *testing.T) {
 		err := e.Encode(&data)
 		require.NotNil(t, err)
 	})
-}
-
-type _testStruct struct {
-	Msg string `json:"msg"`
 }

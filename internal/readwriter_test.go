@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/wonksing/si/v2/internal/siencoding"
 	"github.com/wonksing/si/v2/siutils"
 )
 
@@ -36,7 +37,7 @@ func TestWriter_GetWriter_Reset(t *testing.T) {
 	assert.Nil(t, wr.enc)
 
 	wr = GetWriter(buf)
-	if _, ok := wr.enc.(*DefaultEncoder); !ok {
+	if _, ok := wr.enc.(*siencoding.DefaultEncoder); !ok {
 		t.FailNow()
 	}
 	err := wr.EncodeFlush([]byte("test message"))

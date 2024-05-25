@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/wonksing/si/v2/codec"
 	"github.com/wonksing/si/v2/internal"
 	"golang.org/x/oauth2"
 )
@@ -95,7 +96,7 @@ func WithHeaderHmac256(key string, secret []byte) RequestOptionFunc {
 			return err
 		}
 
-		hashed, err := internal.HmacSha256HexEncodedWithReader(string(secret), r)
+		hashed, err := codec.HmacSha256HexEncodedWithReader(string(secret), r)
 		if err != nil {
 			return err
 		}
