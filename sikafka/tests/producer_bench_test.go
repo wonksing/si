@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"github.com/wonksing/si/v2/sikafka"
-	"github.com/wonksing/si/v2/siutils"
 )
 
 func BenchmarkSyncProducer_Produce(b *testing.B) {
@@ -14,7 +14,7 @@ func BenchmarkSyncProducer_Produce(b *testing.B) {
 	}
 
 	producer, err := sikafka.DefaultSyncProducer([]string{"testkafkahost:9092"})
-	siutils.AssertNilFailB(b, err)
+	require.Nil(b, err)
 	defer producer.Close()
 
 	sp := sikafka.NewSyncProducer(producer, "tp-test-15")
@@ -23,14 +23,14 @@ func BenchmarkSyncProducer_Produce(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		key := strconv.FormatInt(int64(i), 10)
 		sp.Produce([]byte(key), []byte("asdf"))
-		// siutils.AssertNilFailB(b, err)
+		// require.Nil(b, err)
 	}
 }
 
 func BenchmarkAsyncProducer_Produce(b *testing.B) {
 
 	producer, err := sikafka.DefaultAsyncProducer([]string{"testkafkahost:9092"})
-	siutils.AssertNilFailB(b, err)
+	require.Nil(b, err)
 	defer producer.AsyncClose()
 
 	sp := sikafka.NewAsyncProducer(producer, "tp-test-15")
@@ -39,6 +39,6 @@ func BenchmarkAsyncProducer_Produce(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		key := strconv.FormatInt(int64(i), 10)
 		sp.Produce([]byte(key), []byte("asdf"))
-		// siutils.AssertNilFailB(b, err)
+		// require.Nil(b, err)
 	}
 }

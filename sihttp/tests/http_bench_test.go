@@ -9,9 +9,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal/sio"
+	"github.com/stretchr/testify/require"
 	"github.com/wonksing/si/v2/sihttp"
-	"github.com/wonksing/si/v2/siutils"
+	"github.com/wonksing/si/v2/sio"
 )
 
 // BenchmarkBasicClientGet-8   	     794	   1445329 ns/op	    4925 B/op	      57 allocs/op
@@ -19,18 +19,18 @@ func BenchmarkHttpClient_DefaultGet(b *testing.B) {
 	if !onlinetest {
 		b.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFailB(b, standardClient)
+	require.NotNil(b, standardClient)
 
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 
 		request, err := http.NewRequest(http.MethodGet, "http://127.0.0.1:8080/test/hello", nil)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		request.Header.Set("Content-type", "application/x-www-form-urlencoded")
 
 		resp, err := standardClient.Do(request)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -47,7 +47,7 @@ func BenchmarkHttpClient_DoRead(b *testing.B) {
 	if !onlinetest {
 		b.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFailB(b, standardClient)
+	require.NotNil(b, standardClient)
 
 	hc := sihttp.NewClient(standardClient)
 
@@ -55,12 +55,12 @@ func BenchmarkHttpClient_DoRead(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 
 		request, err := http.NewRequest(http.MethodGet, "http://127.0.0.1:8080/test/hello", nil)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		request.Header.Set("Content-type", "application/x-www-form-urlencoded")
 
 		body, err := hc.DoRead(request)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		assert.EqualValues(b, "hello", string(body))
 	}
@@ -71,7 +71,7 @@ func BenchmarkHttpClient_RequestGet(b *testing.B) {
 	if !onlinetest {
 		b.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFailB(b, standardClient)
+	require.NotNil(b, standardClient)
 
 	hc := sihttp.NewClient(standardClient)
 
@@ -80,7 +80,7 @@ func BenchmarkHttpClient_RequestGet(b *testing.B) {
 		header := make(http.Header)
 		header["Content-Type"] = []string{"application/x-www-form-urlencoded"}
 		body, err := hc.Get("http://127.0.0.1:8080/test/hello", header, nil)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		assert.EqualValues(b, "hello", string(body))
 	}
@@ -126,7 +126,7 @@ func BenchmarkReuseRequestPost(b *testing.B) {
 		}
 
 		io.ReadAll(resp.Body)
-		// siutils.AssertNilFailB(b, err)
+		// require.Nil(b, err)
 		// assert.EqualValues(b, sendData, string(respBody))
 		// fmt.Println(string(respBody))
 
@@ -140,7 +140,7 @@ func BenchmarkHttpClient_DefaultPost(b *testing.B) {
 	if !onlinetest {
 		b.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFailB(b, standardClient)
+	require.NotNil(b, standardClient)
 
 	data := strings.Repeat(testData, testDataRepeats)
 	url := testUrl
@@ -152,15 +152,15 @@ func BenchmarkHttpClient_DefaultPost(b *testing.B) {
 		headerData := fmt.Sprintf("%d", i)
 
 		request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader([]byte(sendData)))
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		request.Header.Set("custom_header", headerData)
 
 		resp, err := standardClient.Do(request)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		_, err = io.ReadAll(resp.Body)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		resp.Body.Close()
 	}
@@ -172,7 +172,7 @@ func BenchmarkHttpClient_DefaultPost_WithPool(b *testing.B) {
 	if !onlinetest {
 		b.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFailB(b, standardClient)
+	require.NotNil(b, standardClient)
 
 	data := strings.Repeat(testData, testDataRepeats)
 	url := testUrl
@@ -185,15 +185,15 @@ func BenchmarkHttpClient_DefaultPost_WithPool(b *testing.B) {
 
 		buf := sio.GetBytesReader([]byte(sendData))
 		request, err := http.NewRequest(http.MethodPost, url, buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		request.Header.Set("custom_header", headerData)
 
 		resp, err := standardClient.Do(request)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		_, err = io.ReadAll(resp.Body)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		resp.Body.Close()
 		sio.PutBytesReader(buf)
@@ -206,7 +206,7 @@ func BenchmarkHttpClient_DefaultPost_WithPoolAndDoRead(b *testing.B) {
 	if !onlinetest {
 		b.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFailB(b, standardClient)
+	require.NotNil(b, standardClient)
 
 	data := strings.Repeat(testData, testDataRepeats)
 	url := testUrl
@@ -221,12 +221,12 @@ func BenchmarkHttpClient_DefaultPost_WithPoolAndDoRead(b *testing.B) {
 
 		buf := sio.GetBytesReader([]byte(sendData))
 		request, err := http.NewRequest(http.MethodPost, url, buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		request.Header.Set("custom_header", headerData)
 
 		_, err = client.DoRead(request)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		sio.PutBytesReader(buf)
 	}
@@ -254,6 +254,6 @@ func BenchmarkHttpClient_RequestPost(b *testing.B) {
 		header := make(http.Header)
 		header["custom_header"] = []string{headerData}
 		_, err := client.Post(url, header, []byte(sendData))
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 	}
 }

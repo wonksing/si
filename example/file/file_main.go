@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/wonksing/si/v2/internal/sio"
 	"github.com/wonksing/si/v2/sifile"
+	"github.com/wonksing/si/v2/sio"
 )
 
 func main() {

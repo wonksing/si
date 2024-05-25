@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"github.com/wonksing/si/v2/sifile"
-	"github.com/wonksing/si/v2/siutils"
 )
 
 func TestListAll(t *testing.T) {
 	list, err := sifile.ListDir("./tests")
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	for _, f := range list {
 		fi, err := f.Info()
-		siutils.AssertNilFail(t, err)
+		require.Nil(t, err)
 		fmt.Println(f.Path, f.IsDir(), fi.Size())
 	}
 }

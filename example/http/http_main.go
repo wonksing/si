@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/wonksing/si/v2/internal/sio"
 	"github.com/wonksing/si/v2/sihttp"
+	"github.com/wonksing/si/v2/sio"
 )
 
 func main() {

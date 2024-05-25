@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/wonksing/si/v2/siutils"
+	"github.com/stretchr/testify/require"
 )
 
 func BenchmarkHttpHandlerReaderWriterTiny(b *testing.B) {
@@ -20,7 +20,7 @@ func BenchmarkHttpHandlerReaderWriterTiny(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		buf := bytes.NewBuffer([]byte(data))
 		req, err := http.NewRequest("POST", "/test", buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		rec := httptest.NewRecorder()
@@ -41,7 +41,7 @@ func BenchmarkHttpHandlerReaderWriterCopiedTiny(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		buf := bytes.NewBuffer([]byte(data))
 		req, err := http.NewRequest("POST", "/test", buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		rec := httptest.NewRecorder()
@@ -61,7 +61,7 @@ func BenchmarkHttpHandlerBasicTiny(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		buf := bytes.NewBuffer([]byte(data))
 		req, err := http.NewRequest("POST", "/test", buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		rec := httptest.NewRecorder()
@@ -82,7 +82,7 @@ func BenchmarkHttpHandlerReaderWriterSml(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		buf := bytes.NewBuffer([]byte(data))
 		req, err := http.NewRequest("POST", "/test", buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		rec := httptest.NewRecorder()
@@ -103,7 +103,7 @@ func BenchmarkHttpHandlerReaderWriterCopiedSml(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		buf := bytes.NewBuffer([]byte(data))
 		req, err := http.NewRequest("POST", "/test", buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		rec := httptest.NewRecorder()
@@ -124,7 +124,7 @@ func BenchmarkHttpHandlerBasicSml(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		buf := bytes.NewBuffer([]byte(data))
 		req, err := http.NewRequest("POST", "/test", buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		rec := httptest.NewRecorder()
@@ -145,7 +145,7 @@ func BenchmarkHttpHandlerReaderWriterMed(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		buf := bytes.NewBuffer([]byte(data))
 		req, err := http.NewRequest("POST", "/test", buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		rec := httptest.NewRecorder()
@@ -166,7 +166,7 @@ func BenchmarkHttpHandlerReaderWriterCopiedMed(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		buf := bytes.NewBuffer([]byte(data))
 		req, err := http.NewRequest("POST", "/test", buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		rec := httptest.NewRecorder()
@@ -187,7 +187,7 @@ func BenchmarkHttpHandlerBasicMed(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		buf := bytes.NewBuffer([]byte(data))
 		req, err := http.NewRequest("POST", "/test", buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		rec := httptest.NewRecorder()
@@ -208,7 +208,7 @@ func BenchmarkHttpHandlerReaderWriterLrg(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		buf := bytes.NewBuffer([]byte(data))
 		req, err := http.NewRequest("POST", "/test", buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		rec := httptest.NewRecorder()
@@ -229,7 +229,7 @@ func BenchmarkHttpHandlerReaderWriterCopiedLrg(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		buf := bytes.NewBuffer([]byte(data))
 		req, err := http.NewRequest("POST", "/test", buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		rec := httptest.NewRecorder()
@@ -250,7 +250,7 @@ func BenchmarkHttpHandlerBasicLrg(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		buf := bytes.NewBuffer([]byte(data))
 		req, err := http.NewRequest("POST", "/test", buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 		rec := httptest.NewRecorder()

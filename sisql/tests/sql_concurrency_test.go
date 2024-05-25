@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal/sio"
+	"github.com/stretchr/testify/require"
+	"github.com/wonksing/si/v2/sio"
 	"github.com/wonksing/si/v2/sisql"
-	"github.com/wonksing/si/v2/siutils"
 )
 
 func TestSqlDB_Concurrency_QueryMaps(t *testing.T) {
@@ -18,7 +18,7 @@ func TestSqlDB_Concurrency_QueryMaps(t *testing.T) {
 	if !longtest {
 		t.Skip("skipping long tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db) // sio.SqlColumn{Name: "id", Type: sio.SqlColTypeInt},
 	// sio.SqlColumn{Name: "id2", Type: sio.SqlColTypeInt},
@@ -70,7 +70,7 @@ func TestSqlDB_Concurrency_QueryIntoMapSlice(t *testing.T) {
 	if !longtest {
 		t.Skip("skipping long tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithType("id", sio.SqlColTypeInt), sisql.WithType("id2", sio.SqlColTypeInt))
 

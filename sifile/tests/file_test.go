@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"github.com/wonksing/si/v2/sifile"
-	"github.com/wonksing/si/v2/siutils"
 )
 
 func TestFile_ReadFrom(t *testing.T) {
@@ -26,11 +26,11 @@ func TestFile_ReadFrom(t *testing.T) {
 		fileMode = fi.Mode()
 	}
 	f, err := sifile.OpenFile(fileName, os.O_CREATE|os.O_TRUNC|os.O_RDWR, fileMode)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	defer f.Close()
 
 	n, err := f.ReadFrom(dataReader)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	fmt.Println(n)
 }

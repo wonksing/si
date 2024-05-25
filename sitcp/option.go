@@ -3,7 +3,7 @@ package sitcp
 import (
 	"time"
 
-	"github.com/wonksing/si/v2/internal/sio"
+	"github.com/wonksing/si/v2/sio"
 )
 
 type TcpOption interface {

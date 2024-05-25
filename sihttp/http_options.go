@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/wonksing/si/v2/codec"
-	"github.com/wonksing/si/v2/internal/sio"
+	"github.com/wonksing/si/v2/sio"
 	"golang.org/x/oauth2"
 )
 

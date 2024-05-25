@@ -1,7 +1,7 @@
 package sisql
 
 import (
-	"github.com/wonksing/si/v2/internal/sio"
+	"github.com/wonksing/si/v2/sio"
 )
 
 // SqlOption is an interface with apply method.

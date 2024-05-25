@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/wonksing/si/v2/siutils"
 )
 
@@ -18,7 +19,7 @@ func TestDecodeAny(t *testing.T) {
 	}
 	p := Person{}
 	err := siutils.DecodeAny(m, &p)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, Person{"wonk", 20}, p)
 }
@@ -35,7 +36,7 @@ func TestDecodeAnyJsonIter(t *testing.T) {
 	p := Person{}
 
 	err := siutils.DecodeAny(m, &p)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, Person{Name: "wonk", Age: 20}, p)
 }
@@ -76,7 +77,7 @@ func BenchmarkDecodeAny(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		p := Person{}
 		err := siutils.DecodeAny(m, &p)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 	}
 
 	// assert.EqualValues(b, Person{Name: "wonk", Age: 20}, p)
@@ -118,7 +119,7 @@ func BenchmarkDecodeAnyJsonIter(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		p := Person{}
 		err := siutils.DecodeAny(m, &p)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 	}
 	// assert.EqualValues(t, Person{"wonk", 20}, p)
 }
