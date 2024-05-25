@@ -1,4 +1,4 @@
-package internal
+package utils
 
 import "errors"
 
@@ -6,9 +6,9 @@ const maxInt = int(^uint(0) >> 1)
 
 var ErrTooLarge = errors.New("buf too large")
 
-// grow a byte slice's capacity or allocate more space(len) by n. It returns
+// GrowByteSlice a byte slice's capacity or allocate more space(len) by n. It returns
 // the previous length of b.
-func grow(b *[]byte, n int) (int, error) {
+func GrowByteSlice(b *[]byte, n int) (int, error) {
 	c := cap(*b)
 	l := len(*b)
 	a := c - l // available
@@ -34,8 +34,8 @@ func grow(b *[]byte, n int) (int, error) {
 	return l, nil
 }
 
-// growCap grows the capacity of byte slice by n
-func growCap(b *[]byte, n int) error {
+// GrowByteSliceCap grows the capacity of byte slice by n
+func GrowByteSliceCap(b *[]byte, n int) error {
 	c := cap(*b)
 	l := len(*b)
 	a := c - l // available
@@ -57,4 +57,30 @@ func growCap(b *[]byte, n int) error {
 	copy(newBuf, (*b)[0:])
 	*b = newBuf[:l]
 	return nil
+}
+
+// Deprecated
+func GrowMapSlice(ms *[]map[string]interface{}, s int) (int, error) {
+	c := cap(*ms)
+	l := len(*ms)
+	a := c - l // available
+	if s <= a {
+		*ms = (*ms)[:l+s]
+		return l, nil
+	}
+
+	if l+s <= c {
+		// if needed length is lte c
+		return l, nil
+	}
+
+	if c > maxInt-c-s {
+		// too large
+		return l, ErrTooLarge
+	}
+
+	newBuf := make([]map[string]interface{}, c*2+s)
+	copy(newBuf, (*ms)[0:])
+	*ms = newBuf[:l+s]
+	return l, nil
 }

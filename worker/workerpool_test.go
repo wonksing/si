@@ -1,4 +1,4 @@
-package internal_test
+package worker_test
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/worker"
 )
 
 var (
@@ -40,7 +40,7 @@ func TestWorkerPool_Basic(t *testing.T) {
 
 	log.Println("start")
 	myjobCompleted = 0
-	p := internal.NewWorkerPool(5, 128)
+	p := worker.NewWorkerPool(5, 128)
 	p.Start()
 
 	for i := 0; i < 256; i++ {
@@ -64,7 +64,7 @@ func TestWorkerPool_Ignore(t *testing.T) {
 	log.Println("start")
 	myjobCompleted = 0
 
-	p := internal.NewWorkerPool(5, 128)
+	p := worker.NewWorkerPool(5, 128)
 	p.Start()
 
 	for i := 0; i < 256; i++ {
@@ -87,7 +87,7 @@ func TestWorkerPool_ResultsAndErrors(t *testing.T) {
 	log.Println("start")
 	myjobCompleted = 0
 
-	p := internal.NewWorkerPoolWithResultsAndErrors(5, 128)
+	p := worker.NewWorkerPoolWithResultsAndErrors(5, 128)
 	p.Start()
 
 	go func() {

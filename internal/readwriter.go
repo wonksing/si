@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/wonksing/si/v2/internal/siencoding"
+	"github.com/wonksing/si/v2/internal/utils"
 )
 
 const defaultBufferSize = 512
@@ -117,7 +118,7 @@ func (rd *Reader) readAll() ([]byte, error) {
 	rd.bufAll = rd.bufAll[:0]
 	for {
 		if len(rd.bufAll) == cap(rd.bufAll) {
-			if err := growCap(&rd.bufAll, defaultBufferSize); err != nil {
+			if err := utils.GrowByteSliceCap(&rd.bufAll, defaultBufferSize); err != nil {
 				return nil, err
 			}
 		}
@@ -145,7 +146,7 @@ func readAll(r io.Reader, chk EofChecker) ([]byte, error) {
 	b := make([]byte, 0, defaultBufferSize)
 	for {
 		if len(b) == cap(b) {
-			if err := growCap(&b, defaultBufferSize); err != nil {
+			if err := utils.GrowByteSliceCap(&b, defaultBufferSize); err != nil {
 				return nil, err
 			}
 		}
