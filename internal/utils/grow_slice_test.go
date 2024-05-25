@@ -1,4 +1,4 @@
-package internal
+package utils
 
 import (
 	"testing"
@@ -14,7 +14,7 @@ func Test_grow(t *testing.T) {
 		assert.Equal(t, 7, len(b))
 		assert.Equal(t, 10, cap(b))
 
-		l, err := grow(&b, 100)
+		l, err := GrowByteSlice(&b, 100)
 		if !assert.Nil(t, err) {
 			t.FailNow()
 		}
@@ -28,7 +28,7 @@ func Test_grow(t *testing.T) {
 		b := make([]byte, 0, 100)
 		b = append(b, []byte("0123456789")...)
 
-		l, err := grow(&b, 20)
+		l, err := GrowByteSlice(&b, 20)
 		require.Nil(t, err)
 		require.EqualValues(t, 10, l)
 		require.EqualValues(t, 30, len(b))
@@ -39,7 +39,7 @@ func Test_grow(t *testing.T) {
 		b := make([]byte, 0, 100)
 		b = append(b, []byte("0123456789")...)
 
-		_, err := grow(&b, maxInt)
+		_, err := GrowByteSlice(&b, maxInt)
 		require.NotNil(t, err)
 	})
 }
@@ -52,7 +52,7 @@ func Test_growCap(t *testing.T) {
 		assert.Equal(t, 7, len(b))
 		assert.Equal(t, 10, cap(b))
 
-		err := growCap(&b, 100)
+		err := GrowByteSliceCap(&b, 100)
 		if !assert.Nil(t, err) {
 			t.FailNow()
 		}
@@ -64,7 +64,7 @@ func Test_growCap(t *testing.T) {
 		b := make([]byte, 0, 100)
 		b = append(b, []byte("0123456789")...)
 
-		err := growCap(&b, 100)
+		err := GrowByteSliceCap(&b, 100)
 		if !assert.Nil(t, err) {
 			t.FailNow()
 		}
@@ -76,7 +76,7 @@ func Test_growCap(t *testing.T) {
 		b := make([]byte, 0, 100)
 		b = append(b, []byte("0123456789")...)
 
-		err := growCap(&b, 50)
+		err := GrowByteSliceCap(&b, 50)
 		if !assert.Nil(t, err) {
 			t.FailNow()
 		}
@@ -87,7 +87,7 @@ func Test_growCap(t *testing.T) {
 		b := make([]byte, 0, 100)
 		b = append(b, []byte("0123456789")...)
 
-		err := growCap(&b, maxInt)
+		err := GrowByteSliceCap(&b, maxInt)
 		require.NotNil(t, err)
 	})
 }
