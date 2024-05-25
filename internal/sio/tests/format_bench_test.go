@@ -1,4 +1,4 @@
-package internal_test
+package sio_test
 
 import (
 	"fmt"

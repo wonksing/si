@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/wonksing/si/v2/codec"
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 	"golang.org/x/oauth2"
 )
 
@@ -131,14 +131,14 @@ func WithDefaultHeaders(defaultHeaders map[string]string) ClientOptionFunc {
 	})
 }
 
-func WithReaderOpt(opt internal.ReaderOption) ClientOptionFunc {
+func WithReaderOpt(opt sio.ReaderOption) ClientOptionFunc {
 	return ClientOptionFunc(func(c *Client) error {
 		c.appendReaderOption(opt)
 		return nil
 	})
 }
 
-func WithWriterOpt(opt internal.WriterOption) ClientOptionFunc {
+func WithWriterOpt(opt sio.WriterOption) ClientOptionFunc {
 	return ClientOptionFunc(func(c *Client) error {
 		c.appendWriterOption(opt)
 		return nil

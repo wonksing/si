@@ -1,6 +1,8 @@
 package sisql
 
-import "github.com/wonksing/si/v2/internal"
+import (
+	"github.com/wonksing/si/v2/internal/sio"
+)
 
 // SqlOption is an interface with apply method.
 type SqlOption interface {
@@ -15,7 +17,7 @@ func (o SqlOptionFunc) apply(db *SqlDB) {
 	o(db)
 }
 
-func WithRowScannerOpt(opt internal.RowScannerOption) SqlOptionFunc {
+func WithRowScannerOpt(opt sio.RowScannerOption) SqlOptionFunc {
 	return SqlOptionFunc(func(db *SqlDB) {
 		db.appendRowScannerOpt(opt)
 	})
@@ -23,13 +25,13 @@ func WithRowScannerOpt(opt internal.RowScannerOption) SqlOptionFunc {
 
 func WithTagKey(key string) SqlOptionFunc {
 	return SqlOptionFunc(func(db *SqlDB) {
-		db.appendRowScannerOpt(internal.WithTagKey(key))
+		db.appendRowScannerOpt(sio.WithTagKey(key))
 	})
 }
 
-func WithType(name string, typ internal.SqlColType) SqlOptionFunc {
+func WithType(name string, typ sio.SqlColType) SqlOptionFunc {
 	return SqlOptionFunc(func(db *SqlDB) {
-		db.appendRowScannerOpt(internal.WithSqlColumnType(name, typ))
+		db.appendRowScannerOpt(sio.WithSqlColumnType(name, typ))
 	})
 }
 
@@ -46,7 +48,7 @@ func (o SqlTxOptionFunc) apply(db *SqlTx) {
 	o(db)
 }
 
-func WithTxRowScannerOpt(opt internal.RowScannerOption) SqlTxOptionFunc {
+func WithTxRowScannerOpt(opt sio.RowScannerOption) SqlTxOptionFunc {
 	return SqlTxOptionFunc(func(db *SqlTx) {
 		db.appendRowScannerOpt(opt)
 	})
@@ -54,12 +56,12 @@ func WithTxRowScannerOpt(opt internal.RowScannerOption) SqlTxOptionFunc {
 
 func WithTxTagKey(key string) SqlTxOptionFunc {
 	return SqlTxOptionFunc(func(db *SqlTx) {
-		db.appendRowScannerOpt(internal.WithTagKey(key))
+		db.appendRowScannerOpt(sio.WithTagKey(key))
 	})
 }
 
-func WithTxType(name string, typ internal.SqlColType) SqlTxOptionFunc {
+func WithTxType(name string, typ sio.SqlColType) SqlTxOptionFunc {
 	return SqlTxOptionFunc(func(db *SqlTx) {
-		db.appendRowScannerOpt(internal.WithSqlColumnType(name, typ))
+		db.appendRowScannerOpt(sio.WithSqlColumnType(name, typ))
 	})
 }

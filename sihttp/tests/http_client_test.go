@@ -14,7 +14,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 	"github.com/wonksing/si/v2/sihttp"
 	"github.com/wonksing/si/v2/siutils"
 	"github.com/wonksing/si/v2/tests/testmodels"
@@ -112,8 +112,8 @@ func TestCheckRequestState(t *testing.T) {
 	data := "hey"
 
 	buf := bytes.NewBuffer(make([]byte, 0, 1024))
-	rw := internal.GetReadWriterWithReadWriter(buf)
-	defer internal.PutReadWriter(rw)
+	rw := sio.GetReadWriterWithReadWriter(buf)
+	defer sio.PutReadWriter(rw)
 
 	req, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/test/echo", rw)
 	siutils.AssertNilFail(t, err)
@@ -148,8 +148,8 @@ func TestReuseRequest(t *testing.T) {
 	data := "hey"
 
 	buf := bytes.NewBuffer(make([]byte, 0, 1024))
-	rw := internal.GetReadWriterWithReadWriter(buf)
-	defer internal.PutReadWriter(rw)
+	rw := sio.GetReadWriterWithReadWriter(buf)
+	defer sio.PutReadWriter(rw)
 
 	req, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/test/echo", rw)
 	siutils.AssertNilFail(t, err)
@@ -181,8 +181,8 @@ func TestReuseRequestInGoroutinePanic(t *testing.T) {
 	data := "hey"
 
 	buf := bytes.NewBuffer(make([]byte, 0, 1024))
-	rw := internal.GetReadWriterWithReadWriter(buf)
-	defer internal.PutReadWriter(rw)
+	rw := sio.GetReadWriterWithReadWriter(buf)
+	defer sio.PutReadWriter(rw)
 
 	req, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/test/echo", rw)
 	siutils.AssertNilFail(t, err)
@@ -226,7 +226,7 @@ func TestReuseRequestInGoroutine(t *testing.T) {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup, routineNumber int) {
 			buf := bytes.NewBuffer(make([]byte, 0, 1024))
-			rw := internal.GetReadWriterWithReadWriter(buf)
+			rw := sio.GetReadWriterWithReadWriter(buf)
 
 			req, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/test/echo", nil)
 			siutils.AssertNilFail(t, err)
@@ -250,7 +250,7 @@ func TestReuseRequestInGoroutine(t *testing.T) {
 				resp.Body.Close()
 			}
 
-			internal.PutReadWriter(rw)
+			sio.PutReadWriter(rw)
 			wg.Done()
 		}(&wg, j)
 	}
@@ -283,7 +283,7 @@ func TestHttpClientRequestGet(t *testing.T) {
 		t.Skip("skipping online tests")
 	}
 
-	client := sihttp.NewClient(standardClient, sihttp.WithWriterOpt(internal.SetJsonEncoder()))
+	client := sihttp.NewClient(standardClient, sihttp.WithWriterOpt(sio.SetJsonEncoder()))
 
 	url := "http://127.0.0.1:8080/test/hello"
 
@@ -344,8 +344,8 @@ func TestHttpClientRequestPostJsonDecoded(t *testing.T) {
 	}
 
 	client := sihttp.NewClient(standardClient,
-		sihttp.WithWriterOpt(internal.SetJsonEncoder()),
-		sihttp.WithReaderOpt(internal.SetJsonDecoder()))
+		sihttp.WithWriterOpt(sio.SetJsonEncoder()),
+		sihttp.WithReaderOpt(sio.SetJsonDecoder()))
 
 	url := "http://127.0.0.1:8080/test/echo"
 
@@ -468,12 +468,12 @@ func TestHttpClientRequestPostJsonDecodedWithHeaderHmac256(t *testing.T) {
 
 	client := sihttp.NewClient(standardClient,
 		sihttp.WithRequestHeaderHmac256("hmacKey", []byte("1234")),
-		sihttp.WithWriterOpt(internal.SetJsonEncoder()),
-		sihttp.WithReaderOpt(internal.SetJsonDecoder()),
+		sihttp.WithWriterOpt(sio.SetJsonEncoder()),
+		sihttp.WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	// client.SetRequestOptions(sihttp.WithHeaderHmac256("hmacKey", []byte("1234")))
-	// client.SetWriterOptions(internal.SetJsonEncoder())
-	// client.SetReaderOptions(internal.SetJsonDecoder())
+	// client.SetWriterOptions(sio.SetJsonEncoder())
+	// client.SetReaderOptions(sio.SetJsonDecoder())
 
 	url := "http://127.0.0.1:8080/test/echo"
 
@@ -500,8 +500,8 @@ func TestHttpClientRequestPostJsonDecodedWithBearerToken(t *testing.T) {
 
 	client := sihttp.NewClient(standardClient,
 		sihttp.WithRequestOpt(sihttp.WithBearerToken("asdf")),
-		sihttp.WithWriterOpt(internal.SetJsonEncoder()),
-		sihttp.WithReaderOpt(internal.SetJsonDecoder()),
+		sihttp.WithWriterOpt(sio.SetJsonEncoder()),
+		sihttp.WithReaderOpt(sio.SetJsonDecoder()),
 	)
 
 	url := "http://127.0.0.1:8080/test/echo"

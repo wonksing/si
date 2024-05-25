@@ -1,11 +1,11 @@
-package internal_test
+package sio_test
 
 import (
 	"net"
 	"testing"
 	"time"
 
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 	"github.com/wonksing/si/v2/siutils"
 )
 
@@ -25,7 +25,7 @@ import (
 // 	err = conn.(*net.TCPConn).SetReadBuffer(4096)
 // 	siutils.NilFailB(b, err)
 
-// 	s := internal.NewReadWriterWithValidator(conn, conn, tcpValidator())
+// 	s := sio.NewReadWriterWithValidator(conn, conn, tcpValidator())
 // 	received, err := s.WriteAndRead(createDataToSend())
 // 	siutils.NilFailB(b, err)
 
@@ -45,7 +45,7 @@ import (
 
 // func requestTcpWithConn(b *testing.B, conn net.Conn) {
 
-// 	s := internal.NewReadWriterWithValidator(conn, conn, tcpValidator())
+// 	s := sio.NewReadWriterWithValidator(conn, conn, tcpValidator())
 // 	received, err := s.WriteAndRead(createSmallDataToSend())
 // 	siutils.NilFailB(b, err)
 
@@ -76,13 +76,13 @@ import (
 // 	}
 // }
 
-// func requestTcpWithConn2(b *testing.B, s *internal.ReadWriter, conn net.Conn) {
+// func requestTcpWithConn2(b *testing.B, s *sio.ReadWriter, conn net.Conn) {
 
 // 	s.WriteAndRead(createSmallDataToSend())
 // }
 
-// func tcpValidatorDummy() internal.ReadValidator {
-// 	return internal.ValidateFunc(func(b []byte, errIn error) (bool, error) {
+// func tcpValidatorDummy() sio.ReadValidator {
+// 	return sio.ValidateFunc(func(b []byte, errIn error) (bool, error) {
 // 		return true, nil
 // 	})
 // }
@@ -105,7 +105,7 @@ import (
 // 	err = conn.(*net.TCPConn).SetReadBuffer(4096)
 // 	siutils.NilFailB(b, err)
 
-// 	s := internal.NewReadWriterSizeWithValidator(conn, conn, 4096, tcpValidator())
+// 	s := sio.NewReadWriterSizeWithValidator(conn, conn, 4096, tcpValidator())
 // 	for i := 0; i < b.N; i++ {
 // 		requestTcpWithConn2(b, s, conn)
 // 	}
@@ -155,11 +155,11 @@ func Benchmark_Tcp_Request(b *testing.B) {
 	siutils.AssertNilFailB(b, err)
 
 	for i := 0; i < b.N; i++ {
-		// rw := internal.GetReadWriterWithOptions(conn, []internal.ReaderOption{SetTcpEofChecker()}, conn, nil)
-		rw := internal.GetReadWriterWithReadWriter(conn)
+		// rw := sio.GetReadWriterWithOptions(conn, []sio.ReaderOption{SetTcpEofChecker()}, conn, nil)
+		rw := sio.GetReadWriterWithReadWriter(conn)
 		rw.Reader.ApplyOptions(SetTcpEofChecker())
 		rw.Request(createSmallDataToSend())
-		internal.PutReadWriter(rw)
+		sio.PutReadWriter(rw)
 
 	}
 }

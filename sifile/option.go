@@ -1,6 +1,8 @@
 package sifile
 
-import "github.com/wonksing/si/v2/internal"
+import (
+	"github.com/wonksing/si/v2/internal/sio"
+)
 
 // FileOption is an interface with apply method.
 type FileOption interface {
@@ -15,13 +17,13 @@ func (o FileOptionFunc) apply(f *File) {
 	o(f)
 }
 
-func WithReaderOpt(opt internal.ReaderOption) FileOptionFunc {
+func WithReaderOpt(opt sio.ReaderOption) FileOptionFunc {
 	return FileOptionFunc(func(f *File) {
 		f.appendReaderOpt(opt)
 	})
 }
 
-func WithWriterOpt(opt internal.WriterOption) FileOptionFunc {
+func WithWriterOpt(opt sio.WriterOption) FileOptionFunc {
 	return FileOptionFunc(func(f *File) {
 		f.appendWriterOpt(opt)
 	})

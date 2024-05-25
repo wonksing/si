@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 )
 
 // ClientOption is an interface with apply method.
@@ -34,7 +34,7 @@ func WithHub(h Hub) ClientOptionFunc {
 }
 
 // WithReaderOpt sets ro to c.
-func WithReaderOpt(ro internal.ReaderOption) ClientOptionFunc {
+func WithReaderOpt(ro sio.ReaderOption) ClientOptionFunc {
 	return ClientOptionFunc(func(c *WsClient) {
 		c.appendReaderOpt(ro)
 	})

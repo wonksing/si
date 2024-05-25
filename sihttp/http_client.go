@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 )
 
 // Client is a wrapper of http.Client
@@ -22,8 +22,8 @@ type Client struct {
 	retryDelay    time.Duration
 
 	requestOpts []RequestOption
-	writerOpts  []internal.WriterOption
-	readerOpts  []internal.ReaderOption
+	writerOpts  []sio.WriterOption
+	readerOpts  []sio.ReaderOption
 }
 
 // NewClient returns Client
@@ -58,8 +58,8 @@ func (hc *Client) DoRead(request *http.Request) ([]byte, error) {
 		return nil, err
 	}
 
-	r := internal.GetReader(resp.Body)
-	defer internal.PutReader(r)
+	r := sio.GetReader(resp.Body)
+	defer sio.PutReader(r)
 
 	b, err := r.ReadAll()
 	resp.Body.Close()
@@ -85,10 +85,10 @@ func (hc *Client) DoDecode(request *http.Request, res any) error {
 		return err
 	}
 
-	bb := internal.GetBytesBuffer(nil)
+	bb := sio.GetBytesBuffer(nil)
 	tr := io.TeeReader(resp.Body, bb)
-	r := internal.GetReader(tr, hc.readerOpts...)
-	defer internal.PutReader(r)
+	r := sio.GetReader(tr, hc.readerOpts...)
+	defer sio.PutReader(r)
 
 	err = r.Decode(res)
 	resp.Body.Close()
@@ -344,8 +344,8 @@ func (hc *Client) PostFileContext(ctx context.Context, url string, header http.H
 	}
 
 	// write file contents
-	sr := internal.GetReader(f)
-	defer internal.PutReader(sr)
+	sr := sio.GetReader(f)
+	defer sio.PutReader(sr)
 	_, err = sr.WriteTo(w)
 	if err != nil {
 		return nil, err
@@ -382,10 +382,10 @@ func (hc *Client) setDefaultHeader(request *http.Request) {
 func (hc *Client) appendRequestOption(opt RequestOption) {
 	hc.requestOpts = append(hc.requestOpts, opt)
 }
-func (hc *Client) appendWriterOption(opt internal.WriterOption) {
+func (hc *Client) appendWriterOption(opt sio.WriterOption) {
 	hc.writerOpts = append(hc.writerOpts, opt)
 }
-func (hc *Client) appendReaderOption(opt internal.ReaderOption) {
+func (hc *Client) appendReaderOption(opt sio.ReaderOption) {
 	hc.readerOpts = append(hc.readerOpts, opt)
 }
 
@@ -398,8 +398,8 @@ func (hc *Client) request(ctx context.Context, method string, url string,
 		req, err = http.NewRequestWithContext(ctx, method, url, r)
 	} else {
 		if body != nil {
-			w, buf := internal.GetWriterAndBuffer(hc.writerOpts...)
-			defer internal.PutWriterAndBuffer(w, buf)
+			w, buf := sio.GetWriterAndBuffer(hc.writerOpts...)
+			defer sio.PutWriterAndBuffer(w, buf)
 
 			switch switchedBody := body.(type) {
 			case []byte:
@@ -451,8 +451,8 @@ func (hc *Client) requestDecode(ctx context.Context, method string, url string, 
 		req, err = http.NewRequestWithContext(ctx, method, url, r)
 	} else {
 		if body != nil {
-			w, buf := internal.GetWriterAndBuffer(hc.writerOpts...)
-			defer internal.PutWriterAndBuffer(w, buf)
+			w, buf := sio.GetWriterAndBuffer(hc.writerOpts...)
+			defer sio.PutWriterAndBuffer(w, buf)
 
 			switch switchedBody := body.(type) {
 			case []byte:

@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 	"github.com/wonksing/si/v2/sisql"
 	"github.com/wonksing/si/v2/siutils"
 	"github.com/wonksing/si/v2/tests/testmodels"
@@ -373,14 +373,14 @@ func TestSqlDBQueryMapsBoolWithSqlColumn(t *testing.T) {
 	siutils.AssertNotNilFail(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("si"),
-		sisql.WithType("true_1", internal.SqlColTypeBool),
-		sisql.WithType("true_2", internal.SqlColTypeBool),
-		sisql.WithType("false_1", internal.SqlColTypeBool),
-		sisql.WithType("false_2", internal.SqlColTypeBool))
-	// internal.SqlColumn{Name: "true_1", Type: internal.SqlColTypeBool},
-	// internal.SqlColumn{Name: "true_2", Type: internal.SqlColTypeBool},
-	// internal.SqlColumn{Name: "false_1", Type: internal.SqlColTypeBool},
-	// internal.SqlColumn{Name: "false_2", Type: internal.SqlColTypeBool},
+		sisql.WithType("true_1", sio.SqlColTypeBool),
+		sisql.WithType("true_2", sio.SqlColTypeBool),
+		sisql.WithType("false_1", sio.SqlColTypeBool),
+		sisql.WithType("false_2", sio.SqlColTypeBool))
+	// sio.SqlColumn{Name: "true_1", Type: sio.SqlColTypeBool},
+	// sio.SqlColumn{Name: "true_2", Type: sio.SqlColTypeBool},
+	// sio.SqlColumn{Name: "false_1", Type: sio.SqlColTypeBool},
+	// sio.SqlColumn{Name: "false_2", Type: sio.SqlColTypeBool},
 
 	type BoolTest struct {
 		True_1   bool   `json:"true_1" si:"true_1"`
@@ -471,10 +471,10 @@ func TestSqlDBQueryMapsBoolWithIgnore(t *testing.T) {
 	siutils.AssertNotNilFail(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("si"),
-		sisql.WithType("true_1", internal.SqlColTypeBool),
-		sisql.WithType("true_2", internal.SqlColTypeBool),
-		sisql.WithType("false_1", internal.SqlColTypeBool),
-		sisql.WithType("false_2", internal.SqlColTypeBool))
+		sisql.WithType("true_1", sio.SqlColTypeBool),
+		sisql.WithType("true_2", sio.SqlColTypeBool),
+		sisql.WithType("false_1", sio.SqlColTypeBool),
+		sisql.WithType("false_2", sio.SqlColTypeBool))
 
 	type BoolTest struct {
 		Nil      string `json:"nil" si:"nil"`

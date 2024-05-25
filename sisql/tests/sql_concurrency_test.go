@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 	"github.com/wonksing/si/v2/sisql"
 	"github.com/wonksing/si/v2/siutils"
 )
@@ -20,8 +20,8 @@ func TestSqlDB_Concurrency_QueryMaps(t *testing.T) {
 	}
 	siutils.AssertNotNilFail(t, db)
 
-	sqldb := sisql.NewSqlDB(db) // internal.SqlColumn{Name: "id", Type: internal.SqlColTypeInt},
-	// internal.SqlColumn{Name: "id2", Type: internal.SqlColTypeInt},
+	sqldb := sisql.NewSqlDB(db) // sio.SqlColumn{Name: "id", Type: sio.SqlColTypeInt},
+	// sio.SqlColumn{Name: "id2", Type: sio.SqlColTypeInt},
 
 	var wg sync.WaitGroup
 	for i := 0; i < 30; i++ {
@@ -72,13 +72,13 @@ func TestSqlDB_Concurrency_QueryIntoMapSlice(t *testing.T) {
 	}
 	siutils.AssertNotNilFail(t, db)
 
-	sqldb := sisql.NewSqlDB(db, sisql.WithType("id", internal.SqlColTypeInt), sisql.WithType("id2", internal.SqlColTypeInt))
+	sqldb := sisql.NewSqlDB(db, sisql.WithType("id", sio.SqlColTypeInt), sisql.WithType("id2", sio.SqlColTypeInt))
 
-	// internal.SqlColumn{Name: "id", Type: internal.SqlColTypeInt},
-	// internal.SqlColumn{Name: "id2", Type: internal.SqlColTypeInt},
-	// internal.SqlColumn{Name: "decimal_", Type: internal.SqlColTypeFloat64},
-	// internal.SqlColumn{Name: "numeric_", Type: internal.SqlColTypeFloat64},
-	// internal.SqlColumn{Name: "char_arr_", Type: internal.SqlColTypeUints8},
+	// sio.SqlColumn{Name: "id", Type: sio.SqlColTypeInt},
+	// sio.SqlColumn{Name: "id2", Type: sio.SqlColTypeInt},
+	// sio.SqlColumn{Name: "decimal_", Type: sio.SqlColTypeFloat64},
+	// sio.SqlColumn{Name: "numeric_", Type: sio.SqlColTypeFloat64},
+	// sio.SqlColumn{Name: "char_arr_", Type: sio.SqlColTypeUints8},
 
 	var wg sync.WaitGroup
 	for i := 0; i < 5; i++ {
