@@ -38,9 +38,9 @@ func BenchmarkSqlDB_QueryIntoMap(b *testing.B) {
 
 	// var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	for i := 0; i < b.N; i++ {
-		sqldb := sisql.NewSqlDB(db) // sicore.SqlColumn{"decimal_", sicore.SqlColTypeFloat64},
-		// sicore.SqlColumn{"numeric_", sicore.SqlColTypeFloat64},
-		// sicore.SqlColumn{"char_arr_", sicore.SqlColTypeUints8},
+		sqldb := sisql.NewSqlDB(db) // internal.SqlColumn{"decimal_", internal.SqlColTypeFloat64},
+		// internal.SqlColumn{"numeric_", internal.SqlColTypeFloat64},
+		// internal.SqlColumn{"char_arr_", internal.SqlColTypeUints8},
 
 		query := `
 			select null as nil,
@@ -81,9 +81,9 @@ func BenchmarkSqlDB_QueryIntoAny_Struct(b *testing.B) {
 	siutils.AssertNotNilFailB(b, db)
 
 	for i := 0; i < b.N; i++ {
-		sqldb := sisql.NewSqlDB(db) // sicore.SqlColumn{"decimal_", sicore.SqlColTypeFloat64},
-		// sicore.SqlColumn{"numeric_", sicore.SqlColTypeFloat64},
-		// sicore.SqlColumn{"char_arr_", sicore.SqlColTypeUints8},
+		sqldb := sisql.NewSqlDB(db) // internal.SqlColumn{"decimal_", internal.SqlColTypeFloat64},
+		// internal.SqlColumn{"numeric_", internal.SqlColTypeFloat64},
+		// internal.SqlColumn{"char_arr_", internal.SqlColTypeUints8},
 
 		query := `
 			select null as nil,
@@ -182,9 +182,9 @@ func BenchmarkSqlDB_QueryStructsWithColumn(b *testing.B) {
 	}
 	siutils.AssertNotNilFailB(b, db)
 
-	sqldb := sisql.NewSqlDB(db) // sicore.SqlColumn{Name: "decimal_", Type: sicore.SqlColTypeFloat64},
-	// sicore.SqlColumn{Name: "numeric_", Type: sicore.SqlColTypeFloat64},
-	// sicore.SqlColumn{Name: "char_arr_", Type: sicore.SqlColTypeUints8},
+	sqldb := sisql.NewSqlDB(db) // internal.SqlColumn{Name: "decimal_", Type: internal.SqlColTypeFloat64},
+	// internal.SqlColumn{Name: "numeric_", Type: internal.SqlColTypeFloat64},
+	// internal.SqlColumn{Name: "char_arr_", Type: internal.SqlColTypeUints8},
 
 	for i := 0; i < b.N; i++ {
 

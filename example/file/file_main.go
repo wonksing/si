@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 	"github.com/wonksing/si/v2/sifile"
 )
 
@@ -25,7 +25,7 @@ func main() {
 	fmt.Println(n)
 
 	f2, err := sifile.OpenFile("data/encode.txt", os.O_CREATE|os.O_TRUNC|os.O_RDWR, os.ModePerm,
-		sifile.WithWriterOpt(sicore.SetJsonEncoder()),
+		sifile.WithWriterOpt(internal.SetJsonEncoder()),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -51,7 +51,7 @@ func main() {
 	}
 
 	f3, err := sifile.OpenFile("data/encode.txt", os.O_CREATE|os.O_RDONLY, os.ModePerm,
-		sifile.WithReaderOpt(sicore.SetJsonDecoder()))
+		sifile.WithReaderOpt(internal.SetJsonDecoder()))
 	if err != nil {
 		log.Fatal(err)
 		return

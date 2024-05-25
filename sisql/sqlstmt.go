@@ -4,15 +4,15 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 )
 
 type SqlStmt struct {
 	stmt *sql.Stmt
-	opts []sicore.RowScannerOption
+	opts []internal.RowScannerOption
 }
 
-func NewSqlStmt(stmt *sql.Stmt, opts ...sicore.RowScannerOption) *SqlStmt {
+func NewSqlStmt(stmt *sql.Stmt, opts ...internal.RowScannerOption) *SqlStmt {
 	return &SqlStmt{
 		stmt: stmt,
 		opts: opts,
@@ -65,8 +65,8 @@ func (o *SqlStmt) QueryContextMaps(ctx context.Context, output *[]map[string]int
 	}
 	defer rows.Close()
 
-	rs := sicore.GetRowScanner(o.opts...)
-	defer sicore.PutRowScanner(rs)
+	rs := internal.GetRowScanner(o.opts...)
+	defer internal.PutRowScanner(rs)
 
 	return rs.ScanMapSlice(rows, output)
 }
@@ -78,8 +78,8 @@ func (o *SqlStmt) QueryRowPrimary(output any, args ...any) error {
 func (o *SqlStmt) QueryRowContextPrimary(ctx context.Context, output any, args ...any) error {
 	row := o.stmt.QueryRowContext(ctx, args...)
 
-	rs := sicore.GetRowScanner(o.opts...)
-	defer sicore.PutRowScanner(rs)
+	rs := internal.GetRowScanner(o.opts...)
+	defer internal.PutRowScanner(rs)
 
 	err := rs.ScanPrimary(row, output)
 	if err != nil {
@@ -100,8 +100,8 @@ func (o *SqlStmt) QueryRowContextStruct(ctx context.Context, output any, args ..
 	}
 	defer rows.Close()
 
-	rs := sicore.GetRowScanner(o.opts...)
-	defer sicore.PutRowScanner(rs)
+	rs := internal.GetRowScanner(o.opts...)
+	defer internal.PutRowScanner(rs)
 
 	err = rs.ScanStruct(rows, output)
 	if err != nil {
@@ -124,8 +124,8 @@ func (o *SqlStmt) QueryContextStructs(ctx context.Context, output any, args ...a
 	}
 	defer rows.Close()
 
-	rs := sicore.GetRowScanner(o.opts...)
-	defer sicore.PutRowScanner(rs)
+	rs := internal.GetRowScanner(o.opts...)
+	defer internal.PutRowScanner(rs)
 
 	n, err := rs.ScanStructs(rows, output)
 	if err != nil {

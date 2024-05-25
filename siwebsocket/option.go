@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 )
 
 // ClientOption is an interface with apply method.
@@ -27,14 +27,14 @@ func WithMessageHandler(h MessageHandler) ClientOptionFunc {
 	})
 }
 
-func WithHub(h sicore.Hub) ClientOptionFunc {
+func WithHub(h internal.Hub) ClientOptionFunc {
 	return ClientOptionFunc(func(c *Client) {
 		c.SetHub(h)
 	})
 }
 
 // WithReaderOpt sets ro to c.
-func WithReaderOpt(ro sicore.ReaderOption) ClientOptionFunc {
+func WithReaderOpt(ro internal.ReaderOption) ClientOptionFunc {
 	return ClientOptionFunc(func(c *Client) {
 		c.appendReaderOpt(ro)
 	})
@@ -118,14 +118,14 @@ func WithHubPath(path string) HubOptionFunc {
 }
 
 // WithAfterDeleteClient sets f to h's afterDeleteClient.
-func WithAfterDeleteClient(f func(sicore.Client, error)) HubOptionFunc {
+func WithAfterDeleteClient(f func(internal.Client, error)) HubOptionFunc {
 	return HubOptionFunc(func(h *Hub) {
 		h.afterDeleteClient = f
 	})
 }
 
 // WithAfterStoreClient sets f to h's afterStoreClient.
-func WithAfterStoreClient(f func(sicore.Client, error)) HubOptionFunc {
+func WithAfterStoreClient(f func(internal.Client, error)) HubOptionFunc {
 	return HubOptionFunc(func(h *Hub) {
 		h.afterStoreClient = f
 	})

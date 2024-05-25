@@ -4,19 +4,19 @@ import (
 	"io"
 	"log"
 
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 )
 
 // MessageHandler handles data read from r with ReaderOption opts.
 // Returning error from Handle method stops client's reading and writing. For siwebsocket.Client,
 // Handle method should return error if reading returns an error other than EOF.
 type MessageHandler interface {
-	Handle(r io.Reader, opts ...sicore.ReaderOption) error
+	Handle(r io.Reader, opts ...internal.ReaderOption) error
 }
 
 type NopMessageHandler struct{}
 
-func (o *NopMessageHandler) Handle(r io.Reader, opts ...sicore.ReaderOption) error {
+func (o *NopMessageHandler) Handle(r io.Reader, opts ...internal.ReaderOption) error {
 	// discard reader data
 	_, err := io.Copy(io.Discard, r)
 	return err
@@ -24,9 +24,9 @@ func (o *NopMessageHandler) Handle(r io.Reader, opts ...sicore.ReaderOption) err
 
 type DefaultMessageHandler struct{}
 
-func (o *DefaultMessageHandler) Handle(r io.Reader, opts ...sicore.ReaderOption) error {
-	sr := sicore.GetReader(r, opts...)
-	defer sicore.PutReader(sr)
+func (o *DefaultMessageHandler) Handle(r io.Reader, opts ...internal.ReaderOption) error {
+	sr := internal.GetReader(r, opts...)
+	defer internal.PutReader(sr)
 
 	_, err := sr.ReadAll()
 	if err != nil {
@@ -38,9 +38,9 @@ func (o *DefaultMessageHandler) Handle(r io.Reader, opts ...sicore.ReaderOption)
 
 type DefaultMessageLogHandler struct{}
 
-func (o *DefaultMessageLogHandler) Handle(r io.Reader, opts ...sicore.ReaderOption) error {
-	sr := sicore.GetReader(r, opts...)
-	defer sicore.PutReader(sr)
+func (o *DefaultMessageLogHandler) Handle(r io.Reader, opts ...internal.ReaderOption) error {
+	sr := internal.GetReader(r, opts...)
+	defer internal.PutReader(sr)
 
 	b, err := sr.ReadAll()
 	if err != nil {

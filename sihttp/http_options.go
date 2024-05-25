@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 	"golang.org/x/oauth2"
 )
 
@@ -95,7 +95,7 @@ func WithHeaderHmac256(key string, secret []byte) RequestOptionFunc {
 			return err
 		}
 
-		hashed, err := sicore.HmacSha256HexEncodedWithReader(string(secret), r)
+		hashed, err := internal.HmacSha256HexEncodedWithReader(string(secret), r)
 		if err != nil {
 			return err
 		}
@@ -130,14 +130,14 @@ func WithDefaultHeaders(defaultHeaders map[string]string) ClientOptionFunc {
 	})
 }
 
-func WithReaderOpt(opt sicore.ReaderOption) ClientOptionFunc {
+func WithReaderOpt(opt internal.ReaderOption) ClientOptionFunc {
 	return ClientOptionFunc(func(c *Client) error {
 		c.appendReaderOption(opt)
 		return nil
 	})
 }
 
-func WithWriterOpt(opt sicore.WriterOption) ClientOptionFunc {
+func WithWriterOpt(opt internal.WriterOption) ClientOptionFunc {
 	return ClientOptionFunc(func(c *Client) error {
 		c.appendWriterOption(opt)
 		return nil

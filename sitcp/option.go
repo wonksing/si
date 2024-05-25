@@ -3,7 +3,7 @@ package sitcp
 import (
 	"time"
 
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 )
 
 type TcpOption interface {
@@ -16,21 +16,21 @@ func (s TcpOptionFunc) apply(c *Conn) {
 	s(c)
 }
 
-func WithReaderOpt(opt sicore.ReaderOption) TcpOptionFunc {
+func WithReaderOpt(opt internal.ReaderOption) TcpOptionFunc {
 	return TcpOptionFunc(func(c *Conn) {
 		c.appendReaderOption(opt)
 	})
 }
 
-func WithWriterOpt(opt sicore.WriterOption) TcpOptionFunc {
+func WithWriterOpt(opt internal.WriterOption) TcpOptionFunc {
 	return TcpOptionFunc(func(c *Conn) {
 		c.appendWriterOption(opt)
 	})
 }
 
-func WithEofChecker(chk sicore.EofChecker) TcpOptionFunc {
+func WithEofChecker(chk internal.EofChecker) TcpOptionFunc {
 	return TcpOptionFunc(func(c *Conn) {
-		c.appendReaderOption(sicore.SetEofChecker(chk))
+		c.appendReaderOption(internal.SetEofChecker(chk))
 	})
 }
 
