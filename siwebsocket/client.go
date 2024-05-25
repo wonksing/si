@@ -11,7 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 )
 
 var (
@@ -74,12 +74,12 @@ type Client struct {
 	readErr  error
 	writeErr error
 
-	readOpts []sicore.ReaderOption
+	readOpts []internal.ReaderOption
 
 	id string
 
 	// for server only
-	hub         sicore.Hub
+	hub         internal.Hub
 	userID      string
 	userGroupID string
 }
@@ -103,7 +103,7 @@ func NewClient(conn *websocket.Conn, opts ...ClientOption) (*Client, error) {
 		stopSend: make(chan string, 1),
 		readWg:   &sync.WaitGroup{},
 
-		hub: &sicore.NopHub{},
+		hub: &internal.NopHub{},
 	}
 
 	for _, o := range opts {
@@ -224,11 +224,11 @@ func (c *Client) GetUserGroupID() string {
 	return c.userGroupID
 }
 
-func (c *Client) SetHub(h sicore.Hub) {
+func (c *Client) SetHub(h internal.Hub) {
 	c.hub = h
 }
 
-func (c *Client) appendReaderOpt(ro sicore.ReaderOption) {
+func (c *Client) appendReaderOpt(ro internal.ReaderOption) {
 	c.readOpts = append(c.readOpts, ro)
 }
 

@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 	"github.com/wonksing/si/v2/siutils"
 	"github.com/wonksing/si/v2/tests/testmodels"
 )
@@ -47,8 +47,8 @@ func TestHMacSha256_Writer(t *testing.T) {
 	message := []byte("my message")
 
 	mac := hmac.New(sha256.New, secret)
-	w := sicore.GetWriter(mac)
-	defer sicore.PutWriter(w)
+	w := internal.GetWriter(mac)
+	defer internal.PutWriter(w)
 
 	_, err := w.WriteFlush(message)
 	siutils.AssertNilFail(t, err)
@@ -63,8 +63,8 @@ func TestHMacSha256_Writer_Encode(t *testing.T) {
 	s := testmodels.Student{ID: 1, EmailAddress: "wonk@wonk.org", Name: "wonk", Borrowed: true}
 
 	mac := hmac.New(sha256.New, secret)
-	w := sicore.GetWriter(mac, sicore.SetJsonEncoder())
-	defer sicore.PutWriter(w)
+	w := internal.GetWriter(mac, internal.SetJsonEncoder())
+	defer internal.PutWriter(w)
 
 	err := w.EncodeFlush(&s)
 	siutils.AssertNilFail(t, err)
@@ -94,13 +94,13 @@ func BenchmarkHMacSha256_Writer(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		mac := hmac.New(sha256.New, secret)
-		w := sicore.GetWriter(mac)
+		w := internal.GetWriter(mac)
 
 		_, err := w.WriteFlush(message)
 		siutils.AssertNilFailB(b, err)
 
 		_ = hex.EncodeToString(mac.Sum(nil))
-		sicore.PutWriter(w)
+		internal.PutWriter(w)
 	}
 
 }
@@ -130,13 +130,13 @@ func BenchmarkHMacSha256_Writer_JsonEncode(b *testing.B) {
 		mac := hmac.New(sha256.New, secret)
 
 		s := testmodels.Student{ID: 1, EmailAddress: "wonk@wonk.org", Name: "wonk", Borrowed: true}
-		w := sicore.GetWriter(mac, sicore.SetJsonEncoder())
+		w := internal.GetWriter(mac, internal.SetJsonEncoder())
 
 		err := w.EncodeFlush(&s)
 		siutils.AssertNilFailB(b, err)
 
 		_ = hex.EncodeToString(mac.Sum(nil))
-		sicore.PutWriter(w)
+		internal.PutWriter(w)
 	}
 
 }
@@ -150,13 +150,13 @@ func BenchmarkHMacSha256_Writer_JsonMarshal(b *testing.B) {
 
 		s := testmodels.Student{ID: 1, EmailAddress: "wonk@wonk.org", Name: "wonk", Borrowed: true}
 		j := s.String() + "\n"
-		w := sicore.GetWriter(mac)
+		w := internal.GetWriter(mac)
 
 		_, err := w.WriteFlush([]byte(j))
 		siutils.AssertNilFailB(b, err)
 
 		_ = hex.EncodeToString(mac.Sum(nil))
-		sicore.PutWriter(w)
+		internal.PutWriter(w)
 	}
 
 }

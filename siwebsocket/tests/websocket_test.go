@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 	"github.com/wonksing/si/v2/siutils"
 	"github.com/wonksing/si/v2/siwebsocket"
 	"github.com/wonksing/si/v2/tests/testmodels"
@@ -237,12 +237,12 @@ func TestWebsocket_EchoStop(t *testing.T) {
 
 type StudentMessageHandler struct{}
 
-func (o *StudentMessageHandler) Handle(r io.Reader, opts ...sicore.ReaderOption) error {
+func (o *StudentMessageHandler) Handle(r io.Reader, opts ...internal.ReaderOption) error {
 	// log.Println(string(b))
-	sr := sicore.GetReader(r, opts...)
-	defer sicore.PutReader(sr)
+	sr := internal.GetReader(r, opts...)
+	defer internal.PutReader(sr)
 
-	sr.ApplyOptions(sicore.SetJsonDecoder())
+	sr.ApplyOptions(internal.SetJsonDecoder())
 	var student testmodels.Student
 	if err := sr.Decode(&student); err != nil {
 		log.Println(err)

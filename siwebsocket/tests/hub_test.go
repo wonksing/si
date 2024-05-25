@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 	"github.com/wonksing/si/v2/siutils"
 	"github.com/wonksing/si/v2/siwebsocket"
 )
@@ -214,14 +214,14 @@ func TestReconnects(t *testing.T) {
 func testWithoutBroadcast() int {
 	hub := siwebsocket.NewHub("http://127.0.0.1:8080",
 		"/path/_push", 10*time.Second, 60*time.Second, 1024000, true,
-		siwebsocket.WithAfterStoreClient(func(c sicore.Client, err error) {
+		siwebsocket.WithAfterStoreClient(func(c internal.Client, err error) {
 			if err != nil {
 				log.Println("store: "+err.Error(), c.GetID())
 			} else {
 				log.Println("store: ", c.GetID())
 			}
 		}),
-		siwebsocket.WithAfterDeleteClient(func(c sicore.Client, err error) {
+		siwebsocket.WithAfterDeleteClient(func(c internal.Client, err error) {
 			if err != nil {
 				log.Println("delete: "+err.Error(), c.GetID())
 			} else {

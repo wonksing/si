@@ -17,7 +17,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/wonksing/si/v2/example/school/adaptor"
 	"github.com/wonksing/si/v2/example/school/core"
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 	"github.com/wonksing/si/v2/sihttp"
 )
 
@@ -132,8 +132,8 @@ func HandleGC(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(string(dumpReq))
 	}
 
-	body := sicore.GetReader(req.Body)
-	defer sicore.PutReader(body)
+	body := internal.GetReader(req.Body)
+	defer internal.PutReader(body)
 
 	_, err := body.ReadAll()
 	if err != nil {
@@ -151,8 +151,8 @@ func HandlePprof(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(string(dumpReq))
 	}
 
-	body := sicore.GetReader(req.Body, sicore.SetJsonDecoder())
-	defer sicore.PutReader(body)
+	body := internal.GetReader(req.Body, internal.SetJsonDecoder())
+	defer internal.PutReader(body)
 
 	var s core.Student
 	err := body.Decode(&s)
@@ -173,8 +173,8 @@ func HandlePprof(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	res := sicore.GetWriter(w, sicore.SetJsonEncoder())
-	defer sicore.PutWriter(res)
+	res := internal.GetWriter(w, internal.SetJsonEncoder())
+	defer internal.PutWriter(res)
 
 	err = res.EncodeFlush(list)
 	if err != nil {
@@ -190,8 +190,8 @@ func HandleFindAllStudent(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// read request body
-	body := sicore.GetReader(req.Body, sicore.SetJsonDecoder())
-	defer sicore.PutReader(body)
+	body := internal.GetReader(req.Body, internal.SetJsonDecoder())
+	defer internal.PutReader(body)
 
 	var s core.Student
 	err := body.Decode(&s)
@@ -216,8 +216,8 @@ func HandleFindAllStudent(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	defer f.Close()
-	fw := sicore.GetWriter(f)
-	defer sicore.PutWriter(fw)
+	fw := internal.GetWriter(f)
+	defer internal.PutWriter(fw)
 	for _, student := range list {
 		_, err := fw.Write([]byte(student.EmailAddress + "," + student.Name + "\n"))
 		if err != nil {
@@ -232,8 +232,8 @@ func HandleFindAllStudent(w http.ResponseWriter, req *http.Request) {
 	//////////////////////////////////////////////////////////////////////////////////////
 
 	// write to client
-	res := sicore.GetWriter(w, sicore.SetJsonEncoder())
-	defer sicore.PutWriter(res)
+	res := internal.GetWriter(w, internal.SetJsonEncoder())
+	defer internal.PutWriter(res)
 
 	err = res.EncodeFlush(list)
 	if err != nil {

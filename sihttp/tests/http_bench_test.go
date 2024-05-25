@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 	"github.com/wonksing/si/v2/sihttp"
 	"github.com/wonksing/si/v2/siutils"
 )
@@ -183,7 +183,7 @@ func BenchmarkHttpClient_DefaultPost_WithPool(b *testing.B) {
 		sendData := fmt.Sprintf("%s-%d", data, i)
 		headerData := fmt.Sprintf("%d", i)
 
-		buf := sicore.GetBytesReader([]byte(sendData))
+		buf := internal.GetBytesReader([]byte(sendData))
 		request, err := http.NewRequest(http.MethodPost, url, buf)
 		siutils.AssertNilFailB(b, err)
 
@@ -196,7 +196,7 @@ func BenchmarkHttpClient_DefaultPost_WithPool(b *testing.B) {
 		siutils.AssertNilFailB(b, err)
 
 		resp.Body.Close()
-		sicore.PutBytesReader(buf)
+		internal.PutBytesReader(buf)
 	}
 }
 
@@ -219,7 +219,7 @@ func BenchmarkHttpClient_DefaultPost_WithPoolAndDoRead(b *testing.B) {
 		sendData := fmt.Sprintf("%s-%d", data, i)
 		headerData := fmt.Sprintf("%d", i)
 
-		buf := sicore.GetBytesReader([]byte(sendData))
+		buf := internal.GetBytesReader([]byte(sendData))
 		request, err := http.NewRequest(http.MethodPost, url, buf)
 		siutils.AssertNilFailB(b, err)
 
@@ -228,7 +228,7 @@ func BenchmarkHttpClient_DefaultPost_WithPoolAndDoRead(b *testing.B) {
 		_, err = client.DoRead(request)
 		siutils.AssertNilFailB(b, err)
 
-		sicore.PutBytesReader(buf)
+		internal.PutBytesReader(buf)
 	}
 }
 

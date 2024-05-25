@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 	"github.com/wonksing/si/v2/sitcp"
 	"github.com/wonksing/si/v2/siutils"
 )
@@ -56,7 +56,7 @@ func TestConn_Request(t *testing.T) {
 		t.Skip("skipping online tests")
 	}
 	conn, err := sitcp.DialTimeout("127.0.0.1:10000", 3*time.Second,
-		sitcp.WithReaderOpt(sicore.SetEofChecker(&TcpEOFChecker{})))
+		sitcp.WithReaderOpt(internal.SetEofChecker(&TcpEOFChecker{})))
 	siutils.AssertNilFail(t, err)
 	defer conn.Close()
 

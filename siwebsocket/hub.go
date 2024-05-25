@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 )
 
 // Hub maintains the set of active clients and broadcasts messages to the
@@ -24,10 +24,10 @@ type Hub struct {
 	broadcastWait chan struct{}
 
 	// channel to add clients to `clients` map
-	register chan sicore.Client
+	register chan internal.Client
 
 	// channel to remove clients from `clients` map
-	unregister chan sicore.Client
+	unregister chan internal.Client
 
 	// once runDone is closed, a client cannot be received from register or unregister channel.
 	runDone chan struct{}
@@ -58,9 +58,9 @@ type Hub struct {
 
 	// handlers
 	// called after deleting c from clients map.
-	afterDeleteClient func(c sicore.Client, err error)
+	afterDeleteClient func(c internal.Client, err error)
 	// called after storing c into clients map.
-	afterStoreClient func(c sicore.Client, err error)
+	afterStoreClient func(c internal.Client, err error)
 }
 
 // NewHub creates a hub
@@ -72,8 +72,8 @@ func NewHub(hubAddr, hubPath string, writeWait time.Duration, readWait time.Dura
 	h := &Hub{
 		broadcast:     make(chan []byte, 1024),
 		broadcastWait: make(chan struct{}, 1),
-		register:      make(chan sicore.Client),
-		unregister:    make(chan sicore.Client),
+		register:      make(chan internal.Client),
+		unregister:    make(chan internal.Client),
 
 		clients:    sync.Map{},
 		runDone:    make(chan struct{}),
@@ -97,13 +97,13 @@ func NewHub(hubAddr, hubPath string, writeWait time.Duration, readWait time.Dura
 	}
 
 	if h.afterDeleteClient == nil {
-		h.afterDeleteClient = func(c sicore.Client, err error) {
+		h.afterDeleteClient = func(c internal.Client, err error) {
 			// nothing
 		}
 	}
 
 	if h.afterStoreClient == nil {
-		h.afterStoreClient = func(c sicore.Client, err error) {
+		h.afterStoreClient = func(c internal.Client, err error) {
 			// nothing
 		}
 	}
@@ -118,7 +118,7 @@ func (h *Hub) runBroadcast() {
 	defer close(h.broadcastWait)
 	for message := range h.broadcast {
 		h.clients.Range(func(key interface{}, value interface{}) bool {
-			value.(sicore.Client).Send(message)
+			value.(internal.Client).Send(message)
 			return true
 		})
 	}
@@ -142,7 +142,7 @@ func (h *Hub) runClient() {
 			if exist {
 				// Stop will lead to removeClient method called.
 				// Do not call removeClient method here.
-				loadedClient.(sicore.Client).Stop()
+				loadedClient.(internal.Client).Stop()
 				h.clients.Store(client.GetID(), client)
 			}
 			h.afterStoreClient(client, nil)
@@ -199,7 +199,7 @@ func (h *Hub) Wait() {
 
 var ErrHubClosed = errors.New("hub is closed")
 
-func (h *Hub) Add(client sicore.Client) error {
+func (h *Hub) Add(client internal.Client) error {
 	select {
 	case <-h.clientDone:
 		return ErrHubClosed
@@ -216,7 +216,7 @@ func (h *Hub) Add(client sicore.Client) error {
 	}
 }
 
-func (h *Hub) Remove(client sicore.Client) error {
+func (h *Hub) Remove(client internal.Client) error {
 	select {
 	case <-h.clientDone:
 		return ErrHubClosed
@@ -252,10 +252,10 @@ func (h *Hub) removeAllClients() error {
 
 	// stops gracefully
 	h.clients.Range(func(key interface{}, value interface{}) bool {
-		value.(sicore.Client).Stop()
-		value.(sicore.Client).Wait()
-		h.clients.Delete(value.(sicore.Client).GetID())
-		h.router.Delete(context.Background(), value.(sicore.Client).GetID())
+		value.(internal.Client).Stop()
+		value.(internal.Client).Wait()
+		h.clients.Delete(value.(internal.Client).GetID())
+		h.router.Delete(context.Background(), value.(internal.Client).GetID())
 		return true
 	})
 
@@ -264,7 +264,7 @@ func (h *Hub) removeAllClients() error {
 
 func (h *Hub) RemoveRandomClient() error {
 	h.clients.Range(func(key interface{}, value interface{}) bool {
-		value.(sicore.Client).Stop()
+		value.(internal.Client).Stop()
 		return false
 	})
 
@@ -285,7 +285,7 @@ func (h *Hub) SendMessage(id string, msg []byte) error {
 	if c, ok := h.clients.Load(id); !ok {
 		return errors.New("client not found, " + id)
 	} else {
-		err := c.(sicore.Client).Send(msg)
+		err := c.(internal.Client).Send(msg)
 		if err != nil {
 			return err
 		}
@@ -298,10 +298,10 @@ func (h *Hub) SendMessageWithIDAndUserGroupID(id, userGroupID string, msg []byte
 	if c, ok := h.clients.Load(id); !ok {
 		return errors.New("client not found, " + id)
 	} else {
-		if c.(sicore.Client).GetUserGroupID() != userGroupID {
+		if c.(internal.Client).GetUserGroupID() != userGroupID {
 			return errors.New("client with, " + userGroupID + ", not found")
 		}
-		err := c.(sicore.Client).Send(msg)
+		err := c.(internal.Client).Send(msg)
 		if err != nil {
 			return err
 		}
@@ -315,7 +315,7 @@ func (h *Hub) SendMessageAndWait(id string, msg []byte) error {
 	if c, ok := h.clients.Load(id); !ok {
 		return errors.New("client not found, " + id)
 	} else {
-		err := c.(sicore.Client).SendAndWait(msg)
+		err := c.(internal.Client).SendAndWait(msg)
 		if err != nil {
 			return err
 		}

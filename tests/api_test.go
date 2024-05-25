@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/wonksing/si/v2"
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 	"github.com/wonksing/si/v2/siutils"
 	"github.com/wonksing/si/v2/tests/testmodels"
 )
@@ -81,7 +81,7 @@ func handleTestReaderWriterCopiedTiny(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	defer sicore.PutBytesBuffer(copiedReqBody)
+	defer internal.PutBytesBuffer(copiedReqBody)
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	copiedRespBody, err := si.EncodeJsonCopied(w, &stuResTiny)
@@ -89,7 +89,7 @@ func handleTestReaderWriterCopiedTiny(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	defer sicore.PutBytesBuffer(copiedRespBody)
+	defer internal.PutBytesBuffer(copiedRespBody)
 }
 
 func handleTestBasicSml(w http.ResponseWriter, r *http.Request) {
@@ -132,7 +132,7 @@ func handleTestReaderWriterCopiedSml(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	defer sicore.PutBytesBuffer(copiedReqBody)
+	defer internal.PutBytesBuffer(copiedReqBody)
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	copiedRespBody, err := si.EncodeJsonCopied(w, &stuResSml)
@@ -140,7 +140,7 @@ func handleTestReaderWriterCopiedSml(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	defer sicore.PutBytesBuffer(copiedRespBody)
+	defer internal.PutBytesBuffer(copiedRespBody)
 }
 
 func handleTestBasicMed(w http.ResponseWriter, r *http.Request) {
@@ -183,7 +183,7 @@ func handleTestReaderWriterCopiedMed(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	defer sicore.PutBytesBuffer(copiedReqBody)
+	defer internal.PutBytesBuffer(copiedReqBody)
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	copiedRespBody, err := si.EncodeJsonCopied(w, &stuResMed)
@@ -191,7 +191,7 @@ func handleTestReaderWriterCopiedMed(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	defer sicore.PutBytesBuffer(copiedRespBody)
+	defer internal.PutBytesBuffer(copiedRespBody)
 }
 
 func handleTestBasicLrg(w http.ResponseWriter, r *http.Request) {
@@ -234,7 +234,7 @@ func handleTestReaderWriterCopiedLrg(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	defer sicore.PutBytesBuffer(copiedReqBody)
+	defer internal.PutBytesBuffer(copiedReqBody)
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	copiedRespBody, err := si.EncodeJsonCopied(w, &stuResLrg)
@@ -242,7 +242,7 @@ func handleTestReaderWriterCopiedLrg(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	defer sicore.PutBytesBuffer(copiedRespBody)
+	defer internal.PutBytesBuffer(copiedRespBody)
 }
 
 func TestHttpHandlerSml(t *testing.T) {

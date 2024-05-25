@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 	"github.com/wonksing/si/v2/sihttp"
 )
 
@@ -38,8 +38,8 @@ func main() {
 	fmt.Println(string(res))
 
 	client2 := sihttp.NewClient(c,
-		sihttp.WithWriterOpt(sicore.SetJsonEncoder()),
-		sihttp.WithReaderOpt(sicore.SetJsonDecoder()))
+		sihttp.WithWriterOpt(internal.SetJsonEncoder()),
+		sihttp.WithReaderOpt(internal.SetJsonDecoder()))
 	type Student struct {
 		ID           int    `json:"id"`
 		EmailAddress string `json:"email_address"`

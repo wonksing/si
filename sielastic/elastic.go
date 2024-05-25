@@ -10,7 +10,7 @@ import (
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 )
 
 func DefaultElasticsearchClient(elasticAddresses, userName, password string) (*elasticsearch.Client, error) {
@@ -53,7 +53,7 @@ func (c *Client) IndexDocument(ctx context.Context, indexName string, body []byt
 	}
 
 	var r map[string]interface{}
-	if err := sicore.DecodeJson(&r, res.Body); err != nil {
+	if err := internal.DecodeJson(&r, res.Body); err != nil {
 		return nil, err
 	}
 
@@ -62,10 +62,10 @@ func (c *Client) IndexDocument(ctx context.Context, indexName string, body []byt
 
 // func (c *Client) SearchDocuments(ctx context.Context, indexName string, body map[string]interface{}) (map[string]interface{}, error) {
 
-// 	buf := sicore.GetBytesBuffer(nil)
-// 	defer sicore.PutBytesBuffer(buf)
+// 	buf := internal.GetBytesBuffer(nil)
+// 	defer internal.PutBytesBuffer(buf)
 
-// 	if err := sicore.EncodeJson(buf, body); err != nil {
+// 	if err := internal.EncodeJson(buf, body); err != nil {
 // 		return nil, err
 // 	}
 
@@ -83,7 +83,7 @@ func (c *Client) IndexDocument(ctx context.Context, indexName string, body []byt
 // 	defer res.Body.Close()
 
 // 	var r map[string]interface{}
-// 	if err := sicore.DecodeJson(&r, res.Body); err != nil {
+// 	if err := internal.DecodeJson(&r, res.Body); err != nil {
 // 		return nil, err
 // 	}
 
@@ -114,10 +114,10 @@ type Resp struct {
 
 func (c *Client) SearchDocuments(ctx context.Context, indexName string, body map[string]interface{}, dest any) error {
 
-	buf := sicore.GetBytesBuffer(nil)
-	defer sicore.PutBytesBuffer(buf)
+	buf := internal.GetBytesBuffer(nil)
+	defer internal.PutBytesBuffer(buf)
 
-	if err := sicore.EncodeJson(buf, body); err != nil {
+	if err := internal.EncodeJson(buf, body); err != nil {
 		return err
 	}
 
@@ -136,18 +136,18 @@ func (c *Client) SearchDocuments(ctx context.Context, indexName string, body map
 
 	if res.IsError() {
 		resErr := Resp{}
-		copied, err := sicore.DecodeJsonCopied(&resErr, res.Body)
+		copied, err := internal.DecodeJsonCopied(&resErr, res.Body)
 		if err != nil {
 			return err
 		}
 
-		if err := sicore.DecodeJson(&dest, copied); err != nil {
+		if err := internal.DecodeJson(&dest, copied); err != nil {
 			return err
 		}
 		return errors.New(resErr.Error.Reason)
 	}
 
-	if err := sicore.DecodeJson(dest, res.Body); err != nil {
+	if err := internal.DecodeJson(dest, res.Body); err != nil {
 		return err
 	}
 

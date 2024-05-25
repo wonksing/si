@@ -6,16 +6,16 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/wonksing/si/v2/sicore"
+	"github.com/wonksing/si/v2/internal"
 )
 
 // File is a wrapper of os.File
 type File struct {
 	*os.File
 
-	readerOpts []sicore.ReaderOption
-	writerOpts []sicore.WriterOption
-	rw         *sicore.ReadWriter
+	readerOpts []internal.ReaderOption
+	writerOpts []internal.WriterOption
+	rw         *internal.ReadWriter
 }
 
 // OpenFile opens file with name then returns File.
@@ -45,7 +45,7 @@ func newFile(f *os.File, opts ...FileOption) *File {
 		o.apply(sf)
 	}
 
-	rw := sicore.GetReadWriterWithReadWriter(f)
+	rw := internal.GetReadWriterWithReadWriter(f)
 	rw.Reader.ApplyOptions(sf.readerOpts...)
 	rw.Writer.ApplyOptions(sf.writerOpts...)
 
@@ -53,11 +53,11 @@ func newFile(f *os.File, opts ...FileOption) *File {
 	return sf
 }
 
-func (f *File) appendReaderOpt(opt sicore.ReaderOption) {
+func (f *File) appendReaderOpt(opt internal.ReaderOption) {
 	f.readerOpts = append(f.readerOpts, opt)
 }
 
-func (f *File) appendWriterOpt(opt sicore.WriterOption) {
+func (f *File) appendWriterOpt(opt internal.WriterOption) {
 	f.writerOpts = append(f.writerOpts, opt)
 }
 
@@ -74,7 +74,7 @@ func (f *File) Chown(uid, gid int) error {
 }
 
 func (f *File) Close() error {
-	sicore.PutReadWriter(f.rw)
+	internal.PutReadWriter(f.rw)
 	return f.File.Close()
 }
 
