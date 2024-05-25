@@ -1,4 +1,4 @@
-package internal_test
+package codec
 
 import (
 	"bytes"
@@ -6,8 +6,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"testing"
-
-	"github.com/wonksing/si/v2/internal"
 )
 
 func BenchmarkHmacSha256HexEncoded_Basic(b *testing.B) {
@@ -26,7 +24,7 @@ func BenchmarkHmacSha256HexEncoded(b *testing.B) {
 	msg := bytes.Repeat([]byte("asdf"), 1)
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		_, _ = internal.HmacSha256HexEncoded(secret, msg)
+		_, _ = HmacSha256HexEncoded(secret, msg)
 	}
 }
 
@@ -46,6 +44,6 @@ func BenchmarkHmacSha256HexEncoded_LargeMsg(b *testing.B) {
 	msg := bytes.Repeat([]byte("asdf"), 1000)
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		_, _ = internal.HmacSha256HexEncoded(secret, msg)
+		_, _ = HmacSha256HexEncoded(secret, msg)
 	}
 }

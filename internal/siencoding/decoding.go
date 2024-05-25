@@ -1,27 +1,9 @@
-package internal
+package siencoding
 
 import (
-	"bytes"
 	"errors"
 	"io"
 )
-
-// DecodeJson read src with json bytes then decode it into dst.
-func DecodeJson(dst any, src io.Reader) error {
-	sr := GetReader(src, SetJsonDecoder())
-	defer PutReader(sr)
-	return sr.Decode(dst)
-}
-
-// DecodeJsonCopied read src with json bytes then decode it into dst.
-// It also write the data read from src into a bytes.Buffer then returns it.
-func DecodeJsonCopied(dst any, src io.Reader) (*bytes.Buffer, error) {
-	bb := GetBytesBuffer(nil)
-	r := io.TeeReader(src, bb)
-	sr := GetReader(r, SetJsonDecoder())
-	defer PutReader(sr)
-	return bb, sr.Decode(dst)
-}
 
 // Decoder is an interface that has Decode method.
 type Decoder interface {

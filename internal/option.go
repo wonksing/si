@@ -1,6 +1,10 @@
 package internal
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/wonksing/si/v2/internal/siencoding"
+)
 
 // WriterOption is an interface that has apply method.
 type WriterOption interface {
@@ -25,7 +29,7 @@ func SetJsonEncoder() WriterOption {
 // SetDefaultEncoder sets DefaultEncoder to w
 func SetDefaultEncoder() WriterOption {
 	return WriterOptionFunc(func(w *Writer) {
-		w.SetEncoder(&DefaultEncoder{w})
+		w.SetEncoder(siencoding.NewDefaultEncoder(w))
 	})
 }
 

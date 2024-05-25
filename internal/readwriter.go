@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"errors"
 	"io"
+
+	"github.com/wonksing/si/v2/internal/siencoding"
 )
 
 const defaultBufferSize = 512
@@ -31,7 +33,7 @@ type ReaderResetter interface {
 type Reader struct {
 	r   io.Reader
 	br  *bufio.Reader
-	dec Decoder
+	dec siencoding.Decoder
 	chk EofChecker
 
 	bufAll []byte
@@ -62,7 +64,7 @@ func (rd *Reader) ApplyOptions(opts ...ReaderOption) {
 		rd.chk = DefaultEofChecker
 	}
 	if rd.r != nil && rd.dec == nil {
-		rd.dec = &DefaultDecoder{rd}
+		rd.dec = siencoding.NewDefaultDecoder(rd)
 	}
 }
 
@@ -71,7 +73,7 @@ func (rd *Reader) SetEofChecker(chk EofChecker) {
 	rd.chk = chk
 }
 
-func (rd *Reader) SetDecoder(dec Decoder) {
+func (rd *Reader) SetDecoder(dec siencoding.Decoder) {
 	rd.dec = dec
 }
 
@@ -206,7 +208,7 @@ func (rd *Reader) WriteTo(w io.Writer) (n int64, err error) {
 type Writer struct {
 	w   io.Writer
 	bw  *bufio.Writer
-	enc Encoder
+	enc siencoding.Encoder
 }
 
 func newWriter(w io.Writer, opt ...WriterOption) *Writer {
@@ -228,11 +230,11 @@ func (wr *Writer) ApplyOptions(opts ...WriterOption) {
 		o.apply(wr)
 	}
 	if wr.w != nil && wr.enc == nil {
-		wr.enc = &DefaultEncoder{wr}
+		wr.enc = siencoding.NewDefaultEncoder(wr)
 	}
 }
 
-func (wr *Writer) SetEncoder(enc Encoder) {
+func (wr *Writer) SetEncoder(enc siencoding.Encoder) {
 	wr.enc = enc
 }
 

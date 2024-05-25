@@ -9,7 +9,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/wonksing/si/v2"
+	"github.com/wonksing/si/v2/codec"
 	"github.com/wonksing/si/v2/internal"
 	"github.com/wonksing/si/v2/siutils"
 	"github.com/wonksing/si/v2/tests/testmodels"
@@ -62,13 +62,13 @@ func handleTestBasicTiny(w http.ResponseWriter, r *http.Request) {
 }
 func handleTestReaderWriterTiny(w http.ResponseWriter, r *http.Request) {
 	var req testmodels.StudentList
-	if err := si.DecodeJson(&req, r.Body); err != nil {
+	if err := codec.DecodeJson(&req, r.Body); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	if err := si.EncodeJson(w, &stuResTiny); err != nil {
+	if err := codec.EncodeJson(w, &stuResTiny); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
@@ -76,7 +76,7 @@ func handleTestReaderWriterTiny(w http.ResponseWriter, r *http.Request) {
 
 func handleTestReaderWriterCopiedTiny(w http.ResponseWriter, r *http.Request) {
 	var req testmodels.StudentList
-	copiedReqBody, err := si.DecodeJsonCopied(&req, r.Body)
+	copiedReqBody, err := codec.DecodeJsonCopied(&req, r.Body)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -84,7 +84,7 @@ func handleTestReaderWriterCopiedTiny(w http.ResponseWriter, r *http.Request) {
 	defer internal.PutBytesBuffer(copiedReqBody)
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	copiedRespBody, err := si.EncodeJsonCopied(w, &stuResTiny)
+	copiedRespBody, err := codec.EncodeJsonCopied(w, &stuResTiny)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -113,13 +113,13 @@ func handleTestBasicSml(w http.ResponseWriter, r *http.Request) {
 }
 func handleTestReaderWriterSml(w http.ResponseWriter, r *http.Request) {
 	var req testmodels.StudentList
-	if err := si.DecodeJson(&req, r.Body); err != nil {
+	if err := codec.DecodeJson(&req, r.Body); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	if err := si.EncodeJson(w, &stuResSml); err != nil {
+	if err := codec.EncodeJson(w, &stuResSml); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
@@ -127,7 +127,7 @@ func handleTestReaderWriterSml(w http.ResponseWriter, r *http.Request) {
 
 func handleTestReaderWriterCopiedSml(w http.ResponseWriter, r *http.Request) {
 	var req testmodels.StudentList
-	copiedReqBody, err := si.DecodeJsonCopied(&req, r.Body)
+	copiedReqBody, err := codec.DecodeJsonCopied(&req, r.Body)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -135,7 +135,7 @@ func handleTestReaderWriterCopiedSml(w http.ResponseWriter, r *http.Request) {
 	defer internal.PutBytesBuffer(copiedReqBody)
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	copiedRespBody, err := si.EncodeJsonCopied(w, &stuResSml)
+	copiedRespBody, err := codec.EncodeJsonCopied(w, &stuResSml)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -164,13 +164,13 @@ func handleTestBasicMed(w http.ResponseWriter, r *http.Request) {
 }
 func handleTestReaderWriterMed(w http.ResponseWriter, r *http.Request) {
 	var req testmodels.StudentList
-	if err := si.DecodeJson(&req, r.Body); err != nil {
+	if err := codec.DecodeJson(&req, r.Body); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	if err := si.EncodeJson(w, &stuResMed); err != nil {
+	if err := codec.EncodeJson(w, &stuResMed); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
@@ -178,7 +178,7 @@ func handleTestReaderWriterMed(w http.ResponseWriter, r *http.Request) {
 
 func handleTestReaderWriterCopiedMed(w http.ResponseWriter, r *http.Request) {
 	var req testmodels.StudentList
-	copiedReqBody, err := si.DecodeJsonCopied(&req, r.Body)
+	copiedReqBody, err := codec.DecodeJsonCopied(&req, r.Body)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -186,7 +186,7 @@ func handleTestReaderWriterCopiedMed(w http.ResponseWriter, r *http.Request) {
 	defer internal.PutBytesBuffer(copiedReqBody)
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	copiedRespBody, err := si.EncodeJsonCopied(w, &stuResMed)
+	copiedRespBody, err := codec.EncodeJsonCopied(w, &stuResMed)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -215,13 +215,13 @@ func handleTestBasicLrg(w http.ResponseWriter, r *http.Request) {
 }
 func handleTestReaderWriterLrg(w http.ResponseWriter, r *http.Request) {
 	var req testmodels.StudentList
-	if err := si.DecodeJson(&req, r.Body); err != nil {
+	if err := codec.DecodeJson(&req, r.Body); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	if err := si.EncodeJson(w, &stuResLrg); err != nil {
+	if err := codec.EncodeJson(w, &stuResLrg); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
@@ -229,7 +229,7 @@ func handleTestReaderWriterLrg(w http.ResponseWriter, r *http.Request) {
 
 func handleTestReaderWriterCopiedLrg(w http.ResponseWriter, r *http.Request) {
 	var req testmodels.StudentList
-	copiedReqBody, err := si.DecodeJsonCopied(&req, r.Body)
+	copiedReqBody, err := codec.DecodeJsonCopied(&req, r.Body)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -237,7 +237,7 @@ func handleTestReaderWriterCopiedLrg(w http.ResponseWriter, r *http.Request) {
 	defer internal.PutBytesBuffer(copiedReqBody)
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	copiedRespBody, err := si.EncodeJsonCopied(w, &stuResLrg)
+	copiedRespBody, err := codec.EncodeJsonCopied(w, &stuResLrg)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -265,7 +265,7 @@ func TestDecodeJsonCopied_FailToDecode(t *testing.T) {
 	r := bytes.NewReader([]byte(str))
 
 	res := testmodels.StudentList{}
-	c, err := si.DecodeJsonCopied(&res, r)
+	c, err := codec.DecodeJsonCopied(&res, r)
 	siutils.AssertNotNilFail(t, err)
 	siutils.AssertNotNilFail(t, c)
 	fmt.Println(c.String())
