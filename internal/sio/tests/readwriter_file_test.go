@@ -1,4 +1,4 @@
-package internal_test
+package sio_test
 
 import (
 	"bufio"
@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 	"github.com/wonksing/si/v2/siutils"
 )
 
@@ -34,8 +34,8 @@ func TestReader_File_Read(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	defer f.Close()
 
-	s := internal.GetReader(f)
-	defer internal.PutReader(s)
+	s := sio.GetReader(f)
+	defer sio.PutReader(s)
 
 	expected := testDataFile[:10]
 
@@ -53,7 +53,7 @@ func TestReader_File_Read(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	defer f2.Close()
 
-	s.Reset(f2, internal.SetDefaultEOFChecker())
+	s.Reset(f2, sio.SetDefaultEOFChecker())
 
 	expected = testDataFile2[:10]
 
@@ -73,8 +73,8 @@ func TestReader_File_ReadAll(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	defer f.Close()
 
-	s := internal.GetReader(f)
-	defer internal.PutReader(s)
+	s := sio.GetReader(f)
+	defer sio.PutReader(s)
 
 	b, err := s.ReadAll()
 	siutils.AssertNilFail(t, err)
@@ -91,8 +91,8 @@ func TestReader_File_ReadSmall(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	defer f.Close()
 
-	s := internal.GetReader(f)
-	defer internal.PutReader(s)
+	s := sio.GetReader(f)
+	defer sio.PutReader(s)
 	b := make([]byte, 1)
 	n, err := s.Read(b)
 	siutils.AssertNilFail(t, err)
@@ -109,8 +109,8 @@ func TestReader_File_ReadZeroCase1(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	defer f.Close()
 
-	s := internal.GetReader(f)
-	defer internal.PutReader(s)
+	s := sio.GetReader(f)
+	defer sio.PutReader(s)
 
 	var b []byte
 	n, err := s.Read(b)
@@ -127,8 +127,8 @@ func TestReader_File_ReadZeroCase2(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	defer f.Close()
 
-	s := internal.GetReader(f)
-	defer internal.PutReader(s)
+	s := sio.GetReader(f)
+	defer sio.PutReader(s)
 
 	b := make([]byte, 0, len(testDataFile))
 	n, err := s.Read(b)
@@ -145,8 +145,8 @@ func TestReader_File_Decode(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	defer f.Close()
 
-	r := internal.GetReader(f, internal.SetJsonDecoder())
-	defer internal.PutReader(r)
+	r := sio.GetReader(f, sio.SetJsonDecoder())
+	defer sio.PutReader(r)
 
 	var p Person
 	siutils.AssertNilFail(t, r.Decode(&p))
@@ -157,8 +157,8 @@ func TestWriter_File_Write(t *testing.T) {
 	f, err := os.OpenFile("./data/TestWriter_File_Write.txt", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	siutils.AssertNilFail(t, err)
 
-	s := internal.GetWriter(f)
-	defer internal.PutWriter(s)
+	s := sio.GetWriter(f)
+	defer sio.PutWriter(s)
 
 	expected := `{"name":"wonk","age":20,"email":"wonk@wonk.org"}`
 	expected += "\n"
@@ -174,8 +174,8 @@ func TestWriter_File_WriteMany(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	defer f.Close()
 
-	s := internal.GetWriter(f)
-	defer internal.PutWriter(s)
+	s := sio.GetWriter(f)
+	defer sio.PutWriter(s)
 	line := `{"name":"wonk","age":20,"email":"wonk@wonk.org"}`
 	line += "\n"
 	expected := bytes.Repeat([]byte(line), 1000)
@@ -200,8 +200,8 @@ func TestWriter_File_EncodeDefaultEncoderByte(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	defer f.Close()
 
-	s := internal.GetWriter(f, internal.SetDefaultEncoder())
-	defer internal.PutWriter(s)
+	s := sio.GetWriter(f, sio.SetDefaultEncoder())
+	defer sio.PutWriter(s)
 	byt := []byte(`{"name":"wonk","age":20,"email":"wonk@wonk.wonk","gender":"M","marriage_status":"Yes","num_children":10}`)
 
 	err = s.Encode(byt)
@@ -218,8 +218,8 @@ func TestWriter_File_EncodeDefaultEncoderString(t *testing.T) {
 	siutils.AssertNilFail(t, err)
 	defer f.Close()
 
-	s := internal.GetWriter(f, internal.SetDefaultEncoder())
-	defer internal.PutWriter(s)
+	s := sio.GetWriter(f, sio.SetDefaultEncoder())
+	defer sio.PutWriter(s)
 	str := `{"name":"wonk","age":20,"email":"wonk@wonk.wonk","gender":"M","marriage_status":"Yes","num_children":10}`
 
 	err = s.Encode(str)
@@ -237,8 +237,8 @@ func TestWriter_File_WriteAnyStruct(t *testing.T) {
 
 	p := &Person{"wonk", 20, "wonk@wonk.wonk", "M", "Yes", 10}
 
-	s := internal.GetWriter(f, internal.SetJsonEncoder())
-	defer internal.PutWriter(s)
+	s := sio.GetWriter(f, sio.SetJsonEncoder())
+	defer sio.PutWriter(s)
 
 	err = s.Encode(p)
 	siutils.AssertNilFail(t, err)
@@ -252,8 +252,8 @@ func TestWriter_File_EncodeJsonEncodeStruct(t *testing.T) {
 
 	// bufio readwriter wrap around f
 	bw := bufio.NewWriter(f)
-	s := internal.GetWriter(bw, internal.SetJsonEncoder())
-	defer internal.PutWriter(s)
+	s := sio.GetWriter(bw, sio.SetJsonEncoder())
+	defer sio.PutWriter(s)
 
 	p := &Person{"wonk", 20, "wonk@wonk.wonk", "M", "Yes", 10}
 	err = s.Encode(p)
@@ -268,7 +268,7 @@ func TestWriter_File_EncodeNoEncoderFail(t *testing.T) {
 
 	p := &Person{"wonk", 20, "wonk@wonk.wonk", "M", "Yes", 10}
 
-	s := internal.GetWriter(f)
+	s := sio.GetWriter(f)
 	err = s.Encode(p)
 	siutils.AssertNotNilFail(t, err)
 	siutils.AssertNilFail(t, s.Flush())

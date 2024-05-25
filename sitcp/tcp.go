@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 )
 
 // DialTimeout is a wrapper of net.DialTimeout.
@@ -27,14 +27,14 @@ func DialTimeout(addr string, timeout time.Duration, opts ...TcpOption) (*Conn, 
 type Conn struct {
 	net.Conn
 
-	rw *internal.ReadWriter
+	rw *sio.ReadWriter
 
 	writeTimeout    time.Duration
 	readTimeout     time.Duration
 	writeBufferSize int
 	readBufferSize  int
-	writerOptions   []internal.WriterOption
-	readerOptions   []internal.ReaderOption
+	writerOptions   []sio.WriterOption
+	readerOptions   []sio.ReaderOption
 
 	err error
 }
@@ -47,7 +47,7 @@ func newConn(c net.Conn, opts ...TcpOption) (*Conn, error) {
 		readTimeout:     30 * time.Second,
 		writeBufferSize: 4096,
 		readBufferSize:  4096,
-		rw:              internal.GetReadWriterWithReadWriter(c),
+		rw:              sio.GetReadWriterWithReadWriter(c),
 	}
 
 	if err := conn.reset(opts...); err != nil {
@@ -85,7 +85,7 @@ func (c *Conn) reset(opts ...TcpOption) error {
 
 // Close put underlying rw back to the pool and closes the connection.
 func (c *Conn) Close() error {
-	internal.PutReadWriter(c.rw)
+	sio.PutReadWriter(c.rw)
 	return c.Conn.Close()
 }
 
@@ -119,11 +119,11 @@ func (c *Conn) Read(b []byte) (int, error) {
 	return n, nil
 }
 
-func (c *Conn) appendReaderOption(opt internal.ReaderOption) {
+func (c *Conn) appendReaderOption(opt sio.ReaderOption) {
 	c.readerOptions = append(c.readerOptions, opt)
 }
 
-func (c *Conn) appendWriterOption(opt internal.WriterOption) {
+func (c *Conn) appendWriterOption(opt sio.WriterOption) {
 	c.writerOptions = append(c.writerOptions, opt)
 }
 

@@ -4,12 +4,12 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 )
 
 type SqlTx struct {
 	tx   *sql.Tx
-	opts []internal.RowScannerOption
+	opts []sio.RowScannerOption
 }
 
 func newSqlTx(tx *sql.Tx, opts ...SqlTxOption) *SqlTx {
@@ -93,8 +93,8 @@ func (o *SqlTx) QueryContextMaps(ctx context.Context, query string, output *[]ma
 	}
 	defer rows.Close()
 
-	rs := internal.GetRowScanner(o.opts...)
-	defer internal.PutRowScanner(rs)
+	rs := sio.GetRowScanner(o.opts...)
+	defer sio.PutRowScanner(rs)
 
 	return rs.ScanMapSlice(rows, output)
 }
@@ -106,8 +106,8 @@ func (o *SqlTx) QueryRowPrimary(query string, output any, args ...any) error {
 func (o *SqlTx) QueryRowContextPrimary(ctx context.Context, query string, output any, args ...any) error {
 	row := o.tx.QueryRowContext(ctx, query, args...)
 
-	rs := internal.GetRowScanner(o.opts...)
-	defer internal.PutRowScanner(rs)
+	rs := sio.GetRowScanner(o.opts...)
+	defer sio.PutRowScanner(rs)
 
 	err := rs.ScanPrimary(row, output)
 	if err != nil {
@@ -128,8 +128,8 @@ func (o *SqlTx) QueryRowContextStruct(ctx context.Context, query string, output 
 	}
 	defer rows.Close()
 
-	rs := internal.GetRowScanner(o.opts...)
-	defer internal.PutRowScanner(rs)
+	rs := sio.GetRowScanner(o.opts...)
+	defer sio.PutRowScanner(rs)
 
 	err = rs.ScanStruct(rows, output)
 	if err != nil {
@@ -150,8 +150,8 @@ func (o *SqlTx) QueryContextStructs(ctx context.Context, query string, output an
 	}
 	defer rows.Close()
 
-	rs := internal.GetRowScanner(o.opts...)
-	defer internal.PutRowScanner(rs)
+	rs := sio.GetRowScanner(o.opts...)
+	defer sio.PutRowScanner(rs)
 
 	n, err := rs.ScanStructs(rows, output)
 	if err != nil {
@@ -162,10 +162,10 @@ func (o *SqlTx) QueryContextStructs(ctx context.Context, query string, output an
 }
 
 // func (o *SqlTx) WithTagKey(key string) *SqlTx {
-// 	o.opts = append(o.opts, internal.WithTagKey(key))
+// 	o.opts = append(o.opts, sio.WithTagKey(key))
 // 	return o
 // }
 
-func (o *SqlTx) appendRowScannerOpt(opt internal.RowScannerOption) {
+func (o *SqlTx) appendRowScannerOpt(opt sio.RowScannerOption) {
 	o.opts = append(o.opts, opt)
 }

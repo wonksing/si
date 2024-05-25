@@ -17,7 +17,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/wonksing/si/v2/example/school/adaptor"
 	"github.com/wonksing/si/v2/example/school/core"
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 	"github.com/wonksing/si/v2/sihttp"
 )
 
@@ -132,8 +132,8 @@ func HandleGC(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(string(dumpReq))
 	}
 
-	body := internal.GetReader(req.Body)
-	defer internal.PutReader(body)
+	body := sio.GetReader(req.Body)
+	defer sio.PutReader(body)
 
 	_, err := body.ReadAll()
 	if err != nil {
@@ -151,8 +151,8 @@ func HandlePprof(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(string(dumpReq))
 	}
 
-	body := internal.GetReader(req.Body, internal.SetJsonDecoder())
-	defer internal.PutReader(body)
+	body := sio.GetReader(req.Body, sio.SetJsonDecoder())
+	defer sio.PutReader(body)
 
 	var s core.Student
 	err := body.Decode(&s)
@@ -173,8 +173,8 @@ func HandlePprof(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	res := internal.GetWriter(w, internal.SetJsonEncoder())
-	defer internal.PutWriter(res)
+	res := sio.GetWriter(w, sio.SetJsonEncoder())
+	defer sio.PutWriter(res)
 
 	err = res.EncodeFlush(list)
 	if err != nil {
@@ -190,8 +190,8 @@ func HandleFindAllStudent(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// read request body
-	body := internal.GetReader(req.Body, internal.SetJsonDecoder())
-	defer internal.PutReader(body)
+	body := sio.GetReader(req.Body, sio.SetJsonDecoder())
+	defer sio.PutReader(body)
 
 	var s core.Student
 	err := body.Decode(&s)
@@ -216,8 +216,8 @@ func HandleFindAllStudent(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	defer f.Close()
-	fw := internal.GetWriter(f)
-	defer internal.PutWriter(fw)
+	fw := sio.GetWriter(f)
+	defer sio.PutWriter(fw)
 	for _, student := range list {
 		_, err := fw.Write([]byte(student.EmailAddress + "," + student.Name + "\n"))
 		if err != nil {
@@ -232,8 +232,8 @@ func HandleFindAllStudent(w http.ResponseWriter, req *http.Request) {
 	//////////////////////////////////////////////////////////////////////////////////////
 
 	// write to client
-	res := internal.GetWriter(w, internal.SetJsonEncoder())
-	defer internal.PutWriter(res)
+	res := sio.GetWriter(w, sio.SetJsonEncoder())
+	defer sio.PutWriter(res)
 
 	err = res.EncodeFlush(list)
 	if err != nil {

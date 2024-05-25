@@ -6,16 +6,16 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 )
 
 // File is a wrapper of os.File
 type File struct {
 	*os.File
 
-	readerOpts []internal.ReaderOption
-	writerOpts []internal.WriterOption
-	rw         *internal.ReadWriter
+	readerOpts []sio.ReaderOption
+	writerOpts []sio.WriterOption
+	rw         *sio.ReadWriter
 }
 
 // OpenFile opens file with name then returns File.
@@ -45,7 +45,7 @@ func newFile(f *os.File, opts ...FileOption) *File {
 		o.apply(sf)
 	}
 
-	rw := internal.GetReadWriterWithReadWriter(f)
+	rw := sio.GetReadWriterWithReadWriter(f)
 	rw.Reader.ApplyOptions(sf.readerOpts...)
 	rw.Writer.ApplyOptions(sf.writerOpts...)
 
@@ -53,11 +53,11 @@ func newFile(f *os.File, opts ...FileOption) *File {
 	return sf
 }
 
-func (f *File) appendReaderOpt(opt internal.ReaderOption) {
+func (f *File) appendReaderOpt(opt sio.ReaderOption) {
 	f.readerOpts = append(f.readerOpts, opt)
 }
 
-func (f *File) appendWriterOpt(opt internal.WriterOption) {
+func (f *File) appendWriterOpt(opt sio.WriterOption) {
 	f.writerOpts = append(f.writerOpts, opt)
 }
 
@@ -74,7 +74,7 @@ func (f *File) Chown(uid, gid int) error {
 }
 
 func (f *File) Close() error {
-	internal.PutReadWriter(f.rw)
+	sio.PutReadWriter(f.rw)
 	return f.File.Close()
 }
 

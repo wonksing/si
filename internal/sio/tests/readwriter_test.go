@@ -1,4 +1,4 @@
-package internal_test
+package sio_test
 
 import (
 	"bufio"
@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 	"github.com/wonksing/si/v2/siutils"
 )
 
@@ -14,8 +14,8 @@ func TestReader_Buffer_Read(t *testing.T) {
 	buf := bytes.NewBuffer(make([]byte, 0, 1024))
 	buf.Write([]byte(testDataFile))
 
-	r := internal.GetReader(buf)
-	defer internal.PutReader(r)
+	r := sio.GetReader(buf)
+	defer sio.PutReader(r)
 
 	expected := testDataFile[:10]
 	byt := make([]byte, 10)
@@ -31,8 +31,8 @@ func TestReader_Buffer_ReadBufio(t *testing.T) {
 
 	br := bufio.NewReader(buf)
 
-	r := internal.GetReader(br)
-	defer internal.PutReader(r)
+	r := sio.GetReader(br)
+	defer sio.PutReader(r)
 
 	expected := testDataFile[:10]
 	byt := make([]byte, 10)
@@ -46,8 +46,8 @@ func TestReader_Buffer_ReadAll(t *testing.T) {
 	buf := bytes.NewBuffer(make([]byte, 0, 1024))
 	buf.Write([]byte(testDataFile))
 
-	r := internal.GetReader(buf)
-	defer internal.PutReader(r)
+	r := sio.GetReader(buf)
+	defer sio.PutReader(r)
 
 	expected := testDataFile
 

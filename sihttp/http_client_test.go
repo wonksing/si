@@ -17,7 +17,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 	"github.com/wonksing/si/v2/siutils"
 )
 
@@ -107,8 +107,8 @@ func Test_Client_DoDecode_Struct(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient(),
-		WithWriterOpt(internal.SetJsonEncoder()),
-		WithReaderOpt(internal.SetJsonDecoder()),
+		WithWriterOpt(sio.SetJsonEncoder()),
+		WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
@@ -134,8 +134,8 @@ func Test_Client_Request(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient(),
-		WithWriterOpt(internal.SetJsonEncoder()),
-		WithReaderOpt(internal.SetJsonDecoder()),
+		WithWriterOpt(sio.SetJsonEncoder()),
+		WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
@@ -162,8 +162,8 @@ func Test_Client_RequestDecode(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient(),
-		WithWriterOpt(internal.SetJsonEncoder()),
-		WithReaderOpt(internal.SetJsonDecoder()),
+		WithWriterOpt(sio.SetJsonEncoder()),
+		WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
@@ -186,8 +186,8 @@ func Test_Client_RequestDecodeContext(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient(),
-		WithWriterOpt(internal.SetJsonEncoder()),
-		WithReaderOpt(internal.SetJsonDecoder()),
+		WithWriterOpt(sio.SetJsonEncoder()),
+		WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
@@ -210,8 +210,8 @@ func Test_Client_Get(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient(),
-		WithWriterOpt(internal.SetJsonEncoder()),
-		WithReaderOpt(internal.SetJsonDecoder()),
+		WithWriterOpt(sio.SetJsonEncoder()),
+		WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
@@ -231,8 +231,8 @@ func Test_Client_GetContext(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient(),
-		WithWriterOpt(internal.SetJsonEncoder()),
-		WithReaderOpt(internal.SetJsonDecoder()),
+		WithWriterOpt(sio.SetJsonEncoder()),
+		WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
@@ -252,8 +252,8 @@ func Test_Client_GetDecode(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient(),
-		WithWriterOpt(internal.SetJsonEncoder()),
-		WithReaderOpt(internal.SetJsonDecoder()),
+		WithWriterOpt(sio.SetJsonEncoder()),
+		WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
@@ -285,8 +285,8 @@ func Test_Client_Post(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient(),
-		WithWriterOpt(internal.SetJsonEncoder()),
-		WithReaderOpt(internal.SetJsonDecoder()),
+		WithWriterOpt(sio.SetJsonEncoder()),
+		WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
@@ -327,8 +327,8 @@ func Test_Client_Put(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient(),
-		WithWriterOpt(internal.SetJsonEncoder()),
-		WithReaderOpt(internal.SetJsonDecoder()),
+		WithWriterOpt(sio.SetJsonEncoder()),
+		WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
@@ -370,8 +370,8 @@ func Test_Client_Patch(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient(),
-		WithWriterOpt(internal.SetJsonEncoder()),
-		WithReaderOpt(internal.SetJsonDecoder()),
+		WithWriterOpt(sio.SetJsonEncoder()),
+		WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
@@ -417,8 +417,8 @@ func Test_Client_Delete(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient(),
-		WithWriterOpt(internal.SetJsonEncoder()),
-		WithReaderOpt(internal.SetJsonDecoder()),
+		WithWriterOpt(sio.SetJsonEncoder()),
+		WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
@@ -530,8 +530,8 @@ func Test_Client_PostFile(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient(),
-		WithWriterOpt(internal.SetJsonEncoder()),
-		WithReaderOpt(internal.SetJsonDecoder()),
+		WithWriterOpt(sio.SetJsonEncoder()),
+		WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 
@@ -603,7 +603,7 @@ func Test_Client_appendWriterOption(t *testing.T) {
 
 	c := NewClient(&sc)
 
-	c.appendWriterOption(internal.SetDefaultEncoder())
+	c.appendWriterOption(sio.SetDefaultEncoder())
 
 	assert.EqualValues(t, 1, len(c.writerOpts))
 }
@@ -613,7 +613,7 @@ func Test_Client_appendReaderOption(t *testing.T) {
 
 	c := NewClient(&sc)
 
-	c.appendReaderOption(internal.SetJsonDecoder())
+	c.appendReaderOption(sio.SetJsonDecoder())
 
 	assert.EqualValues(t, 1, len(c.readerOpts))
 }
@@ -642,8 +642,8 @@ func Test_Client_request(t *testing.T) {
 	sc := NewStandardClient(time.Duration(30), tr)
 
 	c := NewClient(sc,
-		WithWriterOpt(internal.SetJsonEncoder()),
-		WithReaderOpt(internal.SetJsonDecoder()),
+		WithWriterOpt(sio.SetJsonEncoder()),
+		WithReaderOpt(sio.SetJsonDecoder()),
 	)
 	siutils.AssertNotNilFail(t, c)
 

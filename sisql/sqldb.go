@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 )
 
 func Open(driverName string, dataSourceName string, opts ...SqlOption) (*SqlDB, error) {
@@ -19,7 +19,7 @@ func Open(driverName string, dataSourceName string, opts ...SqlOption) (*SqlDB, 
 // SqlDB is a wrapper of sql.DB
 type SqlDB struct {
 	db   *sql.DB
-	opts []internal.RowScannerOption
+	opts []sio.RowScannerOption
 }
 
 // NewSqlDB returns SqlDB
@@ -111,8 +111,8 @@ func (o *SqlDB) QueryContextMaps(ctx context.Context, query string, output *[]ma
 	}
 	defer rows.Close()
 
-	rs := internal.GetRowScanner(o.opts...)
-	defer internal.PutRowScanner(rs)
+	rs := sio.GetRowScanner(o.opts...)
+	defer sio.PutRowScanner(rs)
 
 	return rs.ScanMapSlice(rows, output)
 }
@@ -124,8 +124,8 @@ func (o *SqlDB) QueryRowPrimary(query string, output any, args ...any) error {
 func (o *SqlDB) QueryRowContextPrimary(ctx context.Context, query string, output any, args ...any) error {
 	row := o.db.QueryRowContext(ctx, query, args...)
 
-	rs := internal.GetRowScanner(o.opts...)
-	defer internal.PutRowScanner(rs)
+	rs := sio.GetRowScanner(o.opts...)
+	defer sio.PutRowScanner(rs)
 
 	err := rs.ScanPrimary(row, output)
 	if err != nil {
@@ -146,8 +146,8 @@ func (o *SqlDB) QueryRowContextStruct(ctx context.Context, query string, output 
 	}
 	defer rows.Close()
 
-	rs := internal.GetRowScanner(o.opts...)
-	defer internal.PutRowScanner(rs)
+	rs := sio.GetRowScanner(o.opts...)
+	defer sio.PutRowScanner(rs)
 
 	err = rs.ScanStruct(rows, output)
 	if err != nil {
@@ -170,8 +170,8 @@ func (o *SqlDB) QueryContextStructs(ctx context.Context, query string, output an
 	}
 	defer rows.Close()
 
-	rs := internal.GetRowScanner(o.opts...)
-	defer internal.PutRowScanner(rs)
+	rs := sio.GetRowScanner(o.opts...)
+	defer sio.PutRowScanner(rs)
 
 	n, err := rs.ScanStructs(rows, output)
 	if err != nil {
@@ -181,6 +181,6 @@ func (o *SqlDB) QueryContextStructs(ctx context.Context, query string, output an
 	return n, nil
 }
 
-func (o *SqlDB) appendRowScannerOpt(opt internal.RowScannerOption) {
+func (o *SqlDB) appendRowScannerOpt(opt sio.RowScannerOption) {
 	o.opts = append(o.opts, opt)
 }

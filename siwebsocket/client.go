@@ -11,7 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 )
 
 var (
@@ -74,7 +74,7 @@ type WsClient struct {
 	readErr  error
 	writeErr error
 
-	readOpts []internal.ReaderOption
+	readOpts []sio.ReaderOption
 
 	id string
 
@@ -228,7 +228,7 @@ func (c *WsClient) SetHub(h Hub) {
 	c.hub = h
 }
 
-func (c *WsClient) appendReaderOpt(ro internal.ReaderOption) {
+func (c *WsClient) appendReaderOpt(ro sio.ReaderOption) {
 	c.readOpts = append(c.readOpts, ro)
 }
 

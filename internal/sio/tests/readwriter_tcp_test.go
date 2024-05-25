@@ -1,4 +1,4 @@
-package internal_test
+package sio_test
 
 import (
 	"errors"
@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal"
+	"github.com/wonksing/si/v2/internal/sio"
 	"github.com/wonksing/si/v2/siutils"
 )
 
@@ -92,8 +92,8 @@ func TestReader_Writer_Tcp_WriteRead(t *testing.T) {
 		t.FailNow()
 	}
 
-	r := internal.GetReader(conn, SetTcpEofChecker())
-	w := internal.GetWriter(conn)
+	r := sio.GetReader(conn, SetTcpEofChecker())
+	w := sio.GetWriter(conn)
 
 	_, err = w.WriteFlush(createDataToSend())
 	siutils.AssertNilFail(t, err)
@@ -138,12 +138,12 @@ func TestReadWriter_Tcp_Request(t *testing.T) {
 		t.FailNow()
 	}
 
-	// r := internal.GetReader(conn, SetTcpEofChecker())
-	// w := internal.GetWriter(conn)
-	// rw := internal.NewReadWriter(r, w)
+	// r := sio.GetReader(conn, SetTcpEofChecker())
+	// w := sio.GetWriter(conn)
+	// rw := sio.NewReadWriter(r, w)
 
-	// rw := internal.GetReadWriterWithOptions(conn, []internal.ReaderOption{SetTcpEofChecker()}, conn, nil)
-	rw := internal.GetReadWriterWithReadWriter(conn)
+	// rw := sio.GetReadWriterWithOptions(conn, []sio.ReaderOption{SetTcpEofChecker()}, conn, nil)
+	rw := sio.GetReadWriterWithReadWriter(conn)
 	rw.Reader.ApplyOptions(SetTcpEofChecker())
 
 	recv, err := rw.Request(createDataToSend())
@@ -152,10 +152,10 @@ func TestReadWriter_Tcp_Request(t *testing.T) {
 	l, err := strconv.Atoi(string(recv[:7]))
 	siutils.AssertNilFail(t, err)
 	assert.Equal(t, l, len(recv))
-	internal.PutReadWriter(rw)
+	sio.PutReadWriter(rw)
 
-	// rw = internal.GetReadWriterWithOptions(conn, []internal.ReaderOption{SetTcpEofChecker()}, conn, nil)
-	rw = internal.GetReadWriterWithReadWriter(conn)
+	// rw = sio.GetReadWriterWithOptions(conn, []sio.ReaderOption{SetTcpEofChecker()}, conn, nil)
+	rw = sio.GetReadWriterWithReadWriter(conn)
 	rw.Reader.ApplyOptions(SetTcpEofChecker())
 	recv, err = rw.Request(createSmallDataToSend())
 	siutils.AssertNilFail(t, err)
@@ -163,7 +163,7 @@ func TestReadWriter_Tcp_Request(t *testing.T) {
 	l, err = strconv.Atoi(string(recv[:7]))
 	siutils.AssertNilFail(t, err)
 	assert.Equal(t, l, len(recv))
-	internal.PutReadWriter(rw)
+	sio.PutReadWriter(rw)
 }
 
 func createDataToSend() []byte {
@@ -205,14 +205,14 @@ func (c TcpEOFChecker) Check(b []byte, errIn error) (bool, error) {
 	return false, errIn
 }
 
-func SetTcpEofChecker() internal.ReaderOption {
-	return internal.ReaderOptionFunc(func(r *internal.Reader) {
+func SetTcpEofChecker() sio.ReaderOption {
+	return sio.ReaderOptionFunc(func(r *sio.Reader) {
 		r.SetEofChecker(&TcpEOFChecker{})
 	})
 }
 
-// func tcpValidator() internal.ReadValidator {
-// 	return internal.ValidateFunc(func(b []byte, errIn error) (bool, error) {
+// func tcpValidator() sio.ReadValidator {
+// 	return sio.ValidateFunc(func(b []byte, errIn error) (bool, error) {
 // 		if errIn == nil || errIn == io.EOF {
 // 			lenStr := string(b[:7])
 // 			lenProt, err := strconv.ParseInt(lenStr, 10, 64)
