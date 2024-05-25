@@ -5,13 +5,11 @@ import (
 	"errors"
 	"sync"
 	"time"
-
-	"github.com/wonksing/si/v2/internal"
 )
 
-// Hub maintains the set of active clients and broadcasts messages to the
+// WsHub maintains the set of active clients and broadcasts messages to the
 // clients.
-type Hub struct {
+type WsHub struct {
 	// Connected clients.
 	clients sync.Map
 
@@ -24,10 +22,10 @@ type Hub struct {
 	broadcastWait chan struct{}
 
 	// channel to add clients to `clients` map
-	register chan internal.Client
+	register chan Client
 
 	// channel to remove clients from `clients` map
-	unregister chan internal.Client
+	unregister chan Client
 
 	// once runDone is closed, a client cannot be received from register or unregister channel.
 	runDone chan struct{}
@@ -58,22 +56,22 @@ type Hub struct {
 
 	// handlers
 	// called after deleting c from clients map.
-	afterDeleteClient func(c internal.Client, err error)
+	afterDeleteClient func(c Client, err error)
 	// called after storing c into clients map.
-	afterStoreClient func(c internal.Client, err error)
+	afterStoreClient func(c Client, err error)
 }
 
-// NewHub creates a hub
-func NewHub(hubAddr, hubPath string, writeWait time.Duration, readWait time.Duration,
-	maxMessageSize int, usePingPong bool, opts ...HubOption) *Hub {
+// NewWsHub creates a hub
+func NewWsHub(hubAddr, hubPath string, writeWait time.Duration, readWait time.Duration,
+	maxMessageSize int, usePingPong bool, opts ...HubOption) *WsHub {
 
 	pingPeriod := (readWait * 9) / 10
 
-	h := &Hub{
+	h := &WsHub{
 		broadcast:     make(chan []byte, 1024),
 		broadcastWait: make(chan struct{}, 1),
-		register:      make(chan internal.Client),
-		unregister:    make(chan internal.Client),
+		register:      make(chan Client),
+		unregister:    make(chan Client),
 
 		clients:    sync.Map{},
 		runDone:    make(chan struct{}),
@@ -97,13 +95,13 @@ func NewHub(hubAddr, hubPath string, writeWait time.Duration, readWait time.Dura
 	}
 
 	if h.afterDeleteClient == nil {
-		h.afterDeleteClient = func(c internal.Client, err error) {
+		h.afterDeleteClient = func(c Client, err error) {
 			// nothing
 		}
 	}
 
 	if h.afterStoreClient == nil {
-		h.afterStoreClient = func(c internal.Client, err error) {
+		h.afterStoreClient = func(c Client, err error) {
 			// nothing
 		}
 	}
@@ -114,24 +112,24 @@ func NewHub(hubAddr, hubPath string, writeWait time.Duration, readWait time.Dura
 var ErrClientNotExist = errors.New("client does not exist")
 
 // runBroadcast starts receiving messages to broadcast to clients.
-func (h *Hub) runBroadcast() {
+func (h *WsHub) runBroadcast() {
 	defer close(h.broadcastWait)
 	for message := range h.broadcast {
 		h.clients.Range(func(key interface{}, value interface{}) bool {
-			value.(internal.Client).Send(message)
+			value.(Client).Send(message)
 			return true
 		})
 	}
 }
 
 // stopAdnWaitBroadcast stops runBroadcast and wait for it to return.
-func (h *Hub) stopAndWaitBroadcast() {
+func (h *WsHub) stopAndWaitBroadcast() {
 	close(h.broadcast)
 	<-h.broadcastWait
 }
 
 // runClient starts receiving new and disconnected clients.
-func (h *Hub) runClient() {
+func (h *WsHub) runClient() {
 	defer close(h.runWait)
 	for {
 		select {
@@ -142,7 +140,7 @@ func (h *Hub) runClient() {
 			if exist {
 				// Stop will lead to removeClient method called.
 				// Do not call removeClient method here.
-				loadedClient.(internal.Client).Stop()
+				loadedClient.(Client).Stop()
 				h.clients.Store(client.GetID(), client)
 			}
 			h.afterStoreClient(client, nil)
@@ -160,7 +158,7 @@ func (h *Hub) runClient() {
 }
 
 // Run starts the hub.
-func (h *Hub) Run() {
+func (h *WsHub) Run() {
 	go h.waitStop()
 	go h.runBroadcast()
 
@@ -168,12 +166,12 @@ func (h *Hub) Run() {
 }
 
 // stopAndWaitClient stops runClient method and wait for it to return
-func (h *Hub) stopAndWaitClient() {
+func (h *WsHub) stopAndWaitClient() {
 	close(h.runDone) // stops Run method, closing this channel doesn't mean the select loop returns
 	<-h.runWait      // wait Run method to return
 }
 
-func (h *Hub) waitStop() {
+func (h *WsHub) waitStop() {
 	<-h.stopClient      // wait until Stop method is called
 	close(h.clientDone) // prevent from sending into register/unregister/broadcast channel
 	h.stopAndWaitClient()
@@ -183,7 +181,7 @@ func (h *Hub) waitStop() {
 }
 
 // Stop initiates the hub to stop.
-func (h *Hub) Stop() error {
+func (h *WsHub) Stop() error {
 	select {
 	case h.stopClient <- "stop":
 	default:
@@ -193,13 +191,13 @@ func (h *Hub) Stop() error {
 }
 
 // Wait waits until h is completely finished.
-func (h *Hub) Wait() {
+func (h *WsHub) Wait() {
 	<-h.terminated
 }
 
 var ErrHubClosed = errors.New("hub is closed")
 
-func (h *Hub) Add(client internal.Client) error {
+func (h *WsHub) Add(client Client) error {
 	select {
 	case <-h.clientDone:
 		return ErrHubClosed
@@ -216,7 +214,7 @@ func (h *Hub) Add(client internal.Client) error {
 	}
 }
 
-func (h *Hub) Remove(client internal.Client) error {
+func (h *WsHub) Remove(client Client) error {
 	select {
 	case <-h.clientDone:
 		return ErrHubClosed
@@ -232,7 +230,7 @@ func (h *Hub) Remove(client internal.Client) error {
 	}
 }
 
-func (h *Hub) Broadcast(message []byte) error {
+func (h *WsHub) Broadcast(message []byte) error {
 	select {
 	case <-h.clientDone:
 		return ErrHubClosed
@@ -248,30 +246,30 @@ func (h *Hub) Broadcast(message []byte) error {
 	return nil
 }
 
-func (h *Hub) removeAllClients() error {
+func (h *WsHub) removeAllClients() error {
 
 	// stops gracefully
 	h.clients.Range(func(key interface{}, value interface{}) bool {
-		value.(internal.Client).Stop()
-		value.(internal.Client).Wait()
-		h.clients.Delete(value.(internal.Client).GetID())
-		h.router.Delete(context.Background(), value.(internal.Client).GetID())
+		value.(Client).Stop()
+		value.(Client).Wait()
+		h.clients.Delete(value.(Client).GetID())
+		h.router.Delete(context.Background(), value.(Client).GetID())
 		return true
 	})
 
 	return nil
 }
 
-func (h *Hub) RemoveRandomClient() error {
+func (h *WsHub) RemoveRandomClient() error {
 	h.clients.Range(func(key interface{}, value interface{}) bool {
-		value.(internal.Client).Stop()
+		value.(Client).Stop()
 		return false
 	})
 
 	return nil
 }
 
-func (h *Hub) LenClients() int {
+func (h *WsHub) LenClients() int {
 	lenClients := 0
 	h.clients.Range(func(key interface{}, value interface{}) bool {
 		lenClients++
@@ -281,11 +279,11 @@ func (h *Hub) LenClients() int {
 	return lenClients
 }
 
-func (h *Hub) SendMessage(id string, msg []byte) error {
+func (h *WsHub) SendMessage(id string, msg []byte) error {
 	if c, ok := h.clients.Load(id); !ok {
 		return errors.New("client not found, " + id)
 	} else {
-		err := c.(internal.Client).Send(msg)
+		err := c.(Client).Send(msg)
 		if err != nil {
 			return err
 		}
@@ -294,14 +292,14 @@ func (h *Hub) SendMessage(id string, msg []byte) error {
 }
 
 // SendMessageWithIDAndUserGroupID sends msg to a client with id and userGroupID.
-func (h *Hub) SendMessageWithIDAndUserGroupID(id, userGroupID string, msg []byte) error {
+func (h *WsHub) SendMessageWithIDAndUserGroupID(id, userGroupID string, msg []byte) error {
 	if c, ok := h.clients.Load(id); !ok {
 		return errors.New("client not found, " + id)
 	} else {
-		if c.(internal.Client).GetUserGroupID() != userGroupID {
+		if c.(Client).GetUserGroupID() != userGroupID {
 			return errors.New("client with, " + userGroupID + ", not found")
 		}
-		err := c.(internal.Client).Send(msg)
+		err := c.(Client).Send(msg)
 		if err != nil {
 			return err
 		}
@@ -311,11 +309,11 @@ func (h *Hub) SendMessageWithIDAndUserGroupID(id, userGroupID string, msg []byte
 
 // SendMessageAndWait send msg to a client with id and wait until the msg was
 // successfully written to the client.
-func (h *Hub) SendMessageAndWait(id string, msg []byte) error {
+func (h *WsHub) SendMessageAndWait(id string, msg []byte) error {
 	if c, ok := h.clients.Load(id); !ok {
 		return errors.New("client not found, " + id)
 	} else {
-		err := c.(internal.Client).SendAndWait(msg)
+		err := c.(Client).SendAndWait(msg)
 		if err != nil {
 			return err
 		}
@@ -323,28 +321,28 @@ func (h *Hub) SendMessageAndWait(id string, msg []byte) error {
 	return nil
 }
 
-func (h *Hub) SetRouter(r Router) {
+func (h *WsHub) SetRouter(r Router) {
 	h.router = r
 }
-func (h *Hub) SetHubAddr(hubAddr string) {
+func (h *WsHub) SetHubAddr(hubAddr string) {
 	h.hubAddr = hubAddr
 }
-func (h *Hub) SetHubPath(hubPath string) {
+func (h *WsHub) SetHubPath(hubPath string) {
 	h.hubPath = hubPath
 }
 
-func (h *Hub) GetWriteWait() time.Duration {
+func (h *WsHub) GetWriteWait() time.Duration {
 	return h.writeWait
 }
 
-func (h *Hub) GetReadWait() time.Duration {
+func (h *WsHub) GetReadWait() time.Duration {
 	return h.readWait
 }
 
-func (h *Hub) GetUsePingPong() bool {
+func (h *WsHub) GetUsePingPong() bool {
 	return h.usePingPong
 }
 
-func (h *Hub) GetMaxMessageSize() int {
+func (h *WsHub) GetMaxMessageSize() int {
 	return h.maxMessageSize
 }

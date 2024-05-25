@@ -1,4 +1,4 @@
-package internal
+package siwebsocket
 
 type Client interface {
 	Stop() error
