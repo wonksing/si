@@ -58,29 +58,3 @@ func GrowByteSliceCap(b *[]byte, n int) error {
 	*b = newBuf[:l]
 	return nil
 }
-
-// Deprecated
-func GrowMapSlice(ms *[]map[string]interface{}, s int) (int, error) {
-	c := cap(*ms)
-	l := len(*ms)
-	a := c - l // available
-	if s <= a {
-		*ms = (*ms)[:l+s]
-		return l, nil
-	}
-
-	if l+s <= c {
-		// if needed length is lte c
-		return l, nil
-	}
-
-	if c > maxInt-c-s {
-		// too large
-		return l, ErrTooLarge
-	}
-
-	newBuf := make([]map[string]interface{}, c*2+s)
-	copy(newBuf, (*ms)[0:])
-	*ms = newBuf[:l+s]
-	return l, nil
-}

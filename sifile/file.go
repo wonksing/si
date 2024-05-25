@@ -154,6 +154,11 @@ func (f *File) WriteFlush(p []byte) (n int, err error) {
 	return n, err
 }
 
+// Flush flushes underlying rw.
+func (f *File) Flush() (err error) {
+	return f.rw.Flush()
+}
+
 func (f *File) Encode(v any) error {
 	return f.rw.Encode(v)
 }
