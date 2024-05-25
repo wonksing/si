@@ -14,9 +14,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal/sio"
+	"github.com/stretchr/testify/require"
 	"github.com/wonksing/si/v2/sihttp"
-	"github.com/wonksing/si/v2/siutils"
+	"github.com/wonksing/si/v2/sio"
 	"github.com/wonksing/si/v2/tests/testmodels"
 )
 
@@ -24,21 +24,21 @@ func TestOnline_Client_Do(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, standardClient)
+	require.NotNil(t, standardClient)
 
 	hc := sihttp.NewClient(standardClient)
 
 	request, err := http.NewRequest(http.MethodGet, remoteAddr+"/test/hello", nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	request.Header.Set("Content-type", "application/x-www-form-urlencoded")
 
 	resp, err := hc.Do(request)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	defer resp.Body.Close()
 
 	b, err := io.ReadAll(resp.Body)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, "hello", string(b))
 }
@@ -56,7 +56,7 @@ func TestOnline_Client_Post(t *testing.T) {
 	sendData := fmt.Sprintf("%s-%d", data, 0)
 
 	respBody, err := client.Post(url, nil, []byte(sendData))
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, sendData, string(respBody))
 	fmt.Println(string(respBody))
@@ -75,7 +75,7 @@ func Test_Client_Post_inputReader(t *testing.T) {
 	sendData := fmt.Sprintf("%s-%d", data, 0)
 
 	respBody, err := client.Post(url, nil, strings.NewReader(sendData))
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, sendData, string(respBody))
 	fmt.Println(string(respBody))
@@ -91,14 +91,14 @@ func Test_Client_Post_fileData(t *testing.T) {
 	url := remoteAddr + "/test/echo"
 
 	f, err := os.OpenFile("./data/testfile.txt", os.O_RDONLY, 0777)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	defer f.Close()
 
 	header := make(http.Header)
 	header["Content-Type"] = []string{"multipart/form-data"}
 
 	res, err := client.Post(url, header, f)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	fmt.Println(string(res))
 
@@ -116,23 +116,23 @@ func TestCheckRequestState(t *testing.T) {
 	defer sio.PutReadWriter(rw)
 
 	req, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/test/echo", rw)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	req.Header.Set("custom_header", "wonk")
 
 	sendData := fmt.Sprintf("%s-%d", data, 0)
 	rw.WriteFlush([]byte(sendData))
 	resp, err := standardClient.Do(req)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	respBody, err := io.ReadAll(resp.Body)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, sendData, string(respBody))
 	fmt.Println(string(respBody))
 	resp.Body.Close()
 
 	req2, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/test/echo", rw)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	for k := range req.Header {
 		delete(req.Header, k)
@@ -152,7 +152,7 @@ func TestReuseRequest(t *testing.T) {
 	defer sio.PutReadWriter(rw)
 
 	req, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/test/echo", rw)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	req.Header.Set("custom_header", "wonk")
 
@@ -160,10 +160,10 @@ func TestReuseRequest(t *testing.T) {
 		sendData := fmt.Sprintf("%s-%d", data, i)
 		rw.WriteFlush([]byte(sendData))
 		resp, err := standardClient.Do(req)
-		siutils.AssertNilFail(t, err)
+		require.Nil(t, err)
 
 		respBody, err := io.ReadAll(resp.Body)
-		siutils.AssertNilFail(t, err)
+		require.Nil(t, err)
 		assert.EqualValues(t, sendData, string(respBody))
 		fmt.Println(string(respBody))
 
@@ -185,7 +185,7 @@ func TestReuseRequestInGoroutinePanic(t *testing.T) {
 	defer sio.PutReadWriter(rw)
 
 	req, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/test/echo", rw)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	var wg sync.WaitGroup
 	for j := 0; j < 5; j++ {
@@ -198,10 +198,10 @@ func TestReuseRequestInGoroutinePanic(t *testing.T) {
 
 				rw.WriteFlush([]byte(sendData))
 				resp, err := standardClient.Do(req)
-				siutils.AssertNilFail(t, err)
+				require.Nil(t, err)
 
 				respBody, err := io.ReadAll(resp.Body)
-				siutils.AssertNilFail(t, err)
+				require.Nil(t, err)
 				assert.EqualValues(t, sendData, string(respBody))
 				fmt.Println(string(respBody))
 
@@ -229,7 +229,7 @@ func TestReuseRequestInGoroutine(t *testing.T) {
 			rw := sio.GetReadWriterWithReadWriter(buf)
 
 			req, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:8080/test/echo", nil)
-			siutils.AssertNilFail(t, err)
+			require.Nil(t, err)
 
 			req.Body = ioutil.NopCloser(rw)
 
@@ -240,10 +240,10 @@ func TestReuseRequestInGoroutine(t *testing.T) {
 
 				rw.WriteFlush([]byte(sendData))
 				resp, err := standardClient.Do(req)
-				siutils.AssertNilFail(t, err)
+				require.Nil(t, err)
 
 				respBody, err := io.ReadAll(resp.Body)
-				siutils.AssertNilFail(t, err)
+				require.Nil(t, err)
 				assert.EqualValues(t, sendData, string(respBody))
 				fmt.Println(string(respBody))
 
@@ -271,7 +271,7 @@ func TestHttpClientRequestPostTls(t *testing.T) {
 		sendData := fmt.Sprintf("%s-%d", data, i)
 
 		respBody, err := client.Post(urls[i], nil, []byte(sendData))
-		siutils.AssertNilFail(t, err)
+		require.Nil(t, err)
 
 		assert.EqualValues(t, sendData, string(respBody))
 		fmt.Println(string(respBody))
@@ -292,7 +292,7 @@ func TestHttpClientRequestGet(t *testing.T) {
 	queries["kor"] = "길동"
 
 	respBody, err := client.Get(url, nil, queries)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, "hello", string(respBody))
 	// fmt.Println(string(respBody))
@@ -311,7 +311,7 @@ func TestHttpClientRequestPost(t *testing.T) {
 	sendData := fmt.Sprintf("%s-%d", data, 0)
 
 	respBody, err := client.Post(url, nil, []byte(sendData))
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, sendData, string(respBody))
 	fmt.Println(string(respBody))
@@ -331,7 +331,7 @@ func TestHttpClientRequestPut(t *testing.T) {
 	sendData := fmt.Sprintf("%s-%d", data, 0)
 
 	respBody, err := client.Put(url, nil, []byte(sendData))
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, sendData, string(respBody))
 	fmt.Println(string(respBody))
@@ -356,10 +356,10 @@ func TestHttpClientRequestPostJsonDecoded(t *testing.T) {
 	}
 	res := testmodels.Student{}
 	err := client.PostDecode(url, nil, &student, &res)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	err = client.PostDecode(url, nil, &student, &res)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	// assert.EqualValues(t, sendData, string(respBody))
 	fmt.Println(res.String())
 
@@ -375,17 +375,17 @@ func TestHttpClientRequestPostReaderFile(t *testing.T) {
 	url := "http://127.0.0.1:8080/test/file/upload"
 
 	f, err := os.OpenFile("./data/testfile.txt", os.O_RDONLY, 0777)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	defer f.Close()
 
 	contents, err := io.ReadAll(f)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	buf := bytes.NewBuffer(make([]byte, 0, 512))
 	mw := multipart.NewWriter(buf)
 
 	part, err := mw.CreateFormFile("file_to_upload", f.Name())
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	part.Write(contents)
 
 	mw.WriteField("nam", "wonk")
@@ -394,11 +394,11 @@ func TestHttpClientRequestPostReaderFile(t *testing.T) {
 	header["Content-Type"] = []string{mw.FormDataContentType()}
 
 	err = mw.Close()
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	// res, err := client.RequestPostFile(url, header, buf)
 	res, err := client.Post(url, header, buf)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	fmt.Println(string(res))
 
@@ -416,7 +416,7 @@ func TestOnline_Client_PostFile(t *testing.T) {
 	url := "http://127.0.0.1:8080/test/file/upload"
 
 	res, err := client.PostFile(url, nil, nil, "file_to_upload", "./data/testfile.txt")
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	fmt.Println(string(res))
 
@@ -434,7 +434,7 @@ func TestHttpClientRequestGetWithHeaderHmac256(t *testing.T) {
 	url := "http://127.0.0.1:8080/test/hello"
 
 	respBody, err := client.Get(url, nil, nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, "hello", string(respBody))
 
@@ -454,7 +454,7 @@ func TestHttpClientRequestPostWithHeaderHmac256(t *testing.T) {
 	sendData := fmt.Sprintf("%s-%d", data, 0)
 
 	respBody, err := client.Post(url, nil, []byte(sendData))
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, sendData, string(respBody))
 	fmt.Println(string(respBody))
@@ -484,10 +484,10 @@ func TestHttpClientRequestPostJsonDecodedWithHeaderHmac256(t *testing.T) {
 	}
 	res := testmodels.Student{}
 	err := client.PostDecode(url, nil, &student, &res)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	err = client.PostDecode(url, nil, &student, &res)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	// assert.EqualValues(t, sendData, string(respBody))
 	fmt.Println(res.String())
 
@@ -513,10 +513,10 @@ func TestHttpClientRequestPostJsonDecodedWithBearerToken(t *testing.T) {
 	}
 	res := testmodels.Student{}
 	err := client.PostDecode(url, nil, &student, &res)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	err = client.PostDecode(url, nil, &student, &res)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	// assert.EqualValues(t, sendData, string(respBody))
 	fmt.Println(res.String())
 
@@ -540,7 +540,7 @@ func TestWithBaseUrl(t *testing.T) {
 	}
 	b, _ := json.Marshal(&student)
 	res, err := client.Post(url, nil, b)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	expected := `{"id":1,"email_address":"wonk@wonk.org","name":"wonk","borrowed":false}`
 	assert.EqualValues(t, expected, string(res))

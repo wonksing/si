@@ -17,17 +17,17 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal/sio"
-	"github.com/wonksing/si/v2/siutils"
+	"github.com/stretchr/testify/require"
+	"github.com/wonksing/si/v2/sio"
 )
 
 func Test_Client_NewClient(t *testing.T) {
 	sc := _newStandardClient()
 	c := NewClient(sc)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	c = NewClient(sc, nil)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 }
 
 func Test_Client_Do(t *testing.T) {
@@ -40,17 +40,17 @@ func Test_Client_Do(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient())
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	req, err := http.NewRequest(http.MethodGet, svr.URL, nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	resp, err := c.Do(req)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, http.StatusOK, resp.StatusCode)
 
 	defer resp.Body.Close()
 	resBody, err := io.ReadAll(resp.Body)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, expected, resBody)
 }
@@ -65,12 +65,12 @@ func Test_Client_DoRead(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient())
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	req, err := http.NewRequest(http.MethodGet, svr.URL, nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	resBody, err := c.DoRead(req)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, expected, resBody)
 }
@@ -85,14 +85,14 @@ func Test_Client_DoDecode(t *testing.T) {
 	defer svr.Close()
 
 	c := NewClient(_newStandardClient())
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	req, err := http.NewRequest(http.MethodGet, svr.URL, nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	var resBody []byte
 	err = c.DoDecode(req, &resBody)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, expected, resBody)
 }
@@ -110,17 +110,17 @@ func Test_Client_DoDecode_Struct(t *testing.T) {
 		WithWriterOpt(sio.SetJsonEncoder()),
 		WithReaderOpt(sio.SetJsonDecoder()),
 	)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	req, err := http.NewRequest(http.MethodGet, svr.URL, nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	resBody := _testStruct{}
 	err = c.DoDecode(req, &resBody)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	b, err := _jsonMarshal(&resBody)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, b)
 }
 
@@ -137,18 +137,18 @@ func Test_Client_Request(t *testing.T) {
 		WithWriterOpt(sio.SetJsonEncoder()),
 		WithReaderOpt(sio.SetJsonDecoder()),
 	)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	headers := http.Header{}
 	queries := make(map[string]string)
 	var reqBody []byte
 
 	resBody, err := c.Request(http.MethodGet, svr.URL, headers, queries, reqBody)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, resBody)
 
 	resBody, err = c.RequestContext(context.Background(), http.MethodGet, svr.URL, headers, queries, reqBody)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, resBody)
 }
 
@@ -165,14 +165,14 @@ func Test_Client_RequestDecode(t *testing.T) {
 		WithWriterOpt(sio.SetJsonEncoder()),
 		WithReaderOpt(sio.SetJsonDecoder()),
 	)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	resBody := _testStruct{}
 	err := c.RequestDecode(http.MethodGet, svr.URL, nil, nil, nil, &resBody)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	b, err := _jsonMarshal(&resBody)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, b)
 }
 
@@ -189,14 +189,14 @@ func Test_Client_RequestDecodeContext(t *testing.T) {
 		WithWriterOpt(sio.SetJsonEncoder()),
 		WithReaderOpt(sio.SetJsonDecoder()),
 	)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	resBody := _testStruct{}
 	err := c.RequestDecodeContext(context.Background(), http.MethodGet, svr.URL, nil, nil, nil, &resBody)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	b, err := _jsonMarshal(&resBody)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, b)
 }
 
@@ -213,10 +213,10 @@ func Test_Client_Get(t *testing.T) {
 		WithWriterOpt(sio.SetJsonEncoder()),
 		WithReaderOpt(sio.SetJsonDecoder()),
 	)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	resBody, err := c.Get(svr.URL, nil, nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, expected, resBody)
 }
@@ -234,10 +234,10 @@ func Test_Client_GetContext(t *testing.T) {
 		WithWriterOpt(sio.SetJsonEncoder()),
 		WithReaderOpt(sio.SetJsonDecoder()),
 	)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	resBody, err := c.GetContext(context.Background(), svr.URL, nil, nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, expected, resBody)
 }
@@ -255,22 +255,22 @@ func Test_Client_GetDecode(t *testing.T) {
 		WithWriterOpt(sio.SetJsonEncoder()),
 		WithReaderOpt(sio.SetJsonDecoder()),
 	)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	resBody := _testStruct{}
 	err := c.GetDecode(svr.URL, nil, nil, &resBody)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	b, err := _jsonMarshal(&resBody)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, b)
 
 	resBody2 := _testStruct{}
 	err = c.GetDecodeContext(context.Background(), svr.URL, nil, nil, &resBody2)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	b2, err := _jsonMarshal(&resBody2)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, b2)
 }
 
@@ -288,32 +288,32 @@ func Test_Client_Post(t *testing.T) {
 		WithWriterOpt(sio.SetJsonEncoder()),
 		WithReaderOpt(sio.SetJsonDecoder()),
 	)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	var err error
 	var resBody []byte
 	var resStruct _testStruct
 
 	resBody, err = c.Post(svr.URL, nil, expected)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, resBody)
 
 	resBody, err = c.PostContext(context.Background(), svr.URL, nil, expected)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, resBody)
 
 	resStruct = _testStruct{}
 	err = c.PostDecode(svr.URL, nil, expected, &resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	b, err := _jsonMarshal(&resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, b)
 
 	resStruct = _testStruct{}
 	err = c.PostDecodeContext(context.Background(), svr.URL, nil, expected, &resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	b, err = _jsonMarshal(&resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, b)
 }
 
@@ -330,32 +330,32 @@ func Test_Client_Put(t *testing.T) {
 		WithWriterOpt(sio.SetJsonEncoder()),
 		WithReaderOpt(sio.SetJsonDecoder()),
 	)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	var err error
 	var resBody []byte
 	var resStruct _testStruct
 
 	resBody, err = c.Put(svr.URL, nil, nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, resBody)
 
 	resBody, err = c.PutContext(context.Background(), svr.URL, nil, nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, resBody)
 
 	resStruct = _testStruct{}
 	err = c.PutDecode(svr.URL, nil, nil, &resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	b, err := _jsonMarshal(&resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, b)
 
 	resStruct = _testStruct{}
 	err = c.PutDecodeContext(context.Background(), svr.URL, nil, nil, &resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	b, err = _jsonMarshal(&resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, b)
 }
 
@@ -373,32 +373,32 @@ func Test_Client_Patch(t *testing.T) {
 		WithWriterOpt(sio.SetJsonEncoder()),
 		WithReaderOpt(sio.SetJsonDecoder()),
 	)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	var err error
 	var resBody []byte
 	var resStruct _testStruct
 
 	resBody, err = c.Patch(svr.URL, nil, expected)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, resBody)
 
 	resBody, err = c.PatchContext(context.Background(), svr.URL, nil, expected)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, resBody)
 
 	resStruct = _testStruct{}
 	err = c.PatchDecode(svr.URL, nil, expected, &resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	b, err := _jsonMarshal(&resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, b)
 
 	resStruct = _testStruct{}
 	err = c.PatchDecodeContext(context.Background(), svr.URL, nil, expected, &resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	b, err = _jsonMarshal(&resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, b)
 }
 
@@ -420,7 +420,7 @@ func Test_Client_Delete(t *testing.T) {
 		WithWriterOpt(sio.SetJsonEncoder()),
 		WithReaderOpt(sio.SetJsonDecoder()),
 	)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	var err error
 	var resBody []byte
@@ -429,25 +429,25 @@ func Test_Client_Delete(t *testing.T) {
 	queries["msg"] = "hello there"
 
 	resBody, err = c.Delete(svr.URL, nil, queries)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, resBody)
 
 	resBody, err = c.DeleteContext(context.Background(), svr.URL, nil, queries)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, resBody)
 
 	resStruct = _testStruct{}
 	err = c.DeleteDecode(svr.URL, nil, queries, &resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	b, err := _jsonMarshal(&resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, b)
 
 	resStruct = _testStruct{}
 	err = c.DeleteDecodeContext(context.Background(), svr.URL, nil, queries, &resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	b, err = _jsonMarshal(&resStruct)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, b)
 }
 
@@ -533,16 +533,16 @@ func Test_Client_PostFile(t *testing.T) {
 		WithWriterOpt(sio.SetJsonEncoder()),
 		WithReaderOpt(sio.SetJsonDecoder()),
 	)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	var err error
 
 	res, err := c.PostFile(svr.URL, nil, nil, "file_to_upload", "./tests/data/testfile.txt")
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, res)
 
 	res, err = c.PostFileContext(context.Background(), svr.URL, nil, nil, "file_to_upload", "./tests/data/testfile.txt")
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, res)
 }
 
@@ -582,7 +582,7 @@ func Test_Client_setDefaultHeader(t *testing.T) {
 	c := NewClient(&sc, WithDefaultHeaders(defaultHeaders))
 
 	req, err := http.NewRequest(http.MethodGet, "", nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	c.setDefaultHeader(req)
 
 	assert.EqualValues(t, "application/json", req.Header.Get("Content-type"))
@@ -645,15 +645,15 @@ func Test_Client_request(t *testing.T) {
 		WithWriterOpt(sio.SetJsonEncoder()),
 		WithReaderOpt(sio.SetJsonDecoder()),
 	)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, c)
 
 	resBody, err := c.request(context.Background(), http.MethodGet, svr.URL, nil, nil, nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, expected, resBody)
 
 	var decodedResBody map[string]string
 	err = c.requestDecode(context.Background(), http.MethodGet, svr.URL, nil, nil, nil, &decodedResBody)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	b, _ := json.Marshal(&decodedResBody)
 	assert.EqualValues(t, expected, b)
 
@@ -661,7 +661,7 @@ func Test_Client_request(t *testing.T) {
 
 func Test_setHeader(t *testing.T) {
 	req, err := http.NewRequest(http.MethodGet, "", nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	h := http.Header{}
 	h.Set("Content-type", "application/json")
@@ -671,7 +671,7 @@ func Test_setHeader(t *testing.T) {
 
 func Test_setQueries(t *testing.T) {
 	req, err := http.NewRequest(http.MethodGet, "", nil)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	q := make(map[string]string)
 	q["msg"] = "hello there"

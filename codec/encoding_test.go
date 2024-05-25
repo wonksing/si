@@ -7,7 +7,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/wonksing/si/v2/siutils"
 )
 
 func Test_EncodeJson(t *testing.T) {
@@ -64,7 +63,7 @@ func Test_DecodeJson(t *testing.T) {
 	out := make(map[string]interface{})
 
 	err := DecodeJson(&out, buf)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, "asdf", out["email_address"].(string))
 }
 
@@ -74,7 +73,7 @@ func Test_DecodeJsonCopied(t *testing.T) {
 	out := make(map[string]interface{})
 
 	copied, err := DecodeJsonCopied(&out, buf)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	assert.EqualValues(t, "asdf", out["email_address"].(string))
 	assert.EqualValues(t, v, copied.Bytes())
 }

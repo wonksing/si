@@ -1,7 +1,7 @@
 package sifile
 
 import (
-	"github.com/wonksing/si/v2/internal/sio"
+	"github.com/wonksing/si/v2/sio"
 )
 
 // FileOption is an interface with apply method.

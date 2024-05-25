@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/wonksing/si/v2/siutils"
+	"github.com/stretchr/testify/require"
 	"github.com/wonksing/si/v2/tests/testmodels"
 )
 
@@ -21,13 +21,13 @@ func BenchmarkDecode_Json(b *testing.B) {
 		table := testmodels.Table{}
 		byt, _ := json.Marshal(bmap)
 		err := json.Unmarshal(byt, &table)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 	}
 }
 func BenchmarkDecode_Mapstructure(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		table := testmodels.Table{}
 		err := mapstructure.Decode(bmap, &table)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 	}
 }

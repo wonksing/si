@@ -7,7 +7,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal/sio"
+	"github.com/stretchr/testify/require"
+	"github.com/wonksing/si/v2/sio"
 	"github.com/wonksing/si/v2/sisql"
 	"github.com/wonksing/si/v2/siutils"
 	"github.com/wonksing/si/v2/tests/testmodels"
@@ -17,7 +18,7 @@ func TestSqlDB_QueryRow(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db)
 
@@ -29,7 +30,7 @@ func TestSqlDB_QueryRow(t *testing.T) {
 	var tim sql.NullTime
 	row := sqldb.QueryRow(query)
 	err := row.Scan(&tim)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	expected := `2022-01-01 12:12:12 +0000 UTC`
 	assert.Equal(t, expected, tim.Time.String())
@@ -39,7 +40,7 @@ func TestSqlDB_QueryRowStruct(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("json"))
 
@@ -50,7 +51,7 @@ func TestSqlDB_QueryRowStruct(t *testing.T) {
 	// tl := Table{}
 	var tl testmodels.Student
 	err := sqldb.QueryRowStruct(query, &tl)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	expected := `{"id":1,"email_address":"wonk@wonk.org","name":"wonk","borrowed":false,"book_id":23}`
 	assert.Equal(t, expected, tl.String())
@@ -60,7 +61,7 @@ func TestSqlDB_QueryRowPrimary(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("json"))
 
@@ -70,7 +71,7 @@ func TestSqlDB_QueryRowPrimary(t *testing.T) {
 
 	var tl int
 	err := sqldb.QueryRowPrimary(query, &tl)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	assert.EqualValues(t, 12, tl)
 }
@@ -79,7 +80,7 @@ func TestSqlDBQueryStructsBasicDataType(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("json"))
 
@@ -102,7 +103,7 @@ func TestSqlDBQueryStructsBasicDataType(t *testing.T) {
 
 	var l testmodels.BasicDataTypeList
 	_, err := sqldb.QueryStructs(query, &l)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	// jsonValue := l.String()
 	// fmt.Println(jsonValue)
@@ -116,7 +117,7 @@ func TestSqlDBQueryStructsBasicDataTypeLimit(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("json"))
 
@@ -137,7 +138,7 @@ func TestSqlDBQueryStructsBasicDataTypeLimit(t *testing.T) {
 
 	var l testmodels.BasicDataTypeList
 	_, err := sqldb.QueryStructs(query, &l)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	// jsonValue := l.String()
 	// fmt.Println(l.String())
@@ -151,7 +152,7 @@ func TestSqlDBQueryStructsBasicDataTypeBig(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("json"))
 
@@ -164,7 +165,7 @@ func TestSqlDBQueryStructsBasicDataTypeBig(t *testing.T) {
 
 	var l testmodels.BasicDataTypeList
 	_, err := sqldb.QueryStructs(query, &l)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	// jsonValue := l.String()
 	// fmt.Println(l.String())
@@ -178,7 +179,7 @@ func TestSqlDBQueryStructsSimple(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("json"))
 
@@ -189,7 +190,7 @@ func TestSqlDBQueryStructsSimple(t *testing.T) {
 	// tl := Table{}
 	var tl testmodels.StudentList
 	_, err := sqldb.QueryStructs(query, &tl)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	// expected := `[{"id":1,"email_address":"asdf","name":"asdf","borrowed":false,"book_id":23},{"id":2,"email_address":"wonk@wonk.org","name":"wonk","borrowed":false,"book_id":23},{"id":3,"email_address":"wonk@wonk.org","name":"wonk","borrowed":false,"book_id":23},{"id":4,"email_address":"wonk@wonk.org","name":"wonk","borrowed":false,"book_id":23},{"id":5,"email_address":"wonk@wonk.org","name":"wonk","borrowed":false,"book_id":23},{"id":6,"email_address":"wonk@wonk.org","name":"wonk","borrowed":false,"book_id":23},{"id":7,"email_address":"wonk@wonk.org","name":"wonk","borrowed":false,"book_id":23},{"id":8,"email_address":"wonk@wonk.org","name":"wonk","borrowed":false,"book_id":23},{"id":9,"email_address":"wonk@wonk.org","name":"wonk","borrowed":false,"book_id":23},{"id":10,"email_address":"wonk@wonk.org","name":"wonk","borrowed":false,"book_id":23}]`
 	// assert.Equal(t, expected, tl.String())
@@ -199,7 +200,7 @@ func TestSqlDBQueryStructsNil(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	// te := &testmodels.Embedded{
 	// 	Nil: "not nil embedded",
@@ -224,7 +225,7 @@ func TestSqlDBQueryStructsNil(t *testing.T) {
 	// tl := Table{}
 	var tl testmodels.SampleList
 	_, err := sqldb.QueryStructs(query, &tl)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	// fmt.Println(tl.String())
 
 	expected := `[{"embedded_nil_":"","embedded_nil":"2","nil":"","int2_":123,"int3_":234},{"embedded_nil_":"","embedded_nil":"3","nil":"not null","int2_":0,"int3_":null},{"embedded_nil_":"","embedded_nil":"","nil":"not null","int2_":0,"int3_":null},{"embedded_nil_":"","embedded_nil":"","nil":"not null","int2_":99999,"int3_":88888}]`
@@ -235,7 +236,7 @@ func TestSqlDBQueryStructs(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("json"))
 
@@ -261,7 +262,7 @@ func TestSqlDBQueryStructs(t *testing.T) {
 
 	tl := testmodels.TableList{}
 	_, err := sqldb.QueryStructs(query, &tl)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	expected := `[{"nil":"","int2_":123,"decimal_":123,"numeric_":123,"bigint_":123,"char_arr_":"e2FiY2RlLGx1bmNofQ==","varchar_arr_":"e2FiY2RlLGx1bmNofQ==","bytea_":"MDEyMw==","time_":"2022-01-01T12:12:12Z","time_ptr_":"2022-01-01T12:12:12Z","c3":{"child_name":"child of somebody"},"c4":{"child_name":""},"table_str":"t string","table_str2":"t string 2","table_interface":0,"Tabler":null,"any_value":0,"null_string":{"String":"asdf","Valid":true},"null_string_ptr":{"String":"asdf-ptr","Valid":true}}]`
 	assert.Equal(t, expected, tl.String())
@@ -271,7 +272,7 @@ func TestSqlDBQueryStructs2Rows(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("json"))
 
@@ -299,7 +300,7 @@ func TestSqlDBQueryStructs2Rows(t *testing.T) {
 
 	tl := testmodels.TableList{}
 	_, err := sqldb.QueryStructs(query, &tl)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	expected := `[{"nil":"","int2_":123,"decimal_":123,"numeric_":123,"bigint_":123456789123,"char_arr_":"e2FiY2RlLGx1bmNofQ==","varchar_arr_":"e2FiY2RlLGx1bmNofQ==","bytea_":"MDEyMw==","time_":"2022-01-01T12:12:12Z","time_ptr_":"0001-01-01T00:00:00Z","c3":{"child_name":""},"c4":{"child_name":""},"table_str":"","table_str2":null,"table_interface":null,"Tabler":null,"any_value":null,"null_string":{"String":"","Valid":false},"null_string_ptr":{"String":"","Valid":false}},{"nil":"","int2_":123,"decimal_":123,"numeric_":123,"bigint_":123456789123,"char_arr_":"e2FiY2RlLGx1bmNofQ==","varchar_arr_":"e2FiY2RlLGx1bmNofQ==","bytea_":"MDEyMw==","time_":"2022-01-01T12:12:13Z","time_ptr_":"0001-01-01T00:00:00Z","c3":{"child_name":""},"c4":{"child_name":""},"table_str":"","table_str2":null,"table_interface":null,"Tabler":null,"any_value":null,"null_string":{"String":"","Valid":false},"null_string_ptr":{"String":"","Valid":false}}]`
 	assert.Equal(t, expected, tl.String())
@@ -309,7 +310,7 @@ func TestSqlDBQueryMaps(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db)
 
@@ -328,7 +329,7 @@ func TestSqlDBQueryMaps(t *testing.T) {
 
 	m := make([]map[string]interface{}, 0)
 	_, err := sqldb.QueryMaps(query, &m)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	expected := `[{"bigint_":123,"bytea_":"MDEyMw==","char_arr_":"e2FiY2RlLGx1bmNofQ==","decimal_":123,"int2_":123,"nil":null,"numeric_":123,"str":"123","time_":"2022-01-01T12:12:12Z","varchar_arr_":"e2FiY2RlLGx1bmNofQ=="}]`
 	mb, _ := json.Marshal(m)
@@ -341,7 +342,7 @@ func TestSqlDBQueryMapsBool(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("json"))
 
@@ -357,7 +358,7 @@ func TestSqlDBQueryMapsBool(t *testing.T) {
 
 	m := make([]map[string]interface{}, 0)
 	_, err := sqldb.QueryMaps(query, &m)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	expected := `[{"false_1":0,"false_2":"0","false_3":"N","nil":null,"true_1":null,"true_2":"1","true_3":"Y"},{"false_1":0,"false_2":"0","false_3":"N","nil":"abcdef","true_1":1,"true_2":"1","true_3":"Y"}]`
 	mb, _ := json.Marshal(m)
@@ -370,7 +371,7 @@ func TestSqlDBQueryMapsBoolWithSqlColumn(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("si"),
 		sisql.WithType("true_1", sio.SqlColTypeBool),
@@ -401,7 +402,7 @@ func TestSqlDBQueryMapsBoolWithSqlColumn(t *testing.T) {
 
 	m := make([]map[string]interface{}, 0)
 	_, err := sqldb.QueryMaps(query, &m)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	expected := `[{"false_1":false,"false_2":false,"nil":null,"true_1":null,"true_2":true},{"false_1":false,"false_2":false,"nil":null,"true_1":true,"true_2":true}]`
 	mb, _ := json.Marshal(m)
@@ -410,7 +411,7 @@ func TestSqlDBQueryMapsBoolWithSqlColumn(t *testing.T) {
 
 	bt := make([]BoolTest, 0)
 	err = siutils.DecodeAny(m, &bt)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 }
 
@@ -418,7 +419,7 @@ func TestSqlDBQueryStructsNoTag(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("json"))
 	query := `
@@ -430,7 +431,7 @@ func TestSqlDBQueryStructsNoTag(t *testing.T) {
 
 	tl := testmodels.TableWithNoTagList{}
 	_, err := sqldb.QueryStructs(query, &tl)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	expected := `[{"nil_value":"","IntValue":123,"DecimalValue":123,"SomeStringValue":"some string"}]`
 	assert.Equal(t, expected, tl.String())
@@ -440,7 +441,7 @@ func TestSqlDBQueryStructsPtrElem(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("json"))
 
@@ -458,7 +459,7 @@ func TestSqlDBQueryStructsPtrElem(t *testing.T) {
 
 	tl := testmodels.TableWithPtrElemList{}
 	_, err := sqldb.QueryStructs(query, &tl)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	expected := `[{"nil_value":"","IntValue":123,"DecimalValue":123,"SomeStringValue":"some string"},{"nil_value":"not null","IntValue":987,"DecimalValue":654,"SomeStringValue":"2some string2"}]`
 	assert.Equal(t, expected, tl.String())
@@ -468,7 +469,7 @@ func TestSqlDBQueryMapsBoolWithIgnore(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("si"),
 		sisql.WithType("true_1", sio.SqlColTypeBool),
@@ -496,7 +497,7 @@ func TestSqlDBQueryMapsBoolWithIgnore(t *testing.T) {
 
 	m := []BoolTest{}
 	_, err := sqldb.QueryStructs(query, &m)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	expected := `[{"nil":"","true_1":false,"true_2":true,"false_1":false,"false_2":false,"Ignore_3":""},{"nil":"","true_1":true,"true_2":true,"false_1":false,"false_2":false,"Ignore_3":""}]`
 	mb, _ := json.Marshal(m)
@@ -505,7 +506,7 @@ func TestSqlDBQueryMapsBoolWithIgnore(t *testing.T) {
 
 	bt := make([]BoolTest, 0)
 	err = siutils.DecodeAny(m, &bt)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 }
 
@@ -513,10 +514,10 @@ func TestSqlTxQueryStructs(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	tx, err := db.Begin()
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	defer tx.Rollback()
 
 	sqltx := sisql.GetSqlTx(tx, sisql.WithTxTagKey("json"))
@@ -530,7 +531,7 @@ func TestSqlTxQueryStructs(t *testing.T) {
 
 	tl := testmodels.Documents{}
 	_, err = sqltx.QueryStructs(query, &tl)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	expected := `[{"name":"wonk","id":123,"timestamp":"2022-01-01T12:12:12Z"}]`
 	assert.Equal(t, expected, tl.String())
@@ -540,10 +541,10 @@ func TestSqlTxQueryStructsNoTag(t *testing.T) {
 	if !onlinetest {
 		t.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFail(t, db)
+	require.NotNil(t, db)
 
 	tx, err := db.Begin()
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	defer tx.Rollback()
 
 	sqltx := sisql.GetSqlTx(tx, sisql.WithTxTagKey("json"))
@@ -558,7 +559,7 @@ func TestSqlTxQueryStructsNoTag(t *testing.T) {
 
 	tl := testmodels.TableWithNoTagList{}
 	_, err = sqltx.QueryStructs(query, &tl)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	expected := `[{"nil_value":"","IntValue":123,"DecimalValue":123,"SomeStringValue":"some string"}]`
 	assert.Equal(t, expected, tl.String())

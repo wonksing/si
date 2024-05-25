@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"io"
 
-	"github.com/wonksing/si/v2/internal/sio"
+	"github.com/wonksing/si/v2/sio"
 )
 
 // EncodeJson encode src into json bytes then write to dst.

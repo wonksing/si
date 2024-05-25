@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/wonksing/si/v2/siwebsocket"
+	"github.com/wonksing/si/v2/experimental/siwebsocket"
 )
 
 var addr = flag.String("addr", ":28080", "http service address")

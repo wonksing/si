@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/wonksing/si/v2/sisql"
-	"github.com/wonksing/si/v2/siutils"
 	"github.com/wonksing/si/v2/tests/testmodels"
 )
 
@@ -14,7 +14,7 @@ func BenchmarkSqlDB_Exec(b *testing.B) {
 	if !onlinetest {
 		b.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFailB(b, db)
+	require.NotNil(b, db)
 
 	sqldb := sisql.NewSqlDB(db)
 
@@ -34,7 +34,7 @@ func BenchmarkSqlDB_QueryIntoMap(b *testing.B) {
 	if !onlinetest {
 		b.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFailB(b, db)
+	require.NotNil(b, db)
 
 	// var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	for i := 0; i < b.N; i++ {
@@ -78,7 +78,7 @@ func BenchmarkSqlDB_QueryIntoAny_Struct(b *testing.B) {
 	if !onlinetest {
 		b.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFailB(b, db)
+	require.NotNil(b, db)
 
 	for i := 0; i < b.N; i++ {
 		sqldb := sisql.NewSqlDB(db) // sio.SqlColumn{"decimal_", sio.SqlColTypeFloat64},
@@ -100,7 +100,7 @@ func BenchmarkSqlDB_QueryIntoAny_Struct(b *testing.B) {
 
 		tl := testmodels.TableList{}
 		_, err := sqldb.QueryStructs(query, &tl)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		expected := `[{"nil":"","int2_":123,"decimal_":123,"numeric_":123,"bigint_":123,"char_arr_":"e2FiY2RlLGx1bmNofQ==","varchar_arr_":"e2FiY2RlLGx1bmNofQ==","bytea_":"0123","time_":"2022-01-01T12:12:12Z"}]`
 		assert.Equal(b, expected, tl.String())
@@ -111,7 +111,7 @@ func BenchmarkSqlDB_QueryMaps(b *testing.B) {
 	if !onlinetest {
 		b.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFailB(b, db)
+	require.NotNil(b, db)
 
 	sqldb := sisql.NewSqlDB(db)
 	for i := 0; i < b.N; i++ {
@@ -139,7 +139,7 @@ func BenchmarkSqlDB_QueryStructs(b *testing.B) {
 	if !onlinetest {
 		b.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFailB(b, db)
+	require.NotNil(b, db)
 
 	sqldb := sisql.NewSqlDB(db)
 	query := `
@@ -180,7 +180,7 @@ func BenchmarkSqlDB_QueryStructsWithColumn(b *testing.B) {
 	if !onlinetest {
 		b.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFailB(b, db)
+	require.NotNil(b, db)
 
 	sqldb := sisql.NewSqlDB(db) // sio.SqlColumn{Name: "decimal_", Type: sio.SqlColTypeFloat64},
 	// sio.SqlColumn{Name: "numeric_", Type: sio.SqlColTypeFloat64},
@@ -238,7 +238,7 @@ func BenchmarkSqlDB_QueryStructsStudent(b *testing.B) {
 	if !onlinetest {
 		b.Skip("skipping online tests")
 	}
-	siutils.AssertNotNilFailB(b, db)
+	require.NotNil(b, db)
 
 	sqldb := sisql.NewSqlDB(db, sisql.WithTagKey("json"))
 	b.ReportAllocs()

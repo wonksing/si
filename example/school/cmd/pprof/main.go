@@ -17,8 +17,8 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/wonksing/si/v2/example/school/adaptor"
 	"github.com/wonksing/si/v2/example/school/core"
-	"github.com/wonksing/si/v2/internal/sio"
 	"github.com/wonksing/si/v2/sihttp"
+	"github.com/wonksing/si/v2/sio"
 )
 
 var (

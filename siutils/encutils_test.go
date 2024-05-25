@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal/sio"
-	"github.com/wonksing/si/v2/siutils"
+	"github.com/stretchr/testify/require"
+	"github.com/wonksing/si/v2/sio"
 	"github.com/wonksing/si/v2/tests/testmodels"
 )
 
@@ -19,7 +19,7 @@ func TestHMacSha256(t *testing.T) {
 
 	message := []byte("my message")
 	_, err := mac.Write(message)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	hashed := hex.EncodeToString(mac.Sum(nil))
 	// fmt.Println(hashed)
@@ -33,7 +33,7 @@ func TestHMacSha256_JsonString(t *testing.T) {
 
 	message := []byte(`{"id":1,"email_address":"wonk@wonk.org","name":"wonk","borrowed":true}` + "\n")
 	_, err := mac.Write(message)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	hashed := hex.EncodeToString(mac.Sum(nil))
 	// fmt.Println(hashed)
@@ -51,7 +51,7 @@ func TestHMacSha256_Writer(t *testing.T) {
 	defer sio.PutWriter(w)
 
 	_, err := w.WriteFlush(message)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	hashed := hex.EncodeToString(mac.Sum(nil))
 	assert.EqualValues(t, "34420f26f2612cb4e0a812c5e39f656390e4f6c91699d44303425e37bb979d0a", hashed)
@@ -67,7 +67,7 @@ func TestHMacSha256_Writer_Encode(t *testing.T) {
 	defer sio.PutWriter(w)
 
 	err := w.EncodeFlush(&s)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	hashed := hex.EncodeToString(mac.Sum(nil))
 	assert.EqualValues(t, "8af0704ab60a967daa7bef4e6e9d2add957c0cec36b5c98b9810e2a6d8ebae30", hashed)
@@ -81,7 +81,7 @@ func BenchmarkHMacSha256(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		mac := hmac.New(sha256.New, secret)
 		_, err := mac.Write(message)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		_ = hex.EncodeToString(mac.Sum(nil))
 	}
@@ -97,7 +97,7 @@ func BenchmarkHMacSha256_Writer(b *testing.B) {
 		w := sio.GetWriter(mac)
 
 		_, err := w.WriteFlush(message)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		_ = hex.EncodeToString(mac.Sum(nil))
 		sio.PutWriter(w)
@@ -115,7 +115,7 @@ func BenchmarkHMacSha256_JsonEncode(b *testing.B) {
 		s := testmodels.Student{ID: 1, EmailAddress: "wonk@wonk.org", Name: "wonk", Borrowed: true}
 
 		_, err := mac.Write([]byte(s.String() + "\n"))
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		_ = hex.EncodeToString(mac.Sum(nil))
 	}
@@ -133,7 +133,7 @@ func BenchmarkHMacSha256_Writer_JsonEncode(b *testing.B) {
 		w := sio.GetWriter(mac, sio.SetJsonEncoder())
 
 		err := w.EncodeFlush(&s)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		_ = hex.EncodeToString(mac.Sum(nil))
 		sio.PutWriter(w)
@@ -153,7 +153,7 @@ func BenchmarkHMacSha256_Writer_JsonMarshal(b *testing.B) {
 		w := sio.GetWriter(mac)
 
 		_, err := w.WriteFlush([]byte(j))
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		_ = hex.EncodeToString(mac.Sum(nil))
 		sio.PutWriter(w)

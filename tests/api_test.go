@@ -9,9 +9,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"github.com/wonksing/si/v2/codec"
-	"github.com/wonksing/si/v2/internal/sio"
-	"github.com/wonksing/si/v2/siutils"
+	"github.com/wonksing/si/v2/sio"
 	"github.com/wonksing/si/v2/tests/testmodels"
 )
 
@@ -251,7 +251,7 @@ func TestHttpHandlerSml(t *testing.T) {
 
 	buf := bytes.NewBuffer([]byte(`[{"id":1,"email_address":"wonk@wonk.org","name":"wonk","borrowed":false,"book_id":23}]`))
 	req, err := http.NewRequest("POST", "/test", buf)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 	rec := httptest.NewRecorder()
@@ -266,7 +266,7 @@ func TestDecodeJsonCopied_FailToDecode(t *testing.T) {
 
 	res := testmodels.StudentList{}
 	c, err := codec.DecodeJsonCopied(&res, r)
-	siutils.AssertNotNilFail(t, err)
-	siutils.AssertNotNilFail(t, c)
+	require.NotNil(t, err)
+	require.NotNil(t, c)
 	fmt.Println(c.String())
 }

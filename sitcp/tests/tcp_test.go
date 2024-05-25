@@ -12,9 +12,9 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal/sio"
+	"github.com/stretchr/testify/require"
+	"github.com/wonksing/si/v2/sio"
 	"github.com/wonksing/si/v2/sitcp"
-	"github.com/wonksing/si/v2/siutils"
 )
 
 type TcpEOFChecker struct{}
@@ -57,12 +57,12 @@ func TestConn_Request(t *testing.T) {
 	}
 	conn, err := sitcp.DialTimeout("127.0.0.1:10000", 3*time.Second,
 		sitcp.WithReaderOpt(sio.SetEofChecker(&TcpEOFChecker{})))
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	defer conn.Close()
 
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 	res, err := conn.Request(createSmallDataToSend(1, 2))
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	fmt.Println(string(res))
 }
@@ -92,7 +92,7 @@ func TestConn_Request_Concurrent(t *testing.T) {
 
 				sendData := createSmallDataToSend(i, j)
 				res, err := conn.Request(sendData)
-				siutils.AssertNilFail(t, err)
+				require.Nil(t, err)
 				assert.EqualValues(t, sendData, string(res))
 				log.Println(string(res))
 			}
@@ -121,7 +121,7 @@ func TestConnPool_Request(t *testing.T) {
 			sitcp.WithEofChecker(&TcpEOFChecker{}),
 			sitcp.WithWriteTimeout(3*time.Second),
 			sitcp.WithReadTimeout(3*time.Second))
-		// siutils.AssertNilFail(t, err)
+		// require.Nil(t, err)
 		if err != nil {
 			log.Println("conn:", err)
 			time.Sleep(val * time.Millisecond)
@@ -130,7 +130,7 @@ func TestConnPool_Request(t *testing.T) {
 
 		sendData := createSmallDataToSend(1, 2)
 		res, err := conn.Request(sendData)
-		// siutils.AssertNilFail(t, err)
+		// require.Nil(t, err)
 		if err != nil {
 			sitcp.PutConn(addr, conn)
 			log.Println("request:", err)
@@ -174,7 +174,7 @@ func TestConnPool_Request_Concurrent(t *testing.T) {
 					sitcp.WithEofChecker(&TcpEOFChecker{}),
 					sitcp.WithWriteTimeout(3*time.Second),
 					sitcp.WithReadTimeout(3*time.Second))
-				// siutils.AssertNilFail(t, err)
+				// require.Nil(t, err)
 				if err != nil {
 					log.Println("conn:", err)
 					continue
@@ -182,7 +182,7 @@ func TestConnPool_Request_Concurrent(t *testing.T) {
 
 				sendData := createSmallDataToSend(i, j)
 				res, err := conn.Request(sendData)
-				// siutils.AssertNilFail(t, err)
+				// require.Nil(t, err)
 				if err != nil {
 					sitcp.PutConn(addr, conn)
 					log.Println("request:", err)

@@ -136,7 +136,7 @@ func TestHttpClient_Concurrency_Request(t *testing.T) {
 		// 		body := fmt.Sprintf("%s-%d-%d", "post hello", i, j)
 		// 		url := "http://127.0.0.1:8080/test/hello"
 		// 		respBody, err := client.RequestPost(url, nil, []byte(body))
-		// 		siutils.AssertNilFail(t, err)
+		// 		require.Nil(t, err)
 
 		// 		assert.EqualValues(t, "hello", string(respBody))
 		// 	}
@@ -150,7 +150,7 @@ func TestHttpClient_Concurrency_Request(t *testing.T) {
 		// 		body := fmt.Sprintf("%s-%d-%d", "post echo", i, j)
 		// 		url := "http://127.0.0.1:8080/test/echo"
 		// 		respBody, err := client.RequestPost(url, nil, []byte(body))
-		// 		siutils.AssertNilFail(t, err)
+		// 		require.Nil(t, err)
 
 		// 		assert.EqualValues(t, body, string(respBody))
 		// 	}
@@ -164,7 +164,7 @@ func TestHttpClient_Concurrency_Request(t *testing.T) {
 		// 		body := fmt.Sprintf("%s-%d-%d", "hello", i, j)
 		// 		url := "http://127.0.0.1:8080/test/echo2"
 		// 		respBody, err := client.RequestPost(url, nil, []byte(body))
-		// 		siutils.AssertNilFail(t, err)
+		// 		require.Nil(t, err)
 
 		// 		assert.EqualValues(t, "2"+body, string(respBody))
 		// 	}
@@ -178,7 +178,7 @@ func TestHttpClient_Concurrency_Request(t *testing.T) {
 		// 		body := fmt.Sprintf("%s-%d-%d", "hello", i, j)
 		// 		url := "http://127.0.0.1:8080/test/echo3"
 		// 		respBody, err := client.RequestPost(url, nil, []byte(body))
-		// 		siutils.AssertNilFail(t, err)
+		// 		require.Nil(t, err)
 
 		// 		assert.EqualValues(t, "3"+body, string(respBody))
 		// 	}
@@ -191,7 +191,7 @@ func TestHttpClient_Concurrency_Request(t *testing.T) {
 		// 		body := fmt.Sprintf("%s-%d-%d", "hello", i, j)
 		// 		url := "http://127.0.0.1:8080/test/echo4"
 		// 		respBody, err := client.RequestPost(url, nil, []byte(body))
-		// 		siutils.AssertNilFail(t, err)
+		// 		require.Nil(t, err)
 
 		// 		assert.EqualValues(t, "4"+body, string(respBody))
 		// 	}

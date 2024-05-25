@@ -47,15 +47,15 @@ func BenchmarkHttpClient_DefaultPost(b *testing.B) {
 		headerData := fmt.Sprintf("%d", i)
 
 		request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader([]byte(sendData)))
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		request.Header.Set("custom_header", headerData)
 
 		resp, err := client.Do(request)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		_, err = io.ReadAll(resp.Body)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		resp.Body.Close()
 	}
@@ -79,15 +79,15 @@ func BenchmarkHttpClient_DefaultPost_WithPool(b *testing.B) {
 
 		buf := sio.GetBytesReader([]byte(sendData))
 		request, err := http.NewRequest(http.MethodPost, url, buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		request.Header.Set("custom_header", headerData)
 
 		resp, err := client.Do(request)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		_, err = io.ReadAll(resp.Body)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		resp.Body.Close()
 		sio.PutBytesReader(buf)
@@ -114,12 +114,12 @@ func BenchmarkHttpClient_DefaultPost_WithPoolAndDoRead(b *testing.B) {
 
 		buf := sio.GetBytesReader([]byte(sendData))
 		request, err := http.NewRequest(http.MethodPost, url, buf)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		request.Header.Set("custom_header", headerData)
 
 		_, _, err = client.DoRead(request)
-		siutils.AssertNilFailB(b, err)
+		require.Nil(b, err)
 
 		sio.PutBytesReader(buf)
 	}

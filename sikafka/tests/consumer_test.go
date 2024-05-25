@@ -8,8 +8,8 @@ import (
 
 	"github.com/IBM/sarama"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/wonksing/si/v2/sikafka"
-	"github.com/wonksing/si/v2/siutils"
 )
 
 var (
@@ -46,7 +46,7 @@ func TestConsumerGroup(t *testing.T) {
 		t.Skip("skipping online tests")
 	}
 	defClient, err := sikafka.DefaultConsumerGroup([]string{"testkafkahost:9092"}, "tp-consumer-test-grp1", "3.1.0", "range", true)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	consumer := sikafka.NewCgConsumer(&messageHandler{})
 	cg := sikafka.NewConsumerGroup(defClient, consumer, []string{"tp-consumer-test"})
@@ -62,7 +62,7 @@ func TestConsumerGroup(t *testing.T) {
 
 	time.Sleep(3 * time.Second)
 	assert.EqualValues(t, "this-is-a-test-message", consumedMessage)
-	siutils.AssertNilFail(t, cg.Finish())
+	require.Nil(t, cg.Finish())
 }
 
 func TestConsumerGroupStartWith(t *testing.T) {
@@ -70,7 +70,7 @@ func TestConsumerGroupStartWith(t *testing.T) {
 		t.Skip("skipping online tests")
 	}
 	defClient, err := sikafka.DefaultConsumerGroup([]string{"testkafkahost:9092"}, "tp-consumer-test-grp1", "3.1.0", "range", true)
-	siutils.AssertNilFail(t, err)
+	require.Nil(t, err)
 
 	consumer := sikafka.NewCgConsumer(&messageHandler{})
 	cg := sikafka.NewConsumerGroup(defClient, consumer, []string{"tp-consumer-test"})
@@ -89,5 +89,5 @@ func TestConsumerGroupStartWith(t *testing.T) {
 
 	time.Sleep(3 * time.Second)
 	assert.EqualValues(t, "this-is-a-test-message", consumedMessage)
-	siutils.AssertNilFail(t, cg.Finish())
+	require.Nil(t, cg.Finish())
 }
