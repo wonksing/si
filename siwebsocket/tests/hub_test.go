@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wonksing/si/v2/internal"
 	"github.com/wonksing/si/v2/siutils"
 	"github.com/wonksing/si/v2/siwebsocket"
 )
@@ -21,7 +20,7 @@ func TestHub(t *testing.T) {
 	if !longtest {
 		t.Skip("skipping long tests")
 	}
-	hub := siwebsocket.NewHub("http://127.0.0.1:8080", "/path/_push", 10*time.Second, 60*time.Second, 1024000, true)
+	hub := siwebsocket.NewWsHub("http://127.0.0.1:8080", "/path/_push", 10*time.Second, 60*time.Second, 1024000, true)
 	go hub.Run()
 
 	u := url.URL{Scheme: "ws", Host: ":48080", Path: "/push"}
@@ -31,7 +30,7 @@ func TestHub(t *testing.T) {
 		conn, _, err := siwebsocket.DefaultConn(u, nil)
 		siutils.AssertNilFail(t, err)
 
-		_, err = siwebsocket.NewClient(conn,
+		_, err = siwebsocket.NewWsClient(conn,
 			siwebsocket.WithWriteWait(10*time.Second),
 			siwebsocket.WithReadWait(60*time.Second),
 			siwebsocket.WithMaxMessageSize(1024000),
@@ -64,7 +63,7 @@ func TestHub2(t *testing.T) {
 	if !longtest {
 		t.Skip("skipping long tests")
 	}
-	hub := siwebsocket.NewHub("http://127.0.0.1:8080", "/path/_push", 10*time.Second, 60*time.Second, 1024000, true)
+	hub := siwebsocket.NewWsHub("http://127.0.0.1:8080", "/path/_push", 10*time.Second, 60*time.Second, 1024000, true)
 	go hub.Run()
 
 	u := url.URL{Scheme: "ws", Host: ":48080", Path: "/push"}
@@ -80,7 +79,7 @@ func TestHub2(t *testing.T) {
 				return
 			}
 
-			c, err := siwebsocket.NewClient(conn,
+			c, err := siwebsocket.NewWsClient(conn,
 				siwebsocket.WithWriteWait(10*time.Second),
 				siwebsocket.WithReadWait(60*time.Second),
 				siwebsocket.WithMaxMessageSize(1024000),
@@ -122,7 +121,7 @@ func TestHub2(t *testing.T) {
 }
 
 func test() int {
-	hub := siwebsocket.NewHub("http://127.0.0.1:8080", "/path/_push", 10*time.Second, 60*time.Second, 1024000, true)
+	hub := siwebsocket.NewWsHub("http://127.0.0.1:8080", "/path/_push", 10*time.Second, 60*time.Second, 1024000, true)
 	go hub.Run()
 
 	u := url.URL{Scheme: "ws", Host: ":48080", Path: "/push/randomclose"}
@@ -138,7 +137,7 @@ func test() int {
 				return
 			}
 
-			c, err := siwebsocket.NewClient(conn,
+			c, err := siwebsocket.NewWsClient(conn,
 				siwebsocket.WithWriteWait(10*time.Second),
 				siwebsocket.WithReadWait(60*time.Second),
 				siwebsocket.WithMaxMessageSize(1024000),
@@ -212,16 +211,16 @@ func TestReconnects(t *testing.T) {
 }
 
 func testWithoutBroadcast() int {
-	hub := siwebsocket.NewHub("http://127.0.0.1:8080",
+	hub := siwebsocket.NewWsHub("http://127.0.0.1:8080",
 		"/path/_push", 10*time.Second, 60*time.Second, 1024000, true,
-		siwebsocket.WithAfterStoreClient(func(c internal.Client, err error) {
+		siwebsocket.WithAfterStoreClient(func(c siwebsocket.Client, err error) {
 			if err != nil {
 				log.Println("store: "+err.Error(), c.GetID())
 			} else {
 				log.Println("store: ", c.GetID())
 			}
 		}),
-		siwebsocket.WithAfterDeleteClient(func(c internal.Client, err error) {
+		siwebsocket.WithAfterDeleteClient(func(c siwebsocket.Client, err error) {
 			if err != nil {
 				log.Println("delete: "+err.Error(), c.GetID())
 			} else {
@@ -243,7 +242,7 @@ func testWithoutBroadcast() int {
 				return
 			}
 
-			c, err := siwebsocket.NewClient(conn,
+			c, err := siwebsocket.NewWsClient(conn,
 				siwebsocket.WithWriteWait(10*time.Second),
 				siwebsocket.WithReadWait(60*time.Second),
 				siwebsocket.WithMaxMessageSize(1024000),
@@ -304,7 +303,7 @@ func TestReconnectsWithoutBroadcast(t *testing.T) {
 }
 
 func testBroadcast() int {
-	hub := siwebsocket.NewHub("http://127.0.0.1:8080", "/path/_push", 10*time.Second, 60*time.Second, 1024000, true)
+	hub := siwebsocket.NewWsHub("http://127.0.0.1:8080", "/path/_push", 10*time.Second, 60*time.Second, 1024000, true)
 	go hub.Run()
 
 	u := url.URL{Scheme: "ws", Host: ":48080", Path: "/push/randomclose"}
@@ -319,7 +318,7 @@ func testBroadcast() int {
 				return
 			}
 
-			_, err = siwebsocket.NewClient(conn,
+			_, err = siwebsocket.NewWsClient(conn,
 				siwebsocket.WithWriteWait(10*time.Second),
 				siwebsocket.WithReadWait(60*time.Second),
 				siwebsocket.WithMaxMessageSize(1024000),

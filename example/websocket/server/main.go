@@ -38,7 +38,7 @@ var (
 // 	log.Println(c.GetID(), userID, userGroupID)
 // }
 
-func echoHub(hub *siwebsocket.Hub) http.HandlerFunc {
+func echoHub(hub *siwebsocket.WsHub) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userID := r.URL.Query().Get("user_id")
 		userGroupID := r.URL.Query().Get("user_group_id")
@@ -77,7 +77,7 @@ func main() {
 	flag.Parse()
 	log.SetFlags(0)
 
-	hub := siwebsocket.NewHub("http://127.0.0.1:8080", "/ws/_push", 10*time.Second, 60*time.Second, 1024000, true)
+	hub := siwebsocket.NewWsHub("http://127.0.0.1:8080", "/ws/_push", 10*time.Second, 60*time.Second, 1024000, true)
 	go hub.Run()
 	defer func() {
 		hub.Stop()

@@ -41,13 +41,13 @@ func DefaultDialer(u url.URL, header http.Header) *websocket.Dialer {
 	return dialer
 }
 
-// Client starts two go-routines to write and read messages upon creation with
+// WsClient starts two go-routines to write and read messages upon creation with
 // NewClientCongfigured or NewClient function. SendMessage method is used to
 // write messages to the server, and read messages are handled by underlying
 // handler(MessageHandler). Currently, it is not designed to work with request
 // (send and receive) pattern. Sending and reading messages are handled separately,
 // you cannot verify if a request is correctly handled by the other end point's response.
-type Client struct {
+type WsClient struct {
 	// dialer *websocket.Dialer
 	conn    *websocket.Conn
 	handler MessageHandler
@@ -79,15 +79,15 @@ type Client struct {
 	id string
 
 	// for server only
-	hub         internal.Hub
+	hub         Hub
 	userID      string
 	userGroupID string
 }
 
-func NewClient(conn *websocket.Conn, opts ...ClientOption) (*Client, error) {
+func NewWsClient(conn *websocket.Conn, opts ...ClientOption) (*WsClient, error) {
 
 	defaultReadWait := 60 * time.Second
-	c := &Client{
+	c := &WsClient{
 		conn:    conn,
 		handler: &NopMessageHandler{},
 
@@ -103,7 +103,7 @@ func NewClient(conn *websocket.Conn, opts ...ClientOption) (*Client, error) {
 		stopSend: make(chan string, 1),
 		readWg:   &sync.WaitGroup{},
 
-		hub: &internal.NopHub{},
+		hub: &NopHub{},
 	}
 
 	for _, o := range opts {
@@ -147,7 +147,7 @@ func GetUpgradeConfig(opts ...UpgraderOption) *upgraderConfig {
 	return u
 }
 func (u *upgraderConfig) Upgrade(w http.ResponseWriter,
-	r *http.Request, responseHeader http.Header, opts ...ClientOption) (*Client, error) {
+	r *http.Request, responseHeader http.Header, opts ...ClientOption) (*WsClient, error) {
 
 	upgrader := websocket.Upgrader{
 		HandshakeTimeout:  u.handshakeTimeout,
@@ -165,26 +165,26 @@ func (u *upgraderConfig) Upgrade(w http.ResponseWriter,
 		return nil, err
 	}
 
-	return NewClient(conn, opts...)
+	return NewWsClient(conn, opts...)
 }
 
-func (c *Client) ReadErr() error {
+func (c *WsClient) ReadErr() error {
 	return c.readErr
 }
 
-func (c *Client) WriteErr() error {
+func (c *WsClient) WriteErr() error {
 	return c.writeErr
 }
 
 var ErrStopChannelFull = errors.New("stop channel is full")
 var ErrNotStarted = errors.New("client has not been started")
 
-func (c *Client) waitStopSend() {
+func (c *WsClient) waitStopSend() {
 	<-c.stopSend
 	close(c.sendDone)
 }
 
-func (c *Client) Stop() error {
+func (c *WsClient) Stop() error {
 	select {
 	case c.stopSend <- "stop":
 	default:
@@ -193,42 +193,42 @@ func (c *Client) Stop() error {
 	return nil
 }
 
-func (c *Client) Wait() error {
+func (c *WsClient) Wait() error {
 	c.readWg.Wait()
 	return nil
 }
 
-func (c *Client) SetMessageHandler(h MessageHandler) {
+func (c *WsClient) SetMessageHandler(h MessageHandler) {
 	c.handler = h
 }
 
-func (c *Client) SetID(id string) {
+func (c *WsClient) SetID(id string) {
 	c.id = id
 }
 
-func (c *Client) GetID() string {
+func (c *WsClient) GetID() string {
 	return c.id
 }
 
-func (c *Client) SetUserID(id string) {
+func (c *WsClient) SetUserID(id string) {
 	c.userID = id
 }
-func (c *Client) GetUserID() string {
+func (c *WsClient) GetUserID() string {
 	return c.userID
 }
 
-func (c *Client) SetUserGroupID(id string) {
+func (c *WsClient) SetUserGroupID(id string) {
 	c.userGroupID = id
 }
-func (c *Client) GetUserGroupID() string {
+func (c *WsClient) GetUserGroupID() string {
 	return c.userGroupID
 }
 
-func (c *Client) SetHub(h internal.Hub) {
+func (c *WsClient) SetHub(h Hub) {
 	c.hub = h
 }
 
-func (c *Client) appendReaderOpt(ro internal.ReaderOption) {
+func (c *WsClient) appendReaderOpt(ro internal.ReaderOption) {
 	c.readOpts = append(c.readOpts, ro)
 }
 
@@ -246,7 +246,7 @@ func newMsg(data []byte) *msg {
 	}
 }
 
-func (c *Client) Send(b []byte) error {
+func (c *WsClient) Send(b []byte) error {
 	select {
 	case <-c.sendDone:
 		return ErrDataChannelClosed
@@ -261,7 +261,7 @@ func (c *Client) Send(b []byte) error {
 	return nil
 }
 
-func (c *Client) SendAndWait(b []byte) error {
+func (c *WsClient) SendAndWait(b []byte) error {
 	select {
 	case <-c.sendDone:
 		return ErrDataChannelClosed
@@ -277,12 +277,12 @@ func (c *Client) SendAndWait(b []byte) error {
 	}
 }
 
-func (c *Client) closeMessage(msg string) error {
+func (c *WsClient) closeMessage(msg string) error {
 	c.conn.SetWriteDeadline(time.Now().Add(c.writeWait))
 	return c.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, msg))
 }
 
-func (c *Client) ReadMessage() (messageType int, p []byte, err error) {
+func (c *WsClient) ReadMessage() (messageType int, p []byte, err error) {
 	var r io.Reader
 	messageType, r, err = c.conn.NextReader()
 	if err != nil {
@@ -292,7 +292,7 @@ func (c *Client) ReadMessage() (messageType int, p []byte, err error) {
 	return messageType, p, err
 }
 
-func (c *Client) readPump() {
+func (c *WsClient) readPump() {
 	defer func() {
 		c.Stop()
 		c.conn.Close()
@@ -325,7 +325,7 @@ func (c *Client) readPump() {
 	}
 }
 
-func (c *Client) writePump() {
+func (c *WsClient) writePump() {
 	ticker := time.NewTicker(c.pingPeriod)
 	normalClose := false
 	defer func() {
