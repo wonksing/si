@@ -37,13 +37,7 @@ func NewMysqlDialector(config mysql.Config) gorm.Dialector {
 
 // Open
 func Open(gormDialector gorm.Dialector, config *gorm.Config) (*gorm.DB, error) {
-	gormDB, err := gorm.Open(
+	return gorm.Open(
 		gormDialector,
 		config)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return gormDB, nil
 }
