@@ -246,19 +246,36 @@ func TestWriter_File_WriteAnyStruct(t *testing.T) {
 }
 
 func TestWriter_File_EncodeJsonEncodeStruct(t *testing.T) {
-	f, err := os.OpenFile("./data/TestWriter_File_EncodeJsonEncodeStruct.txt", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
-	require.Nil(t, err)
-	defer f.Close()
 
-	// bufio readwriter wrap around f
-	bw := bufio.NewWriter(f)
-	s := sio.GetWriter(bw, sio.SetJsonEncoder())
-	defer sio.PutWriter(s)
+	t.Run("succeed-1", func(t *testing.T) {
+		f, err := os.OpenFile("./data/TestWriter_File_EncodeJsonEncodeStruct.txt", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+		require.Nil(t, err)
+		defer f.Close()
 
-	p := &Person{"wonk", 20, "wonk@wonk.wonk", "M", "Yes", 10}
-	err = s.Encode(p)
-	require.Nil(t, err)
-	require.Nil(t, s.Flush())
+		// bufio readwriter wrap around f
+		bw := bufio.NewWriter(f)
+		s := sio.GetWriter(bw, sio.SetJsonEncoder())
+		defer sio.PutWriter(s)
+
+		p := &Person{"wonk", 20, "wonk@wonk.wonk", "M", "Yes", 10}
+		require.Nil(t, s.Encode(p))
+		require.Nil(t, s.Flush())
+	})
+
+	t.Run("succeed-2", func(t *testing.T) {
+		f, err := os.OpenFile("./data/TestWriter_File_EncodeJsonEncodeStruct.txt", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+		require.Nil(t, err)
+		defer f.Close()
+
+		// bufio readwriter wrap around f
+		bw := bufio.NewWriter(f)
+		s := sio.GetWriter(bw, sio.SetJsonEncoder())
+		defer sio.PutWriter(s)
+
+		p := &Person{"wonk", 20, "wonk@wonk.wonk", "M", "Yes", 10}
+		require.Nil(t, s.Encode(p))
+		require.Nil(t, s.Flush())
+	})
 }
 
 func TestWriter_File_EncodeNoEncoderFail(t *testing.T) {
