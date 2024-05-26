@@ -562,7 +562,7 @@ func _newStandardClient() *http.Client {
 		Dial:               dialer.Dial,
 	}
 
-	return NewStandardClient(time.Duration(30), tr)
+	return NewStandardClient(time.Duration(30)*time.Second, tr)
 }
 
 type _testStruct struct {
