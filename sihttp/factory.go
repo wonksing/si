@@ -35,7 +35,7 @@ func DefaultStandardClient(tlsConfig *tls.Config) *http.Client {
 func NewStandardClient(clientTimeout time.Duration, transport *http.Transport) *http.Client {
 
 	client := &http.Client{
-		Timeout:   time.Duration(30) * time.Second,
+		Timeout:   clientTimeout,
 		Transport: transport,
 	}
 	return client

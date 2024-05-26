@@ -11,13 +11,6 @@ type Error struct {
 	Body     []byte
 }
 
-// func NewError(status int, message string) *Error {
-// 	return &Error{
-// 		Status:  status,
-// 		Message: message,
-// 	}
-// }
-
 func (e Error) Error() string {
 	msg := bytes.Buffer{}
 	if e.Response == nil {
