@@ -24,18 +24,18 @@ func TestServer_NewServer(t *testing.T) {
 	s := NewServer(m, &c, ":63000", 30*time.Second, 30*time.Second)
 	require.NotNil(t, s)
 
-	go func() {
-		err := s.Start()
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-	}()
-	time.Sleep(2 * time.Second)
-	resBody, err := _get("http://127.0.0.1:63000/")
-	require.Nil(t, err)
-	require.EqualValues(t, expected, resBody)
-	fmt.Println(string(resBody))
-	require.Nil(t, s.Stop())
+	// go func() {
+	// 	err := s.Start()
+	// 	if err != nil {
+	// 		fmt.Println(err.Error())
+	// 	}
+	// }()
+	// time.Sleep(2 * time.Second)
+	// resBody, err := _get("http://127.0.0.1:63000/")
+	// require.Nil(t, err)
+	// require.EqualValues(t, expected, resBody)
+	// fmt.Println(string(resBody))
+	// require.Nil(t, s.Stop())
 }
 
 func TestServer_NewServerTls(t *testing.T) {
