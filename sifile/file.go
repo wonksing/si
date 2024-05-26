@@ -36,6 +36,15 @@ func Create(name string, opts ...FileOption) (*File, error) {
 	return newFile(f, opts...), nil
 }
 
+// Open opens file with name then returns File.
+func Open(name string, opts ...FileOption) (*File, error) {
+	f, err := os.Open(name)
+	if err != nil {
+		return nil, err
+	}
+	return newFile(f, opts...), nil
+}
+
 func newFile(f *os.File, opts ...FileOption) *File {
 	sf := &File{
 		File: f,

@@ -17,11 +17,6 @@ type Flusher interface {
 	Flush() error
 }
 
-// Lengther wraps Len medhod
-type Lengther interface {
-	Len() int
-}
-
 type WriterResetter interface {
 	Reset(w io.Writer)
 }
@@ -32,7 +27,6 @@ type ReaderResetter interface {
 
 // Reader is a wrapper of buifio.Reader.
 type Reader struct {
-	r   io.Reader
 	br  *bufio.Reader
 	dec siencoding.Decoder
 	chk EofChecker
@@ -47,7 +41,7 @@ func newReader(r io.Reader, opt ...ReaderOption) *Reader {
 		br = bufio.NewReader(r)
 	}
 
-	rd := &Reader{r: r, br: br, bufAll: make([]byte, 0, defaultBufferSize)}
+	rd := &Reader{br: br, bufAll: make([]byte, 0, defaultBufferSize)}
 	rd.ApplyOptions(opt...)
 	return rd
 }
@@ -61,10 +55,10 @@ func (rd *Reader) ApplyOptions(opts ...ReaderOption) {
 	}
 
 	// always set DefaultEofChecker if `rd.chk` is not set
-	if rd.r != nil && rd.chk == nil {
+	if rd.chk == nil {
 		rd.chk = DefaultEofChecker
 	}
-	if rd.r != nil && rd.dec == nil {
+	if rd.dec == nil {
 		rd.dec = siencoding.NewDefaultDecoder(rd)
 	}
 }
@@ -81,18 +75,24 @@ func (rd *Reader) SetDecoder(dec siencoding.Decoder) {
 // Reset resets underlying Reader with r and opt.
 func (rd *Reader) Reset(r io.Reader, opt ...ReaderOption) {
 	rd.bufAll = rd.bufAll[:0]
-	rd.r = r
-	rd.br.Reset(r)
+
+	br, ok := r.(*bufio.Reader)
+	if ok {
+		rd.br = br
+	} else {
+		rd.br.Reset(r)
+	}
 
 	if rs, ok := rd.dec.(ReaderResetter); ok {
 		rs.Reset(rd)
 	} else {
 		rd.dec = nil
 	}
-
 	rd.chk = nil
 
-	rd.ApplyOptions(opt...)
+	if r != nil {
+		rd.ApplyOptions(opt...)
+	}
 }
 
 // Read reads the data of underlying Reader(rd.br) into p.
@@ -190,16 +190,6 @@ func (rd *Reader) Size() int {
 	return rd.br.Size()
 }
 
-// Len returns the length of underlying Reader(rd.r) if rd.r implements Len() method.
-// It returns 0 otherwise.
-// This is different from Buffered. Buffered returns the length of temporary data in a buffer.
-func (rd *Reader) Len() int {
-	if l, ok := rd.r.(Lengther); ok {
-		return l.Len()
-	}
-	return 0
-}
-
 // WriteTo writes data of underlying Reader(rd.br) into w.
 func (rd *Reader) WriteTo(w io.Writer) (n int64, err error) {
 	return rd.br.WriteTo(w)
@@ -207,18 +197,18 @@ func (rd *Reader) WriteTo(w io.Writer) (n int64, err error) {
 
 // Writer is a wrapper of bufio.Writer with Encoder.
 type Writer struct {
-	w   io.Writer
+	// w   io.Writer
 	bw  *bufio.Writer
 	enc siencoding.Encoder
 }
 
 func newWriter(w io.Writer, opt ...WriterOption) *Writer {
-	var bw *bufio.Writer
-	var ok bool
-	if bw, ok = w.(*bufio.Writer); !ok {
+	bw, ok := w.(*bufio.Writer)
+	if !ok {
 		bw = bufio.NewWriter(w)
 	}
-	wr := &Writer{w: w, bw: bw}
+
+	wr := &Writer{bw: bw}
 	wr.ApplyOptions(opt...)
 	return wr
 }
@@ -230,7 +220,7 @@ func (wr *Writer) ApplyOptions(opts ...WriterOption) {
 		}
 		o.apply(wr)
 	}
-	if wr.w != nil && wr.enc == nil {
+	if wr.enc == nil {
 		wr.enc = siencoding.NewDefaultEncoder(wr)
 	}
 }
@@ -261,15 +251,22 @@ func (wr *Writer) ReadFrom(r io.Reader) (n int64, err error) {
 
 // Reset resets underlying Writer(wr) with w and opt.
 func (wr *Writer) Reset(w io.Writer, opt ...WriterOption) {
-	wr.w = w
-	wr.bw.Reset(w)
+	bw, ok := w.(*bufio.Writer)
+	if ok {
+		wr.bw = bw
+	} else {
+		wr.bw.Reset(w)
+	}
 
 	if rs, ok := wr.enc.(WriterResetter); ok {
 		rs.Reset(wr)
 	} else {
 		wr.enc = nil
 	}
-	wr.ApplyOptions(opt...)
+
+	if w != nil {
+		wr.ApplyOptions(opt...)
+	}
 }
 
 func (wr *Writer) Size() int {
@@ -340,9 +337,9 @@ func newReadWriter(r *Reader, w *Writer) *ReadWriter {
 	return &ReadWriter{r, w}
 }
 
-func (rw *ReadWriter) RLen() int {
-	return rw.Reader.Len()
-}
+// func (rw *ReadWriter) RLen() int {
+// 	return rw.Reader.Len()
+// }
 
 func (rw *ReadWriter) RBuffered() int {
 	return rw.Reader.Buffered()
