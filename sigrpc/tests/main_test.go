@@ -41,7 +41,7 @@ var (
 // 		Dial:               dialer.Dial,
 // 	}
 
-// 	return sihttp.NewStandardClient(time.Duration(30), tr)
+// 	return sihttp.NewStandardClient(time.Duration(30)*time.Second, tr)
 // }
 
 func setup() error {

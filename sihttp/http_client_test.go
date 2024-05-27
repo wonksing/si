@@ -562,7 +562,7 @@ func _newStandardClient() *http.Client {
 		Dial:               dialer.Dial,
 	}
 
-	return NewStandardClient(time.Duration(30), tr)
+	return NewStandardClient(time.Duration(30)*time.Second, tr)
 }
 
 type _testStruct struct {
@@ -639,7 +639,7 @@ func Test_Client_request(t *testing.T) {
 		DisableKeepAlives:  false,
 		Dial:               dialer.Dial,
 	}
-	sc := NewStandardClient(time.Duration(30), tr)
+	sc := NewStandardClient(time.Duration(30)*time.Second, tr)
 
 	c := NewClient(sc,
 		WithWriterOpt(sio.SetJsonEncoder()),
