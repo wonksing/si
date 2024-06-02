@@ -1,100 +1,52 @@
-package sigrpc_test
+package main
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"os"
-	"strconv"
-	"testing"
 	"time"
 
-	_ "github.com/lib/pq"
+	pb "github.com/wonksing/si/v2/example/grpc/protos"
 	"github.com/wonksing/si/v2/sigrpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
-
-	pb "github.com/wonksing/si/v2/sigrpc/tests/protos"
 )
 
-var (
-	onlinetest, _ = strconv.ParseBool(os.Getenv("ONLINE_TEST"))
+func main() {
 
-	server     *sigrpc.Server
-	serverAddr = ":60000"
-
-	client *sigrpc.Client
-)
-
-func setup() error {
 	var err error
+	serverAddr := ":50051"
+
+	listener, _ := sigrpc.TcpListener(serverAddr)
+	server, err := sigrpc.NewServer(listener,
+		sigrpc.WithDefaultKeepAliveEnforcement(),
+		sigrpc.WithDefaultKeepAlive())
 
 	// build server
 	// enforcementPolicyUse := true
 	// enforcementPolicyMinTime := 15
 	// enforcementPolicyPermitWithoutStream := true
-	// certPem := "./certs/server.crt"
-	// certKey := "./certs/server.key"
+	// certPem := ""
+	// certKey := ""
 	// keepAliveMaxConnIdle := 300
 	// keepAliveMaxConnAge := 300
 	// keepAliveMaxConnAgeGrace := 6
 	// keepAliveTime := 60
 	// keepAliveTimeout := 1
 	// healthCheckUse := true
-
 	// listener, _ := sigrpc.TcpListener(serverAddr)
-	// server, err = sigrpc.NewServer(listener,
+	// server, err := sigrpc.NewServer(listener,
 	// 	enforcementPolicyUse, enforcementPolicyMinTime, enforcementPolicyPermitWithoutStream,
 	// 	certPem, certKey,
 	// 	keepAliveMaxConnIdle, keepAliveMaxConnAge, keepAliveMaxConnAgeGrace, keepAliveTime, keepAliveTimeout,
 	// 	healthCheckUse)
-	// if err != nil {
-	// 	return err
-	// }
-
-	lis, _ := sigrpc.TcpListener(serverAddr)
-	server, err = sigrpc.NewServer(lis)
 	if err != nil {
-		return err
+		os.Exit(1)
 	}
 	pb.RegisterStudentServer(server, &studentGrpcServer{})
 
-	go func() {
-		server.Start()
-	}()
-
-	// build client
-	client, err = sigrpc.NewClient(serverAddr,
-		sigrpc.WithInsecureTransportCreds())
-	if err != nil {
-		return err
+	if err := server.Start(); err != nil {
+		log.Println(err.Error())
 	}
-
-	if onlinetest {
-	}
-
-	return nil
-}
-
-func shutdown() {
-	if server != nil {
-		server.Close()
-	}
-	if client != nil {
-		client.Close()
-	}
-}
-
-func TestMain(m *testing.M) {
-	err := setup()
-	if err != nil {
-		fmt.Println(err)
-		shutdown()
-		os.Exit(1)
-	}
-
-	exitCode := m.Run()
-
-	shutdown()
-	os.Exit(exitCode)
 }
 
 type studentGrpcServer struct {
