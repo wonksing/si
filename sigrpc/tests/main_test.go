@@ -58,7 +58,8 @@ func setup() error {
 	keepAliveTimeout := 1
 	healthCheckUse := true
 
-	server, err = sigrpc.NewServer(serverAddr,
+	listener, _ := sigrpc.TcpListener(serverAddr)
+	server, err = sigrpc.NewServer(listener,
 		enforcementPolicyUse, enforcementPolicyMinTime, enforcementPolicyPermitWithoutStream,
 		certPem, certKey,
 		keepAliveMaxConnIdle, keepAliveMaxConnAge, keepAliveMaxConnAgeGrace, keepAliveTime, keepAliveTimeout,
@@ -66,7 +67,7 @@ func setup() error {
 	if err != nil {
 		return err
 	}
-	pb.RegisterStudentServer(server.Svr, &studentGrpcServer{})
+	pb.RegisterStudentServer(server, &studentGrpcServer{})
 
 	go func() {
 		server.Start()

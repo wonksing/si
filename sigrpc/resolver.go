@@ -25,6 +25,7 @@ func (g *grpcResolverBuilder) Build(target resolver.Target, cc resolver.ClientCo
 	r.start()
 	return r, nil
 }
+
 func (g *grpcResolverBuilder) Scheme() string { return g.scheme }
 
 type grpcResolver struct {
@@ -39,15 +40,15 @@ func removeFirstSlash(input string) string {
 	}
 	return input
 }
+
 func (r *grpcResolver) endpointFromTarget() string {
 	if r.target.URL.Path == "" {
 		return removeFirstSlash(r.target.URL.Opaque)
 	}
 	return removeFirstSlash(r.target.URL.Path)
 }
+
 func (r *grpcResolver) start() {
-	// fmt.Println(r.target.Endpoint, r.target.URL, r.target.URL.Path, r.target.URL.Opaque)
-	// addrStrs := r.addrsStore[r.target.Endpoint]
 	addrStrs := r.addrsStore[r.endpointFromTarget()]
 	addrs := make([]resolver.Address, len(addrStrs))
 	for i, s := range addrStrs {
@@ -55,5 +56,7 @@ func (r *grpcResolver) start() {
 	}
 	r.cc.UpdateState(resolver.State{Addresses: addrs})
 }
+
 func (*grpcResolver) ResolveNow(o resolver.ResolveNowOptions) {}
-func (*grpcResolver) Close()                                  {}
+
+func (*grpcResolver) Close() {}
