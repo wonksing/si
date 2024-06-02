@@ -9,19 +9,35 @@ import (
 )
 
 func TestDecodeAny(t *testing.T) {
-	m := map[string]interface{}{
-		"name": "wonk",
-		"age":  20,
-	}
-	type Person struct {
-		Name string `json:"name"`
-		Age  int    `json:"age"`
-	}
-	p := Person{}
-	err := siutils.DecodeAny(m, &p)
-	require.Nil(t, err)
+	t.Run("succeed", func(t *testing.T) {
+		m := map[string]interface{}{
+			"name": "wonk",
+			"age":  20,
+		}
+		type Person struct {
+			Name string `json:"name"`
+			Age  int    `json:"age"`
+		}
+		p := Person{}
+		err := siutils.DecodeAny(m, &p)
+		require.Nil(t, err)
 
-	assert.EqualValues(t, Person{"wonk", 20}, p)
+		require.EqualValues(t, Person{"wonk", 20}, p)
+	})
+
+	t.Run("fail", func(t *testing.T) {
+		m := map[string]interface{}{
+			"name": "wonk",
+			"age":  20,
+		}
+		type Person struct {
+			Name string `json:"name"`
+			Age  int    `json:"age"`
+		}
+		p := Person{}
+		err := siutils.DecodeAny(m, p)
+		require.NotNil(t, err)
+	})
 }
 
 func TestDecodeAnyJsonIter(t *testing.T) {

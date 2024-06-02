@@ -9,8 +9,29 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/wonksing/si/v2/sio"
+	"github.com/wonksing/si/v2/siutils"
 	"github.com/wonksing/si/v2/tests/testmodels"
 )
+
+func Test_HmacSha256(t *testing.T) {
+	key := []byte("1234")
+	message := []byte("my message")
+	expected := "34420f26f2612cb4e0a812c5e39f656390e4f6c91699d44303425e37bb979d0a"
+
+	h := siutils.HmacSha256(message, key)
+
+	hashed := hex.EncodeToString(h.Sum(nil))
+	require.EqualValues(t, expected, hashed)
+}
+
+func Test_HmacSha256HexStr(t *testing.T) {
+	key := []byte("1234")
+	message := []byte("my message")
+	expected := "34420f26f2612cb4e0a812c5e39f656390e4f6c91699d44303425e37bb979d0a"
+
+	hashed := siutils.HmacSha256HexStr(message, key)
+	require.EqualValues(t, expected, hashed)
+}
 
 func TestHMacSha256(t *testing.T) {
 
