@@ -10,9 +10,9 @@ import (
 )
 
 func TestXxx(t *testing.T) {
-	if !onlinetest {
-		t.Skip("skipping online tests")
-	}
+	// if !onlinetest {
+	// 	t.Skip("skipping online tests")
+	// }
 
 	c := pb.NewStudentClient(client)
 	rep, err := c.Read(context.Background(), &pb.StudentRequest{
