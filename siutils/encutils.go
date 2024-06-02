@@ -7,13 +7,13 @@ import (
 	"hash"
 )
 
-func HmacSah256(message []byte, hmacKey []byte) hash.Hash {
+func HmacSha256(message []byte, hmacKey []byte) hash.Hash {
 	mac := hmac.New(sha256.New, hmacKey)
 	mac.Write(message)
 	return mac
 }
 
-func HmacSah256HexStr(message []byte, hmacKey []byte) string {
-	mac := HmacSah256(message, hmacKey)
+func HmacSha256HexStr(message []byte, hmacKey []byte) string {
+	mac := HmacSha256(message, hmacKey)
 	return hex.EncodeToString(mac.Sum(nil))
 }
