@@ -10,7 +10,6 @@ import (
 
 	_ "github.com/lib/pq"
 	"github.com/wonksing/si/v2/sigrpc"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pb "github.com/wonksing/si/v2/sigrpc/tests/protos"
@@ -22,7 +21,7 @@ var (
 	server     *sigrpc.Server
 	serverAddr = ":60000"
 
-	client *grpc.ClientConn
+	client *sigrpc.Client
 )
 
 // func openClient() *http.Client {
@@ -46,60 +45,61 @@ var (
 
 func setup() error {
 	var err error
+	// build server
+	enforcementPolicyUse := true
+	enforcementPolicyMinTime := 15
+	enforcementPolicyPermitWithoutStream := true
+	certPem := "./certs/server.crt"
+	certKey := "./certs/server.key"
+	keepAliveMaxConnIdle := 300
+	keepAliveMaxConnAge := 300
+	keepAliveMaxConnAgeGrace := 6
+	keepAliveTime := 60
+	keepAliveTimeout := 1
+	healthCheckUse := true
+
+	server, err = sigrpc.NewServer(serverAddr,
+		enforcementPolicyUse, enforcementPolicyMinTime, enforcementPolicyPermitWithoutStream,
+		certPem, certKey,
+		keepAliveMaxConnIdle, keepAliveMaxConnAge, keepAliveMaxConnAgeGrace, keepAliveTime, keepAliveTimeout,
+		healthCheckUse)
+	if err != nil {
+		return err
+	}
+	pb.RegisterStudentServer(server.Svr, &studentGrpcServer{})
+
+	go func() {
+		server.Start()
+	}()
+
+	// build client
+	resolveScheme := "student"
+	resolveServiceName := "student-svc"
+	keepAlivePermitWithoutStream := true
+	certServername := "localhost"
+	defaultServiceConfig := `{
+		"loadBalancingConfig": [{"round_robin":{}}],
+		"methodConfig": [{
+			"name": [{}],
+			"waitForReady": true,
+			"retryPolicy": {
+				"MaxAttempts": 4,
+				"InitialBackoff": ".01s",
+				"MaxBackoff": ".01s",
+				"BackoffMultiplier": 1.0,
+				"RetryableStatusCodes": [ "UNAVAILABLE" ]
+			}
+		}]
+	}`
+	dialBlock := false
+	dialTimeoutSecond := 6
+	client, err = sigrpc.NewClient(serverAddr, resolveScheme, resolveServiceName, keepAliveTime, keepAliveTimeout, keepAlivePermitWithoutStream,
+		certPem, certServername, defaultServiceConfig, dialBlock, dialTimeoutSecond)
+	if err != nil {
+		return err
+	}
+
 	if onlinetest {
-		// build server
-		enforcementPolicyUse := true
-		enforcementPolicyMinTime := 15
-		enforcementPolicyPermitWithoutStream := true
-		certPem := "./certs/server.crt"
-		certKey := "./certs/server.key"
-		keepAliveMaxConnIdle := 300
-		keepAliveMaxConnAge := 300
-		keepAliveMaxConnAgeGrace := 6
-		keepAliveTime := 60
-		keepAliveTimeout := 1
-		healthCheckUse := true
-
-		server, err = sigrpc.NewServer(serverAddr,
-			enforcementPolicyUse, enforcementPolicyMinTime, enforcementPolicyPermitWithoutStream,
-			certPem, certKey,
-			keepAliveMaxConnIdle, keepAliveMaxConnAge, keepAliveMaxConnAgeGrace, keepAliveTime, keepAliveTimeout,
-			healthCheckUse)
-		if err != nil {
-			return err
-		}
-		pb.RegisterStudentServer(server.Svr, &studentGrpcServer{})
-
-		go func() {
-			server.Start()
-		}()
-
-		// build client
-		resolveScheme := "student"
-		resolveServiceName := "student-svc"
-		keepAlivePermitWithoutStream := true
-		certServername := "localhost"
-		defaultServiceConfig := `{
-			"loadBalancingConfig": [{"round_robin":{}}],
-			"methodConfig": [{
-				"name": [{}],
-				"waitForReady": true,
-				"retryPolicy": {
-					"MaxAttempts": 4,
-					"InitialBackoff": ".01s",
-					"MaxBackoff": ".01s",
-					"BackoffMultiplier": 1.0,
-					"RetryableStatusCodes": [ "UNAVAILABLE" ]
-				}
-			}]
-		}`
-		dialBlock := false
-		dialTimeoutSecond := 6
-		client, err = sigrpc.NewClient(serverAddr, resolveScheme, resolveServiceName, keepAliveTime, keepAliveTimeout, keepAlivePermitWithoutStream,
-			certPem, certServername, defaultServiceConfig, dialBlock, dialTimeoutSecond)
-		if err != nil {
-			return err
-		}
 	}
 
 	return nil

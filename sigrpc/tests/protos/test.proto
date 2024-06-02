@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/common/wrapper/tests/protos";
+option go_package = "github.com/wonksing/si/sigrpc/tests/protos";
 
 import "google/protobuf/timestamp.proto";
 // import "google/protobuf/any.proto";
