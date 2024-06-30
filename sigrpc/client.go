@@ -3,6 +3,7 @@ package sigrpc
 import (
 	"context"
 	"crypto/tls"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -13,6 +14,7 @@ import (
 func WithInsecureTransportCreds() grpc.DialOption {
 	return grpc.WithTransportCredentials(insecure.NewCredentials())
 }
+
 func WithTLSConfigTransportCreds(c *tls.Config) grpc.DialOption {
 	// &tls.Config{} for example
 	return grpc.WithTransportCredentials(credentials.NewTLS(c))
@@ -25,6 +27,14 @@ func WithDefaultKeepAliveParams() grpc.DialOption {
 	}
 	return grpc.WithKeepaliveParams(kacp)
 }
+func WithKeepAliveParams(keepAliveTime, keepAliveTimeout time.Duration, permitWithoutStream bool) grpc.DialOption {
+	kacp := keepalive.ClientParameters{
+		Time:                keepAliveTime,
+		Timeout:             keepAliveTimeout,
+		PermitWithoutStream: permitWithoutStream,
+	}
+	return grpc.WithKeepaliveParams(kacp)
+}
 
 func TransportCredentialsOption(certPemFile string, serverNameOverride string) (grpc.DialOption, error) {
 	creds, err := credentials.NewClientTLSFromFile(certPemFile, serverNameOverride)
@@ -34,21 +44,28 @@ func TransportCredentialsOption(certPemFile string, serverNameOverride string) (
 	return grpc.WithTransportCredentials(creds), nil
 }
 
-func WithDefaultServiceConfig() grpc.DialOption {
+func WithDefaultServiceConfig(defaultServiceConfig string) grpc.DialOption {
 	return grpc.WithDefaultServiceConfig(defaultServiceConfig)
 }
 
 func WithDefaultDialBlock() grpc.DialOption {
-	if defaultDialBlock {
+	return WithDialBlock(defaultDialBlock)
+}
+func WithDialBlock(dialBlock bool) grpc.DialOption {
+	if dialBlock {
 		return grpc.WithBlock()
 	}
 	return grpc.EmptyDialOption{}
 }
 
 func NewClient(address string, opts ...grpc.DialOption) (*Client, error) {
+	return NewClientWithDialTimeout(address, defaultDialTimeout, opts...)
+}
+
+func NewClientWithDialTimeout(address string, dialTimeout time.Duration, opts ...grpc.DialOption) (*Client, error) {
 	defaultOpts := []grpc.DialOption{}
 
-	ctx, cancel := context.WithTimeout(context.Background(), defaultDialTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), dialTimeout)
 	defer cancel()
 
 	defaultOpts = append(defaultOpts, opts...)
