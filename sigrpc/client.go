@@ -55,7 +55,7 @@ func WithDialBlock(dialBlock bool) grpc.DialOption {
 	if dialBlock {
 		return grpc.WithBlock()
 	}
-	return grpc.EmptyDialOption{}
+	return &grpc.EmptyDialOption{}
 }
 
 func NewClient(address string, opts ...grpc.DialOption) (*Client, error) {

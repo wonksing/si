@@ -3,6 +3,7 @@ package sigrpc
 import (
 	"crypto/tls"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -15,12 +16,35 @@ func TcpListener(addr string) (net.Listener, error) {
 	return net.Listen("tcp", addr)
 }
 
-func OptionWithX509KeyPair(certPemFile, certKeyFile string) (grpc.ServerOption, error) {
+func WithX509KeyPair(certPemFile, certKeyFile string) (grpc.ServerOption, error) {
 	cert, err := tls.LoadX509KeyPair(certPemFile, certKeyFile)
 	if err != nil {
 		return nil, err
 	}
 	return grpc.Creds(credentials.NewServerTLSFromCert(&cert)), nil
+}
+
+func WithKeepAliveEnforcement(enabled bool, minTime time.Duration, permitWithoutStream bool) grpc.ServerOption {
+	if !enabled {
+		return &grpc.EmptyServerOption{}
+	}
+	kaep := keepalive.EnforcementPolicy{
+		MinTime:             minTime,
+		PermitWithoutStream: permitWithoutStream,
+	}
+	return grpc.KeepaliveEnforcementPolicy(kaep)
+}
+
+func WithKeepAlive(maxConnIdle, maxConnAge, maxConnAgeGrace time.Duration, keepAliveTime, pingTimeout time.Duration) grpc.ServerOption {
+
+	kasp := keepalive.ServerParameters{
+		MaxConnectionIdle:     maxConnIdle,
+		MaxConnectionAge:      maxConnAge,
+		MaxConnectionAgeGrace: maxConnAgeGrace,
+		Time:                  keepAliveTime,
+		Timeout:               pingTimeout,
+	}
+	return grpc.KeepaliveParams(kasp)
 }
 
 func WithDefaultKeepAliveEnforcement() grpc.ServerOption {
