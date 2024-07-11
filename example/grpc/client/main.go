@@ -14,6 +14,7 @@ import (
 func main() {
 	client1()
 	client2()
+	client3()
 }
 
 func client1() {
@@ -51,6 +52,33 @@ func client2() {
 
 	client, err := sigrpc.NewClient(serverAddr,
 		sigrpc.WithTLSConfigTransportCreds(&tls.Config{}),
+		sigrpc.WithDefaultKeepAliveParams())
+	if err != nil {
+		log.Println(err.Error())
+		os.Exit(1)
+	}
+	defer client.Close()
+
+	c := pb.NewStudentClient(client)
+	rep, err := c.Read(context.Background(), &pb.StudentRequest{
+		Name: "wonka",
+	})
+	if err != nil {
+		log.Println(err.Error())
+		os.Exit(1)
+	}
+	fmt.Println(rep.String())
+}
+
+func client3() {
+	// sigrpc.DefaultClient("dns://")
+
+	// build client
+	serverAddr := "dns:///wonkgitea.io:50051"
+
+	client, err := sigrpc.NewClient(serverAddr,
+		// sigrpc.WithTLSConfigTransportCreds(&tls.Config{InsecureSkipVerify: true}),
+		sigrpc.WithInsecureTransportCreds(),
 		sigrpc.WithDefaultKeepAliveParams())
 	if err != nil {
 		log.Println(err.Error())
