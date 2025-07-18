@@ -1,6 +1,6 @@
 module github.com/wonksing/si/v2
 
-go 1.20
+go 1.23.0
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
@@ -17,7 +17,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/rabbitmq/amqp091-go v1.8.1
 	github.com/stretchr/testify v1.9.0
-	golang.org/x/oauth2 v0.7.0
+	golang.org/x/oauth2 v0.27.0
 	google.golang.org/grpc v1.57.1
 	google.golang.org/protobuf v1.33.0
 	gorm.io/driver/mysql v1.4.7
@@ -79,7 +79,6 @@ require (
 	golang.org/x/net v0.28.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
-	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230525234030-28d5490b6b19 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
