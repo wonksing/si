@@ -15,7 +15,6 @@ require (
 	github.com/jlaffaye/ftp v0.1.0
 	github.com/lib/pq v1.10.6
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/rabbitmq/amqp091-go v1.8.1
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/oauth2 v0.27.0
 	google.golang.org/grpc v1.57.1
